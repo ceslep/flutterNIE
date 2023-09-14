@@ -11,6 +11,8 @@ class Login extends StatefulWidget {
       required this.onIngresar})
       : super(key: key);
   // ignore: library_private_types_in_public_api
+  @override
+  // ignore: library_private_types_in_public_api
   _LoginState createState() => _LoginState();
 }
 
