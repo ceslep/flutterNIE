@@ -15,8 +15,24 @@ class CustomAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(title),
-      content: Text(content),
+      title: Row(
+        children: [
+          Text(title),
+          const Icon(
+            Icons.person,
+            color: Colors.blue,
+          ),
+        ],
+      ),
+      content: Row(
+        children: [
+          const Icon(
+            Icons.warning,
+            color: Colors.red,
+          ),
+          Text(content),
+        ],
+      ),
       actions: actions,
     );
   }
