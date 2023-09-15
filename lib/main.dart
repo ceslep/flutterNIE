@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:notas_ie/estudiante_provider.dart';
 import 'package:notas_ie/widgets/custom_alert.dart';
-import 'package:notas_ie/widgets/entreda_app.dart';
+import 'package:notas_ie/widgets/entrada_app.dart';
 import 'package:provider/provider.dart';
 import 'widgets/login.dart';
 import 'package:localstorage/localstorage.dart';

@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../estudiante_provider.dart';
 
 void main() {
   runApp(const EntradaApp());
 }
 
-class EntradaApp extends StatelessWidget {
+class EntradaApp extends StatefulWidget {
   const EntradaApp({super.key});
 
   @override
+  State<EntradaApp> createState() => _EntradaAppState();
+}
+
+class _EntradaAppState extends State<EntradaApp> {
+  @override
   Widget build(BuildContext context) {
+    final estudianteProvider =
+        Provider.of<EstudianteProvider>(context, listen: false);
     return MaterialApp(
       theme: ThemeData(
           colorScheme:
@@ -34,11 +44,16 @@ class EntradaApp extends StatelessWidget {
             ),
             title: const Text('Notas IedeOccidente'),
           ),
-          body: const TabBarView(
+          body: TabBarView(
             children: [
-              Icon(Icons.directions_car),
-              Icon(Icons.directions_transit),
-              Icon(Icons.directions_bike),
+              Column(
+                children: [
+                  const Icon(Icons.directions_car),
+                  Text(estudianteProvider.estudiante)
+                ],
+              ),
+              const Icon(Icons.directions_transit),
+              const Icon(Icons.directions_bike),
             ],
           ),
         ),
