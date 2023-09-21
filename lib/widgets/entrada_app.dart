@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:notas_ie/modelo_notas.dart';
 import 'package:notas_ie/notas_provider.dart';
+import 'package:notas_ie/widgets/custom_alert.dart';
 import 'package:notas_ie/widgets/menu_periodos.dart';
 import 'package:provider/provider.dart';
 import '../estudiante_provider.dart';
@@ -18,19 +20,34 @@ class EntradaApp extends StatefulWidget {
 }
 
 class _EntradaAppState extends State<EntradaApp> {
+  String periodo = "";
+  late EstudianteProvider estudianteProvider;
+  late NotasProvider notasProvider;
+  late List<ModeloNotas> listaDeNotas = notasProvider.data;
+  late List<String> periodos;
+  late List<ModeloNotas> listaDeNotasFiltradas;
+
+  @override
+  void initState() {
+    super.initState();
+    estudianteProvider =
+        Provider.of<EstudianteProvider>(context, listen: false);
+    periodo = estudianteProvider.periodo;
+    notasProvider = Provider.of<NotasProvider>(context, listen: false);
+    listaDeNotas = notasProvider.data;
+    print({'ln': listaDeNotas.length});
+    listaDeNotasFiltradas =
+        listaDeNotas.where((nota) => nota.periodo == periodo).toList();
+    print({'nf': listaDeNotasFiltradas.length});
+
+    periodos = listaDeNotas.map((e) => e.periodo).toSet().toList();
+    if (!periodos.contains(periodo)) {
+      periodos.add(periodo);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final estudianteProvider =
-        Provider.of<EstudianteProvider>(context, listen: false);
-    final notasProvider = Provider.of<NotasProvider>(context, listen: false);
-    final listaDeNotas = notasProvider.data;
-    final periodos = listaDeNotas.map((e) => e.periodo).toSet().toList();
-    String periodo = estudianteProvider.periodo;
-    if (!periodos.contains('CUATRO')) {
-      periodos.add('CUATRO');
-    }
-    // print({'periodo': periodos});
-
     return MaterialApp(
       theme: ThemeData(
           colorScheme:
@@ -62,7 +79,7 @@ class _EntradaAppState extends State<EntradaApp> {
                 children: [
                   const Icon(Icons.directions_car),
                   Text(
-                    estudianteProvider.nombres,
+                    estudianteProvider.nombres ?? "",
                     style: TextStyle(
                         color: Colors.blue.shade900,
                         fontWeight: FontWeight.bold),
@@ -74,24 +91,58 @@ class _EntradaAppState extends State<EntradaApp> {
                       ? DropdownButtonWidget(
                           items: periodos,
                           onChanged: (String value) {
-                            print(value);
+                            setState(() {
+                              periodo = value;
+                              listaDeNotasFiltradas = listaDeNotas
+                                  .where((nota) => nota.periodo == periodo)
+                                  .toList();
+                            });
                           },
                           defaultValue: periodo,
                         )
                       : const Text(''),
                   Expanded(
-                    child: listaDeNotas.isEmpty
+                    child: listaDeNotasFiltradas.isEmpty
                         ? const Center(child: Text('No hay notas'))
                         : ListView.builder(
+                            itemCount: listaDeNotasFiltradas.length,
                             itemBuilder: (context, index) {
-                              final nota = listaDeNotas[index];
+                              final nota = listaDeNotasFiltradas[index];
                               return ListTile(
-                                title: Text(nota.asignatura),
-                                subtitle: Text(
-                                    'Valoración: ${nota.valoracion.toString()}'),
+                                title: Text(nota.asignatura,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green)),
+                                subtitle: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Text('Valoración: '),
+                                        Text('${nota.valoracion} ',
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Text('docente:  ',
+                                            style: TextStyle(
+                                                color: Colors.blueAccent,
+                                                fontWeight: FontWeight.bold)),
+                                        Text('${nota.nombresDocente} ',
+                                            style: const TextStyle(
+                                                color: Colors.indigo,
+                                                fontWeight: FontWeight.bold))
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                onTap: () {
+                                  mostrarAlert(
+                                      context, 'Nota', nota.valoracion);
+                                },
                               );
                             },
-                            itemCount: listaDeNotas.length,
                           ),
                   ),
                 ],
@@ -103,6 +154,27 @@ class _EntradaAppState extends State<EntradaApp> {
           ),
         ),
       ),
+    );
+  }
+
+  void mostrarAlert(BuildContext context, String title, String text) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          key: const Key('alert'),
+          title: title,
+          content: text,
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cerrar'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

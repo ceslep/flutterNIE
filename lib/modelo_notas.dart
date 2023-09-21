@@ -4,6 +4,7 @@ class ModeloNotas {
   final String grado;
   final String asignatura;
   final String docente;
+  final String nombresDocente;
   final String periodo;
   final String valoracion;
   final String nota1;
@@ -87,6 +88,7 @@ class ModeloNotas {
     required this.grado,
     required this.asignatura,
     required this.docente,
+    required this.nombresDocente,
     required this.periodo,
     required this.valoracion,
     required this.nota1,
@@ -172,6 +174,7 @@ class ModeloNotas {
       grado: json['grado'],
       asignatura: json['asignatura'],
       docente: json['docente'],
+      nombresDocente: json['nombresDocente'],
       periodo: json['periodo'],
       valoracion: json['valoracion'] ?? '',
       nota1: json['nota1'] ?? '',
