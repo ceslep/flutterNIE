@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:notas_ie/notas_provider.dart';
+import 'package:notas_ie/widgets/menu_periodos.dart';
 import 'package:provider/provider.dart';
 import '../estudiante_provider.dart';
 
@@ -18,6 +20,12 @@ class _EntradaAppState extends State<EntradaApp> {
   Widget build(BuildContext context) {
     final estudianteProvider =
         Provider.of<EstudianteProvider>(context, listen: false);
+    final notasProvider = Provider.of<NotasProvider>(context, listen: false);
+    final listaDeNotas = notasProvider.data;
+    final periodos = listaDeNotas.map((e) => e.periodo).toSet().toList();
+    String periodo = estudianteProvider.periodo;
+    print(periodos.toSet());
+
     return MaterialApp(
       theme: ThemeData(
           colorScheme:
@@ -48,11 +56,34 @@ class _EntradaAppState extends State<EntradaApp> {
               Column(
                 children: [
                   const Icon(Icons.directions_car),
-                  Text(estudianteProvider.estudiante)
+                  Text(estudianteProvider.nombres),
+                  periodos.isNotEmpty
+                      ? DropdownButtonWidget(
+                          items: periodos,
+                          onChanged: (value) => {},
+                          defaultValue: periodo,
+                        )
+                      : const Text(''),
+                  Expanded(
+                    child: listaDeNotas.isEmpty
+                        ? const Center(child: Text('No hay notas'))
+                        : ListView.builder(
+                            itemBuilder: (context, index) {
+                              final nota = listaDeNotas[index];
+                              return ListTile(
+                                title: Text(nota.asignatura),
+                                subtitle: Text(
+                                    'Valoración: ${nota.valoracion.toString()}'),
+                              );
+                            },
+                            itemCount: listaDeNotas.length,
+                          ),
+                  ),
                 ],
               ),
               const Icon(Icons.directions_transit),
               const Icon(Icons.directions_bike),
+              // Elimina la pestaña adicional
             ],
           ),
         ),

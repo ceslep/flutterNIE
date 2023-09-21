@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:notas_ie/estudiante_provider.dart';
+import 'package:notas_ie/notas_provider.dart';
 import 'package:notas_ie/widgets/custom_alert.dart';
 import 'package:notas_ie/widgets/entrada_app.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,8 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => EstudianteProvider()),
+        ChangeNotifierProvider(create: (context) => NotasProvider())
+
         // Agrega más providers si es necesario
       ],
       child: const MainApp(),
@@ -56,6 +59,8 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
   @override
   void initState() {
     super.initState();
+    usuarioController.text = "1011098505";
+    passwordController.text = "1011098505";
   }
 
   @override
@@ -77,8 +82,25 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
 
-        print(jsonResponse['acceso']);
+        print(jsonResponse);
+        // ignore: use_build_context_synchronously
+        final misNotas = Provider.of<NotasProvider>(context, listen: false);
+        final dataNotas = jsonResponse['dataNotas'] as List<dynamic>;
 
+// Convierte dataNotas a una lista de Map<String, dynamic>
+        final listaNotas =
+            dataNotas.map((item) => item as Map<String, dynamic>).toList();
+
+        misNotas.setData(listaNotas);
+
+        print(misNotas);
+        final estudianteProvider =
+            // ignore: use_build_context_synchronously
+            Provider.of<EstudianteProvider>(context, listen: false);
+
+        estudianteProvider.setNombresEstudiante(jsonResponse['nombres']);
+        estudianteProvider.setEstudiante(jsonResponse['estudiante']);
+        estudianteProvider.setPeriodo(jsonResponse['periodo']);
         return jsonResponse['acceso'] == 'si';
       } // ...
       return false;
@@ -115,12 +137,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
       });
       if (acceso) {
         // ignore: use_build_context_synchronously
-        String nuevoEstudiante = usuarioController.text;
-        final estudianteProvider =
-            // ignore: use_build_context_synchronously
-            Provider.of<EstudianteProvider>(context, listen: false);
-        estudianteProvider.setEstudiante(nuevoEstudiante);
-        print({'ep': estudianteProvider.estudiante});
+
         // ignore: use_build_context_synchronously
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const EntradaApp()));
