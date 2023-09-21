@@ -22,18 +22,27 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: _selectedValue,
-      items: widget.items.map((item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item),
-        );
-      }).toList(),
-      onChanged: (value) {
-        _selectedValue = value;
-        widget.onChanged(value!);
-      },
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        const Text('Período', textAlign: TextAlign.left),
+        Container(
+            padding: const EdgeInsets.all(16),
+            width: double.infinity,
+            child: DropdownButton<String>(
+              value: _selectedValue ?? widget.defaultValue,
+              items: widget.items.map((item) {
+                return DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(item),
+                );
+              }).toList(),
+              onChanged: (value) {
+                _selectedValue = value;
+                widget.onChanged(value!);
+              },
+            ))
+      ],
     );
   }
 }

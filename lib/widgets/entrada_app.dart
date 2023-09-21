@@ -24,7 +24,10 @@ class _EntradaAppState extends State<EntradaApp> {
     final listaDeNotas = notasProvider.data;
     final periodos = listaDeNotas.map((e) => e.periodo).toSet().toList();
     String periodo = estudianteProvider.periodo;
-    print(periodos.toSet());
+    if (!periodos.contains('CUATRO')) {
+      periodos.add('CUATRO');
+    }
+    print({'periodo': periodos});
 
     return MaterialApp(
       theme: ThemeData(
@@ -56,7 +59,15 @@ class _EntradaAppState extends State<EntradaApp> {
               Column(
                 children: [
                   const Icon(Icons.directions_car),
-                  Text(estudianteProvider.nombres),
+                  Text(
+                    estudianteProvider.nombres,
+                    style: TextStyle(
+                        color: Colors.blue.shade900,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   periodos.isNotEmpty
                       ? DropdownButtonWidget(
                           items: periodos,
