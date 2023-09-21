@@ -8,8 +8,7 @@ class NotasProvider extends ChangeNotifier {
   List<ModeloNotas> get data => _data;
 
   void setData(List<Map<String, dynamic>> jsonData) {
-    // ignore: unnecessary_null_comparison
-    if (jsonData == null) {
+    if (jsonData.isEmpty) {
       return;
     }
     _data = jsonData.map((json) => ModeloNotas.fromJson(json)).toList();

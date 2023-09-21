@@ -21,6 +21,12 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
   String? _selectedValue;
 
   @override
+  void initState() {
+    super.initState();
+    _selectedValue = widget.defaultValue;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -30,7 +36,7 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
             padding: const EdgeInsets.all(16),
             width: double.infinity,
             child: DropdownButton<String>(
-              value: _selectedValue ?? widget.defaultValue,
+              value: _selectedValue,
               items: widget.items.map((item) {
                 return DropdownMenuItem<String>(
                   value: item,
@@ -38,8 +44,11 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
                 );
               }).toList(),
               onChanged: (value) {
-                _selectedValue = value;
-                widget.onChanged(value!);
+                setState(() {
+                  _selectedValue = value;
+                });
+                widget.onChanged(
+                    value!); // Llama a la función de callback con el valor seleccionado
               },
             ))
       ],

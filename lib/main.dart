@@ -82,7 +82,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
 
-        print(jsonResponse);
+        //  print(jsonResponse);
         // ignore: use_build_context_synchronously
         final misNotas = Provider.of<NotasProvider>(context, listen: false);
         final dataNotas = jsonResponse['dataNotas'] as List<dynamic>;
@@ -93,7 +93,6 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
 
         misNotas.setData(listaNotas);
 
-        print(misNotas);
         final estudianteProvider =
             // ignore: use_build_context_synchronously
             Provider.of<EstudianteProvider>(context, listen: false);

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:notas_ie/notas_provider.dart';
 import 'package:notas_ie/widgets/menu_periodos.dart';
@@ -27,7 +29,7 @@ class _EntradaAppState extends State<EntradaApp> {
     if (!periodos.contains('CUATRO')) {
       periodos.add('CUATRO');
     }
-    print({'periodo': periodos});
+    // print({'periodo': periodos});
 
     return MaterialApp(
       theme: ThemeData(
@@ -71,7 +73,9 @@ class _EntradaAppState extends State<EntradaApp> {
                   periodos.isNotEmpty
                       ? DropdownButtonWidget(
                           items: periodos,
-                          onChanged: (value) => {},
+                          onChanged: (String value) {
+                            print(value);
+                          },
                           defaultValue: periodo,
                         )
                       : const Text(''),
