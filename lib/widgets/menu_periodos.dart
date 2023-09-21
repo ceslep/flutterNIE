@@ -31,9 +31,14 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        const Text('Período', textAlign: TextAlign.left),
         Container(
-            padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.only(left: 16),
+          child: const Row(
+            children: [Text('Período', textAlign: TextAlign.left)],
+          ),
+        ),
+        Container(
+            padding: const EdgeInsets.only(left: 16),
             width: double.infinity,
             child: DropdownButton<String>(
               value: _selectedValue,

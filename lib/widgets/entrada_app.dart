@@ -3,14 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:notas_ie/modelo_notas.dart';
 import 'package:notas_ie/notas_provider.dart';
-import 'package:notas_ie/widgets/custom_alert.dart';
 import 'package:notas_ie/widgets/menu_periodos.dart';
+import 'package:notas_ie/widgets/nota_list_tile.dart';
 import 'package:provider/provider.dart';
 import '../estudiante_provider.dart';
-
-void main() {
-  runApp(const EntradaApp());
-}
 
 class EntradaApp extends StatefulWidget {
   const EntradaApp({super.key});
@@ -84,9 +80,6 @@ class _EntradaAppState extends State<EntradaApp> {
                         color: Colors.blue.shade900,
                         fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
                   periodos.isNotEmpty
                       ? DropdownButtonWidget(
                           items: periodos,
@@ -108,40 +101,13 @@ class _EntradaAppState extends State<EntradaApp> {
                             itemCount: listaDeNotasFiltradas.length,
                             itemBuilder: (context, index) {
                               final nota = listaDeNotasFiltradas[index];
-                              return ListTile(
-                                title: Text(nota.asignatura,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green)),
-                                subtitle: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const Text('Valoración: '),
-                                        Text('${nota.valoracion} ',
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold)),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        const Text('docente:  ',
-                                            style: TextStyle(
-                                                color: Colors.blueAccent,
-                                                fontWeight: FontWeight.bold)),
-                                        Text('${nota.nombresDocente} ',
-                                            style: const TextStyle(
-                                                color: Colors.indigo,
-                                                fontWeight: FontWeight.bold))
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                onTap: () {
-                                  mostrarAlert(
-                                      context, 'Nota', nota.valoracion);
-                                },
-                              );
+                              final List<ModeloNotas> detalleNotas =
+                                  listaDeNotasFiltradas
+                                      .where((detalle) =>
+                                          detalle.asignatura == nota.asignatura)
+                                      .toList();
+                              return NotaListTile(
+                                  nota: nota, notas: detalleNotas);
                             },
                           ),
                   ),
@@ -154,27 +120,6 @@ class _EntradaAppState extends State<EntradaApp> {
           ),
         ),
       ),
-    );
-  }
-
-  void mostrarAlert(BuildContext context, String title, String text) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CustomAlertDialog(
-          key: const Key('alert'),
-          title: title,
-          content: text,
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cerrar'),
-            ),
-          ],
-        );
-      },
     );
   }
 }
