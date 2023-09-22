@@ -34,21 +34,40 @@ class _NotaListTileState extends State<NotaListTile> {
             children: [
               const Text('Valoración: '),
               Text('${widget.nota.valoracion} ',
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: widget.nota.valoracion != ""
+                          ? double.parse(widget.nota.valoracion) < 3
+                              ? Colors.red
+                              : Colors.black
+                          : Colors.black)),
             ],
           ),
           Row(
             children: [
-              const Text('docente:  ',
-                  style: TextStyle(
-                      color: Colors.blueAccent, fontWeight: FontWeight.bold)),
-              Text('${widget.nota.nombresDocente} ',
-                  style: const TextStyle(
-                      fontSize: 10,
-                      color: Colors.indigo,
-                      fontWeight: FontWeight.bold))
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Row(
+                    children: [
+                      Text(
+                        'Docente',
+                        style: TextStyle(
+                            color: Colors.blueAccent,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                  Text('${widget.nota.nombresDocente} ',
+                      style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.indigo,
+                          fontWeight: FontWeight.bold)),
+                ],
+              )
             ],
-          )
+          ),
+          const Divider()
         ],
       ),
       trailing: SizedBox(
@@ -64,8 +83,10 @@ class _NotaListTileState extends State<NotaListTile> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          NotasDetalladas(detalleNotas: notasDetallado)));
+                      builder: (context) => NotasDetalladas(
+                            detalleNotas: notasDetallado,
+                            asignatura: widget.nota.asignatura,
+                          )));
             }),
       ),
     );

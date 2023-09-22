@@ -1,8 +1,11 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:notas_ie/inasistencias_provider.dart';
+import 'package:notas_ie/modelo_inasistencias.dart';
 import 'package:notas_ie/modelo_notas.dart';
 import 'package:notas_ie/notas_provider.dart';
+import 'package:notas_ie/widgets/inasistencias.dart';
 import 'package:notas_ie/widgets/menu_periodos.dart';
 import 'package:notas_ie/widgets/nota_list_tile.dart';
 import 'package:provider/provider.dart';
@@ -19,9 +22,11 @@ class _EntradaAppState extends State<EntradaApp> {
   String periodo = "";
   late EstudianteProvider estudianteProvider;
   late NotasProvider notasProvider;
+  late InasistenciasProvider inasistenciasProvider;
   late List<ModeloNotas> listaDeNotas = notasProvider.data;
   late List<String> periodos;
   late List<ModeloNotas> listaDeNotasFiltradas;
+  late List<ModeloInasistencias> listaInasistencias;
 
   @override
   void initState() {
@@ -40,6 +45,9 @@ class _EntradaAppState extends State<EntradaApp> {
     if (!periodos.contains(periodo)) {
       periodos.add(periodo);
     }
+    inasistenciasProvider =
+        Provider.of<InasistenciasProvider>(context, listen: false);
+    listaInasistencias = inasistenciasProvider.data;
   }
 
   @override
@@ -63,8 +71,12 @@ class _EntradaAppState extends State<EntradaApp> {
                   icon: Icon(Icons.calculate_sharp, color: Colors.yellowAccent),
                   child: Text('Notas', style: TextStyle(color: Colors.yellow)),
                 ),
-                Tab(icon: Icon(Icons.directions_transit)),
-                Tab(icon: Icon(Icons.directions_bike)),
+                Tab(
+                    icon: Icon(Icons.access_time_filled),
+                    child: Text('Inasistencias')),
+                Tab(
+                    icon: Icon(Icons.settings_accessibility),
+                    child: Text('Convivencia')),
               ],
             ),
             title: const Text('Notas IedeOccidente'),
@@ -100,12 +112,15 @@ class _EntradaAppState extends State<EntradaApp> {
                         : ListView.builder(
                             itemCount: listaDeNotasFiltradas.length,
                             itemBuilder: (context, index) {
+                              /* if (index.isOdd) return const Divider();
+                              final indexs = index ~/ 2; */
                               final nota = listaDeNotasFiltradas[index];
                               final List<ModeloNotas> detalleNotas =
                                   listaDeNotasFiltradas
                                       .where((detalle) =>
                                           detalle.asignatura == nota.asignatura)
                                       .toList();
+
                               return NotaListTile(
                                   nota: nota, notas: detalleNotas);
                             },
@@ -113,7 +128,7 @@ class _EntradaAppState extends State<EntradaApp> {
                   ),
                 ],
               ),
-              const Icon(Icons.directions_transit),
+              const Inasistencias(),
               const Icon(Icons.directions_bike),
               // Elimina la pestaña adicional
             ],
