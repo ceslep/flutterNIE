@@ -1,12 +1,12 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 import 'dart:convert';
+import 'package:easy_splash_screen/easy_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:notas_ie/estudiante_provider.dart';
 import 'package:notas_ie/inasistencias_provider.dart';
 import 'package:notas_ie/notas_provider.dart';
 import 'package:notas_ie/widgets/custom_alert.dart';
 import 'package:notas_ie/widgets/entrada_app.dart';
-import 'package:notas_ie/widgets/inasistencias.dart';
 import 'package:provider/provider.dart';
 import 'widgets/login.dart';
 import 'package:localstorage/localstorage.dart';
@@ -35,7 +35,22 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const PaginaPrincipal(),
+      debugShowCheckedModeBanner: false,
+      home: EasySplashScreen(
+        logo: Image.network('https://app.iedeoccidente.com/esc.png'),
+        title: const Text(
+          "Institución Educativa de Occidente.",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.green.shade100,
+        showLoader: true,
+        loadingText: const Text("Cargando..."),
+        navigator: const PaginaPrincipal(),
+        durationInSeconds: 3,
+      ),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
         useMaterial3: true,
@@ -62,8 +77,8 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
   @override
   void initState() {
     super.initState();
-    usuarioController.text = "1054922378";
-    passwordController.text = "1054922378";
+    usuarioController.text = "1016719618";
+    passwordController.text = "1016719618";
   }
 
   @override
@@ -95,7 +110,6 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
           final jsonResponseInasistencias =
               json.decode(responseInasistencias.body);
           //  print(jsonResponse);
-          // ignore: use_build_context_synchronously
           final misNotas = Provider.of<NotasProvider>(context, listen: false);
           final dataNotas = jsonResponse['dataNotas'] as List<dynamic>;
 
@@ -119,7 +133,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
               .map((item) => item as Map<String, dynamic>)
               .toList();
           inasistenciasProvider.setData(listaInasistencias);
-          print({'inas': inasistenciasProvider.data.length});
+          print({'inas1': inasistenciasProvider.data.length});
         }
         return jsonResponse['acceso'] == 'si';
       } // ...
@@ -156,13 +170,11 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
         login = false;
       });
       if (acceso) {
-        // ignore: use_build_context_synchronously
-
-        // ignore: use_build_context_synchronously
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const EntradaApp()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const EntradaApp(elPeriodo: '')));
       } else {
-        // ignore: use_build_context_synchronously
         mostrarAlert(
             context, 'Acceso Denegado', 'Estudiante o contraseña erróneas');
       }
@@ -170,7 +182,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('NotasIE'),
+          title: const Text('I.E. de Occidente'),
           backgroundColor: const Color.fromARGB(255, 80, 137, 15),
           foregroundColor: Colors.white,
         ),

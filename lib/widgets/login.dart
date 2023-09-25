@@ -2,6 +2,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class Login extends StatefulWidget {
@@ -37,6 +38,10 @@ class _LoginState extends State<Login> {
         Padding(
           padding: const EdgeInsets.all(35),
           child: TextField(
+            keyboardType: TextInputType.number, // Tipo de teclado numérico
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly, // Permite solo números
+            ],
             controller: widget.usController,
             decoration: const InputDecoration(
               labelText: "Usuario",
@@ -46,6 +51,10 @@ class _LoginState extends State<Login> {
         Padding(
           padding: const EdgeInsets.all(35),
           child: TextField(
+            keyboardType: TextInputType.number, // Tipo de teclado numérico
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly, // Permite solo números
+            ],
             controller: widget.passController,
             obscureText: true,
             decoration: const InputDecoration(

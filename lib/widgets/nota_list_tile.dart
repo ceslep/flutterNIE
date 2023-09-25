@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:notas_ie/modelo_notas.dart';
 import 'package:notas_ie/widgets/custom_alert.dart';
@@ -15,11 +17,25 @@ class NotaListTile extends StatefulWidget {
 }
 
 class _NotaListTileState extends State<NotaListTile> {
-  late List<ModeloNotas> notasDetallado;
+  bool _isVisible = true;
+  late Timer _timer;
+  late List<ModeloNotas> notasDetallado = widget.notas;
   @override
   void initState() {
     super.initState();
-    notasDetallado = widget.notas;
+    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      setState(() {
+        _isVisible = !_isVisible; // Cambia la visibilidad del texto
+        print({'v': _isVisible});
+      });
+    });
+//    notasDetallado = widget.notas;
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -33,14 +49,20 @@ class _NotaListTileState extends State<NotaListTile> {
           Row(
             children: [
               const Text('Valoración: '),
-              Text('${widget.nota.valoracion} ',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: widget.nota.valoracion != ""
-                          ? double.parse(widget.nota.valoracion) < 3
-                              ? Colors.red
-                              : Colors.black
-                          : Colors.black)),
+              AnimatedOpacity(
+                opacity: double.parse(widget.nota.valoracion) < 3
+                    ? (_isVisible ? 1.0 : 0.0)
+                    : 1,
+                duration: const Duration(milliseconds: 200),
+                child: Text('${widget.nota.valoracion} ',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: widget.nota.valoracion != ""
+                            ? double.parse(widget.nota.valoracion) < 3
+                                ? Colors.red
+                                : Colors.black
+                            : Colors.black)),
+              ),
             ],
           ),
           Row(
@@ -80,6 +102,7 @@ class _NotaListTileState extends State<NotaListTile> {
               size: 38,
             ),
             onTap: () {
+              notasDetallado = widget.notas;
               Navigator.push(
                   context,
                   MaterialPageRoute(

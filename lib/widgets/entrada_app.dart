@@ -12,7 +12,8 @@ import 'package:provider/provider.dart';
 import '../estudiante_provider.dart';
 
 class EntradaApp extends StatefulWidget {
-  const EntradaApp({super.key});
+  final String elPeriodo;
+  const EntradaApp({super.key, required this.elPeriodo});
 
   @override
   State<EntradaApp> createState() => _EntradaAppState();
@@ -33,7 +34,8 @@ class _EntradaAppState extends State<EntradaApp> {
     super.initState();
     estudianteProvider =
         Provider.of<EstudianteProvider>(context, listen: false);
-    periodo = estudianteProvider.periodo;
+    periodo =
+        widget.elPeriodo == '' ? estudianteProvider.periodo : widget.elPeriodo;
     notasProvider = Provider.of<NotasProvider>(context, listen: false);
     listaDeNotas = notasProvider.data;
     print({'ln': listaDeNotas.length});
@@ -53,6 +55,7 @@ class _EntradaAppState extends State<EntradaApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           colorScheme:
               ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent)),
@@ -115,12 +118,18 @@ class _EntradaAppState extends State<EntradaApp> {
                               /* if (index.isOdd) return const Divider();
                               final indexs = index ~/ 2; */
                               final nota = listaDeNotasFiltradas[index];
+
                               final List<ModeloNotas> detalleNotas =
                                   listaDeNotasFiltradas
                                       .where((detalle) =>
                                           detalle.asignatura == nota.asignatura)
                                       .toList();
-
+                              if (detalleNotas.isNotEmpty) {
+                                print({
+                                  'asignatura': detalleNotas[0].asignatura,
+                                  'periodo': detalleNotas[0].periodo
+                                });
+                              }
                               return NotaListTile(
                                   nota: nota, notas: detalleNotas);
                             },
@@ -128,7 +137,8 @@ class _EntradaAppState extends State<EntradaApp> {
                   ),
                 ],
               ),
-              const Inasistencias(),
+              Inasistencias(
+                  inasistencias: listaInasistencias, periodoActual: periodo),
               const Icon(Icons.directions_bike),
               // Elimina la pestaña adicional
             ],
