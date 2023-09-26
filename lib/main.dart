@@ -88,6 +88,10 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
     super.dispose();
   }
 
+  void haceralgo() {
+    print('hacer algo');
+  }
+
   @override
   Widget build(BuildContext context) {
     Future<bool> fetchDataFromJson() async {
@@ -125,6 +129,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
           estudianteProvider.setNombresEstudiante(jsonResponse['nombres']);
           estudianteProvider.setEstudiante(jsonResponse['estudiante']);
           estudianteProvider.setPeriodo(jsonResponse['periodo']);
+          estudianteProvider.setGrado(jsonResponse['grado']);
 
           final inasistenciasProvider =
               Provider.of<InasistenciasProvider>(context, listen: false);

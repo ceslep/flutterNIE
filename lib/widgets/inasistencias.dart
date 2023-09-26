@@ -33,11 +33,12 @@ class _InasistenciasState extends State<Inasistencias> {
             child: Card(
               clipBehavior: Clip.hardEdge,
               child: SizedBox(
-                height: 50,
+                height: 120,
+                width: 300,
                 child: Column(
                   children: [
-                    Text(
-                        'No hay inasistencias para el período ${widget.periodoActual}'),
+                    const Text('No hay inasistencias para'),
+                    Text('el período ${widget.periodoActual}'),
                     ElevatedButton(
                         onPressed: () {
                           Navigator.push(

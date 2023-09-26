@@ -88,12 +88,27 @@ class _EntradaAppState extends State<EntradaApp> {
             children: [
               Column(
                 children: [
-                  const Icon(Icons.directions_car),
-                  Text(
-                    estudianteProvider.nombres ?? "",
-                    style: TextStyle(
-                        color: Colors.blue.shade900,
-                        fontWeight: FontWeight.bold),
+                  GestureDetector(
+                    onTap: () async {
+                      print('hola');
+                      await actualizar();
+                      setState(() {});
+                    },
+                    child: Column(
+                      children: [
+                        const Icon(Icons.face_6_outlined, color: Colors.green),
+                        Text(
+                          estudianteProvider.nombres ?? "",
+                          style: TextStyle(
+                              color: Colors.blue.shade900,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(estudianteProvider.grado,
+                            style: const TextStyle(
+                                color: Colors.blueGrey,
+                                fontWeight: FontWeight.bold))
+                      ],
+                    ),
                   ),
                   periodos.isNotEmpty
                       ? DropdownButtonWidget(
@@ -112,27 +127,37 @@ class _EntradaAppState extends State<EntradaApp> {
                   Expanded(
                     child: listaDeNotasFiltradas.isEmpty
                         ? const Center(child: Text('No hay notas'))
-                        : ListView.builder(
-                            itemCount: listaDeNotasFiltradas.length,
-                            itemBuilder: (context, index) {
-                              /* if (index.isOdd) return const Divider();
-                              final indexs = index ~/ 2; */
-                              final nota = listaDeNotasFiltradas[index];
-
-                              final List<ModeloNotas> detalleNotas =
-                                  listaDeNotasFiltradas
-                                      .where((detalle) =>
-                                          detalle.asignatura == nota.asignatura)
-                                      .toList();
-                              if (detalleNotas.isNotEmpty) {
-                                print({
-                                  'asignatura': detalleNotas[0].asignatura,
-                                  'periodo': detalleNotas[0].periodo
-                                });
-                              }
-                              return NotaListTile(
-                                  nota: nota, notas: detalleNotas);
+                        : RefreshIndicator(
+                            color: Colors.white,
+                            backgroundColor: Colors.blue,
+                            strokeWidth: 4.0,
+                            onRefresh: () async {
+                              await actualizar();
+                              setState(() {});
                             },
+                            child: ListView.builder(
+                              itemCount: listaDeNotasFiltradas.length,
+                              itemBuilder: (context, index) {
+                                /* if (index.isOdd) return const Divider();
+                                  final indexs = index ~/ 2; */
+                                final nota = listaDeNotasFiltradas[index];
+
+                                final List<ModeloNotas> detalleNotas =
+                                    listaDeNotasFiltradas
+                                        .where((detalle) =>
+                                            detalle.asignatura ==
+                                            nota.asignatura)
+                                        .toList();
+                                if (detalleNotas.isNotEmpty) {
+                                  print({
+                                    'asignatura': detalleNotas[0].asignatura,
+                                    'periodo': detalleNotas[0].periodo
+                                  });
+                                }
+                                return NotaListTile(
+                                    nota: nota, notas: detalleNotas);
+                              },
+                            ),
                           ),
                   ),
                 ],
@@ -146,5 +171,17 @@ class _EntradaAppState extends State<EntradaApp> {
         ),
       ),
     );
+  }
+
+  Future<void> actualizar() async {
+    await notasProvider.updateData(estudianteProvider.estudiante).then((_) {
+      listaDeNotas = notasProvider.data;
+      listaDeNotasFiltradas =
+          listaDeNotas.where((nota) => nota.periodo == periodo).toList();
+      periodos = listaDeNotas.map((e) => e.periodo).toSet().toList();
+      if (!periodos.contains(periodo)) {
+        periodos.add(periodo);
+      }
+    });
   }
 }
