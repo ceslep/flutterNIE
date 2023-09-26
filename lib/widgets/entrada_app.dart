@@ -1,10 +1,11 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:notas_ie/inasistencias_provider.dart';
 import 'package:notas_ie/modelo_inasistencias.dart';
 import 'package:notas_ie/modelo_notas.dart';
 import 'package:notas_ie/notas_provider.dart';
+import 'package:notas_ie/widgets/desi_alert.dart';
 import 'package:notas_ie/widgets/inasistencias.dart';
 import 'package:notas_ie/widgets/menu_periodos.dart';
 import 'package:notas_ie/widgets/nota_list_tile.dart';
@@ -20,6 +21,7 @@ class EntradaApp extends StatefulWidget {
 }
 
 class _EntradaAppState extends State<EntradaApp> {
+  bool salida = false;
   String periodo = "";
   late EstudianteProvider estudianteProvider;
   late NotasProvider notasProvider;
@@ -52,6 +54,13 @@ class _EntradaAppState extends State<EntradaApp> {
     listaInasistencias = inasistenciasProvider.data;
   }
 
+  void salir() {
+    print({"salir": salida});
+    if (salida) {
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -65,7 +74,46 @@ class _EntradaAppState extends State<EntradaApp> {
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () async {
+                bool result = await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Row(
+                        children: [
+                          Icon(Icons.info,
+                              color: Color.fromARGB(255, 126, 115, 15)),
+                          Text('Cerrar'),
+                        ],
+                      ),
+                      content: const Row(
+                        children: [
+                          Text('Desea cerrar sesión'),
+                          Icon(
+                            Icons.question_mark,
+                            color: Colors.red,
+                          )
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, true);
+                            },
+                            child: const Text('Aceptar')),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, false);
+                            },
+                            child: const Text('Cancelar'))
+                      ],
+                    );
+                  },
+                );
+                if (result) {
+                  Navigator.pop(context);
+                }
+              },
             ),
             backgroundColor: Colors.lightBlueAccent,
             bottom: const TabBar(
@@ -183,5 +231,38 @@ class _EntradaAppState extends State<EntradaApp> {
         periodos.add(periodo);
       }
     });
+  }
+
+  Future<bool> mostrarAlert(BuildContext context, String title, String text) {
+    bool value = false;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DAlertDialog(
+          key: const Key('dalert'),
+          title: title,
+          content: text,
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+
+                value = false;
+              },
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                value = true;
+                print("si");
+              },
+              child: const Text('Si'),
+            )
+          ],
+        );
+      },
+    );
+    return Future.value(value);
   }
 }

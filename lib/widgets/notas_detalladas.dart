@@ -56,7 +56,7 @@ class _NotasDetalladasState extends State<NotasDetalladas> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 15500), (timer) {
       setState(() {
         _isVisible = !_isVisible; // Cambia la visibilidad del texto
         print({'v': _isVisible});
@@ -191,60 +191,6 @@ class _NotasDetalladasState extends State<NotasDetalladas> {
                             ],
                           ),
                         )
-                      /* ListTile(
-                          title: Text(titulo,
-                              style: const TextStyle(
-                                  color: Colors.deepPurple,
-                                  fontStyle: FontStyle.italic,
-                                  fontWeight: FontWeight.w400)),
-                          subtitle: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  const Text('Nota: '),
-                                  AnimatedOpacity(
-                                    opacity: valuen < 3
-                                        ? (_isVisible ? 1.0 : 0.0)
-                                        : 1,
-                                    duration: const Duration(milliseconds: 200),
-                                    child: Text(
-                                      subtitulo,
-                                      style: TextStyle(
-                                          color: valuen < 3
-                                              ? Colors.red
-                                              : Colors.black,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  Text(subtitulo2)
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Periodo: '),
-                                  Text(mapaModelo['periodo'],
-                                      style:
-                                          const TextStyle(color: Colors.blue)),
-                                  const SizedBox(width: 10),
-                                  const Text('Registrado:'),
-                                  const SizedBox(width: 10),
-                                  Text(mapaModelo['fechahora'],
-                                      style: const TextStyle(
-                                          fontStyle: FontStyle.italic))
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Porcentaje: '),
-                                  Text(mapaModelo[porcentajeN] != ''
-                                      ? mapaModelo[porcentajeN]
-                                      : 'Sin porcentaje declarado')
-                                ],
-                              ),
-                              const Divider()
-                            ],
-                          ),
-                        ) */
                       : const Text('');
                 },
               ).toList(),
