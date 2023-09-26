@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'widgets/login.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String urlbase = 'https://app.iedeoccidente.com';
 
@@ -70,15 +71,97 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
   LocalStorage storage = LocalStorage('app.json');
 
   bool login = false;
+  late final String estud;
   //variables de estado
   TextEditingController usuarioController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  Future<String> obtenerValorLocal() async {
+    final prefs = await SharedPreferences.getInstance();
+    final valor = prefs.getString(
+        'estudiante'); // Reemplaza 'clave' por la clave que utilizaste al guardar el valor
+    return valor ?? ""; // Valor predeterminado si no se encuentra la clave
+  }
+
+  Future<void> guardarValorLocal(String estudiante) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('estudiante',
+        estudiante); // Reemplaza 'clave' por tu clave y true por el valor que desees almacenar
+  }
+
+  Future<bool> fetchDataFromJson() async {
+    final url = Uri.parse('$urlbase/est/php/login.php');
+
+    final bodyData = json.encode({
+      'identificacion': usuarioController.text,
+      'pass': passwordController.text
+    });
+
+    final response = await http.post(url, body: bodyData);
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      if (jsonResponse['acceso'] == 'si') {
+        final urlInasistencias = Uri.parse('$urlbase/est/php/getInasist.php');
+        final bodyDataInasistencias = json.encode({
+          'estudiante': usuarioController.text,
+        });
+        final responseInasistencias =
+            await http.post(urlInasistencias, body: bodyDataInasistencias);
+        final jsonResponseInasistencias =
+            json.decode(responseInasistencias.body);
+        //  print(jsonResponse);
+        final misNotas = Provider.of<NotasProvider>(context, listen: false);
+        final dataNotas = jsonResponse['dataNotas'] as List<dynamic>;
+
+// Convierte dataNotas a una lista de Map<String, dynamic>
+        final listaNotas =
+            dataNotas.map((item) => item as Map<String, dynamic>).toList();
+
+        misNotas.setData(listaNotas);
+
+        final estudianteProvider =
+            Provider.of<EstudianteProvider>(context, listen: false);
+
+        estudianteProvider.setNombresEstudiante(jsonResponse['nombres']);
+        estudianteProvider.setEstudiante(jsonResponse['estudiante']);
+        estudianteProvider.setPeriodo(jsonResponse['periodo']);
+        estudianteProvider.setGrado(jsonResponse['grado']);
+
+        final inasistenciasProvider =
+            Provider.of<InasistenciasProvider>(context, listen: false);
+        final dataInasistencias = jsonResponseInasistencias as List<dynamic>;
+        final listaInasistencias = dataInasistencias
+            .map((item) => item as Map<String, dynamic>)
+            .toList();
+        inasistenciasProvider.setData(listaInasistencias);
+        print({'inas1': inasistenciasProvider.data.length});
+        guardarValorLocal(estudianteProvider.estudiante);
+      }
+      return jsonResponse['acceso'] == 'si';
+    } // ...
+    return false;
+  }
 
   @override
   void initState() {
     super.initState();
     usuarioController.text = "1016719618";
     passwordController.text = "1016719618";
+    obtenerValorLocal().then((value) {
+      estud = value;
+      fetchDataFromJson().then((value) {
+        usuarioController.text = estud;
+        passwordController.text = estud;
+        print({'estud': estud});
+        if (estud != "") {
+          print("ingresando");
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const EntradaApp(elPeriodo: '')));
+        }
+      });
+    });
   }
 
   @override
@@ -94,58 +177,6 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
 
   @override
   Widget build(BuildContext context) {
-    Future<bool> fetchDataFromJson() async {
-      final url = Uri.parse('$urlbase/est/php/login.php');
-
-      final bodyData = json.encode({
-        'identificacion': usuarioController.text,
-        'pass': passwordController.text
-      });
-
-      final response = await http.post(url, body: bodyData);
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
-        if (jsonResponse['acceso'] == 'si') {
-          final urlInasistencias = Uri.parse('$urlbase/est/php/getInasist.php');
-          final bodyDataInasistencias = json.encode({
-            'estudiante': usuarioController.text,
-          });
-          final responseInasistencias =
-              await http.post(urlInasistencias, body: bodyDataInasistencias);
-          final jsonResponseInasistencias =
-              json.decode(responseInasistencias.body);
-          //  print(jsonResponse);
-          final misNotas = Provider.of<NotasProvider>(context, listen: false);
-          final dataNotas = jsonResponse['dataNotas'] as List<dynamic>;
-
-// Convierte dataNotas a una lista de Map<String, dynamic>
-          final listaNotas =
-              dataNotas.map((item) => item as Map<String, dynamic>).toList();
-
-          misNotas.setData(listaNotas);
-
-          final estudianteProvider =
-              Provider.of<EstudianteProvider>(context, listen: false);
-
-          estudianteProvider.setNombresEstudiante(jsonResponse['nombres']);
-          estudianteProvider.setEstudiante(jsonResponse['estudiante']);
-          estudianteProvider.setPeriodo(jsonResponse['periodo']);
-          estudianteProvider.setGrado(jsonResponse['grado']);
-
-          final inasistenciasProvider =
-              Provider.of<InasistenciasProvider>(context, listen: false);
-          final dataInasistencias = jsonResponseInasistencias as List<dynamic>;
-          final listaInasistencias = dataInasistencias
-              .map((item) => item as Map<String, dynamic>)
-              .toList();
-          inasistenciasProvider.setData(listaInasistencias);
-          print({'inas1': inasistenciasProvider.data.length});
-        }
-        return jsonResponse['acceso'] == 'si';
-      } // ...
-      return false;
-    }
-
     void mostrarAlert(BuildContext context, String title, String text) {
       showDialog(
         context: context,

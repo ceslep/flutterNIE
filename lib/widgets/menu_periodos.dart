@@ -45,7 +45,10 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
               items: widget.items.map((item) {
                 return DropdownMenuItem<String>(
                   value: item,
-                  child: Text(item),
+                  child: Text(item,
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 141, 0, 122),
+                          fontWeight: FontWeight.bold)),
                 );
               }).toList(),
               onChanged: (value) {

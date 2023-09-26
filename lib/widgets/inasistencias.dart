@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:notas_ie/modelo_inasistencias.dart';
 import 'package:notas_ie/widgets/entrada_app.dart';
@@ -123,5 +125,9 @@ class _InasistenciasState extends State<Inasistencias> {
         );
       },
     );
+  }
+
+  Widget resumenInasistencias(BuildContext context) {
+    return const Text('Hola');
   }
 }

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:notas_ie/inasistencias_provider.dart';
+import 'package:notas_ie/main.dart';
 import 'package:notas_ie/modelo_inasistencias.dart';
 import 'package:notas_ie/modelo_notas.dart';
 import 'package:notas_ie/notas_provider.dart';
@@ -11,6 +12,7 @@ import 'package:notas_ie/widgets/menu_periodos.dart';
 import 'package:notas_ie/widgets/nota_list_tile.dart';
 import 'package:provider/provider.dart';
 import '../estudiante_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EntradaApp extends StatefulWidget {
   final String elPeriodo;
@@ -30,6 +32,12 @@ class _EntradaAppState extends State<EntradaApp> {
   late List<String> periodos;
   late List<ModeloNotas> listaDeNotasFiltradas;
   late List<ModeloInasistencias> listaInasistencias;
+
+  Future<void> guardarValorLocal(String estudiante) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('estudiante',
+        estudiante); // Reemplaza 'clave' por tu clave y true por el valor que desees almacenar
+  }
 
   @override
   void initState() {
@@ -111,7 +119,12 @@ class _EntradaAppState extends State<EntradaApp> {
                   },
                 );
                 if (result) {
-                  Navigator.pop(context);
+                  guardarValorLocal("").then((value) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MainApp()));
+                  });
                 }
               },
             ),
