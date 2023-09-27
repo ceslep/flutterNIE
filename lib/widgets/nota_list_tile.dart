@@ -26,7 +26,7 @@ class _NotaListTileState extends State<NotaListTile> {
     _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       setState(() {
         _isVisible = !_isVisible; // Cambia la visibilidad del texto
-        print({'v': _isVisible});
+        //  print({'v': _isVisible});
       });
     });
 //    notasDetallado = widget.notas;
@@ -50,7 +50,10 @@ class _NotaListTileState extends State<NotaListTile> {
             children: [
               const Text('Valoración: '),
               AnimatedOpacity(
-                opacity: double.parse(widget.nota.valoracion) < 3
+                opacity: double.parse(widget.nota.valoracion != ""
+                            ? widget.nota.valoracion
+                            : "0") <
+                        3
                     ? (_isVisible ? 1.0 : 0.0)
                     : 1,
                 duration: const Duration(milliseconds: 200),

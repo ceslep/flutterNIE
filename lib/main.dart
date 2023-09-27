@@ -2,6 +2,8 @@
 import 'dart:convert';
 import 'package:easy_splash_screen/easy_splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:notas_ie/convivencia_provider.dart';
+import 'package:notas_ie/estud_provider.dart';
 import 'package:notas_ie/estudiante_provider.dart';
 import 'package:notas_ie/inasistencias_provider.dart';
 import 'package:notas_ie/notas_provider.dart';
@@ -21,7 +23,9 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => EstudianteProvider()),
         ChangeNotifierProvider(create: (context) => NotasProvider()),
-        ChangeNotifierProvider(create: (context) => InasistenciasProvider())
+        ChangeNotifierProvider(create: (context) => InasistenciasProvider()),
+        ChangeNotifierProvider(create: (context) => EstudProvider()),
+        ChangeNotifierProvider(create: (context) => ConvivenciaProvider())
 
         // Agrega más providers si es necesario
       ],
@@ -69,9 +73,9 @@ class PaginaPrincipal extends StatefulWidget {
 
 class _PaginaPrincipalState extends State<PaginaPrincipal> {
   LocalStorage storage = LocalStorage('app.json');
-
   bool login = false;
-  late final String estud;
+  late String estud;
+  bool iniciando = false;
   //variables de estado
   TextEditingController usuarioController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -80,7 +84,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
     final prefs = await SharedPreferences.getInstance();
     final valor = prefs.getString(
         'estudiante'); // Reemplaza 'clave' por la clave que utilizaste al guardar el valor
-    return valor ?? ""; // Valor predeterminado si no se encuentra la clave
+    return valor ?? ''; // Valor predeterminado si no se encuentra la clave
   }
 
   Future<void> guardarValorLocal(String estudiante) async {
@@ -135,6 +139,25 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
             .toList();
         inasistenciasProvider.setData(listaInasistencias);
         print({'inas1': inasistenciasProvider.data.length});
+
+        final urlConvivencia =
+            Uri.parse('$urlbase/consolidadoConvivenciaEstudiante.php');
+        final bodyDataConvivencia = json.encode({
+          'estudiante': usuarioController.text,
+          'year': (DateTime.now()).year.toString()
+        });
+        final responseConvivencia =
+            await http.post(urlConvivencia, body: bodyDataConvivencia);
+        final jsonResponseConvivencia = json.decode(responseConvivencia.body);
+        final dataConvivencia = jsonResponseConvivencia as List<dynamic>;
+        final listaConvivencia = dataConvivencia
+            .map((item) => item as Map<String, dynamic>)
+            .toList();
+
+        final convivenciaProvider =
+            Provider.of<ConvivenciaProvider>(context, listen: false);
+        convivenciaProvider.setData(listaConvivencia);
+
         guardarValorLocal(estudianteProvider.estudiante);
       }
       return jsonResponse['acceso'] == 'si';
@@ -145,22 +168,34 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
   @override
   void initState() {
     super.initState();
-    usuarioController.text = "1016719618";
-    passwordController.text = "1016719618";
+    /*  usuarioController.text = "1016719618";
+    passwordController.text = "1016719618"; */
+    estud = '-1';
+    iniciando = false;
+    setState(() {});
+    final estudProvider = Provider.of<EstudProvider>(context, listen: false);
     obtenerValorLocal().then((value) {
       estud = value;
-      fetchDataFromJson().then((value) {
+      if (estud != '') {
+        iniciando = true;
+
+        estudProvider.setEstud(estud);
         usuarioController.text = estud;
         passwordController.text = estud;
-        print({'estud': estud});
-        if (estud != "") {
-          print("ingresando");
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const EntradaApp(elPeriodo: '')));
-        }
-      });
+        fetchDataFromJson().then((value) {
+          print({'estud': estud});
+          if (estud != "") {
+            print("ingresando");
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const EntradaApp(elPeriodo: '')));
+          }
+        });
+      } else {
+        usuarioController.text = '';
+        passwordController.text = '';
+      }
     });
   }
 
@@ -223,6 +258,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
           backgroundColor: const Color.fromARGB(255, 80, 137, 15),
           foregroundColor: Colors.white,
         ),
+        // ignore: unnecessary_null_comparison
         body: Login(
             usController: usuarioController,
             passController: passwordController,

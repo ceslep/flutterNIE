@@ -59,7 +59,7 @@ class _NotasDetalladasState extends State<NotasDetalladas> {
     _timer = Timer.periodic(const Duration(milliseconds: 15500), (timer) {
       setState(() {
         _isVisible = !_isVisible; // Cambia la visibilidad del texto
-        print({'v': _isVisible});
+        //  print({'v': _isVisible});
       });
     });
   }

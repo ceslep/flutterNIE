@@ -1,11 +1,14 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:notas_ie/convivencia_provider.dart';
 import 'package:notas_ie/inasistencias_provider.dart';
 import 'package:notas_ie/main.dart';
+import 'package:notas_ie/modelo_Convivencia.dart';
 import 'package:notas_ie/modelo_inasistencias.dart';
 import 'package:notas_ie/modelo_notas.dart';
 import 'package:notas_ie/notas_provider.dart';
+import 'package:notas_ie/widgets/convivencia.dart';
 import 'package:notas_ie/widgets/desi_alert.dart';
 import 'package:notas_ie/widgets/inasistencias.dart';
 import 'package:notas_ie/widgets/menu_periodos.dart';
@@ -28,10 +31,12 @@ class _EntradaAppState extends State<EntradaApp> {
   late EstudianteProvider estudianteProvider;
   late NotasProvider notasProvider;
   late InasistenciasProvider inasistenciasProvider;
+  late ConvivenciaProvider convivenciaProvider;
   late List<ModeloNotas> listaDeNotas = notasProvider.data;
   late List<String> periodos;
   late List<ModeloNotas> listaDeNotasFiltradas;
   late List<ModeloInasistencias> listaInasistencias;
+  late List<ModeloConvivencia> listaConvivencia;
 
   Future<void> guardarValorLocal(String estudiante) async {
     final prefs = await SharedPreferences.getInstance();
@@ -60,6 +65,9 @@ class _EntradaAppState extends State<EntradaApp> {
     inasistenciasProvider =
         Provider.of<InasistenciasProvider>(context, listen: false);
     listaInasistencias = inasistenciasProvider.data;
+    convivenciaProvider =
+        Provider.of<ConvivenciaProvider>(context, listen: false);
+    listaConvivencia = convivenciaProvider.data;
   }
 
   void salir() {
@@ -210,10 +218,10 @@ class _EntradaAppState extends State<EntradaApp> {
                                             nota.asignatura)
                                         .toList();
                                 if (detalleNotas.isNotEmpty) {
-                                  print({
+                                  /* print({
                                     'asignatura': detalleNotas[0].asignatura,
                                     'periodo': detalleNotas[0].periodo
-                                  });
+                                  }); */
                                 }
                                 return NotaListTile(
                                     nota: nota, notas: detalleNotas);
@@ -225,7 +233,7 @@ class _EntradaAppState extends State<EntradaApp> {
               ),
               Inasistencias(
                   inasistencias: listaInasistencias, periodoActual: periodo),
-              const Icon(Icons.directions_bike),
+              Convivencia(convivencia: listaConvivencia),
               // Elimina la pestaña adicional
             ],
           ),
