@@ -56,7 +56,7 @@ class _NotasDetalladasState extends State<NotasDetalladas> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 15500), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 550), (timer) {
       setState(() {
         _isVisible = !_isVisible; // Cambia la visibilidad del texto
         //  print({'v': _isVisible});

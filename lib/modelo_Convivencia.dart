@@ -8,7 +8,7 @@ ModeloConvivencia modeloConvivenciaFromJson(String str) =>
     ModeloConvivencia.fromJson(json.decode(str));
 
 String modeloConvivenciaToJson(ModeloConvivencia data) =>
-    json.encode(data.toJson());
+    json.encode(data.toMap());
 
 class ModeloConvivencia {
   String ind;
@@ -52,7 +52,7 @@ class ModeloConvivencia {
         firma: json["firma"],
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toMap() => {
         "ind": ind,
         "estudiante": estudiante,
         "nombres": nombres,

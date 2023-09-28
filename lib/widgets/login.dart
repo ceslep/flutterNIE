@@ -24,6 +24,14 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  late final bool llogin;
+  @override
+  void initState() {
+    super.initState();
+    llogin = widget.login;
+    print({'login': llogin});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -31,13 +39,21 @@ class _LoginState extends State<Login> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Center(
-          child: CachedNetworkImage(
-            imageUrl: "https://app.iedeoccidente.com/esc.png",
-          ),
+          child: !widget.login
+              ? CachedNetworkImage(
+                  imageUrl: "https://app.iedeoccidente.com/esc.png",
+                )
+              : const SpinKitCircle(
+                  color: Colors.blue, // Color de la animación
+                  size: 50.0, // Tamaño del widget
+                ),
         ),
         Padding(
           padding: const EdgeInsets.all(35),
           child: TextField(
+            onChanged: (value) {
+              print({'oc': value});
+            },
             keyboardType: TextInputType.number, // Tipo de teclado numérico
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.digitsOnly, // Permite solo números

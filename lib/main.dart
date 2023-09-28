@@ -178,7 +178,8 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
       estud = value;
       if (estud != '') {
         iniciando = true;
-
+        login = true;
+        setState(() {});
         estudProvider.setEstud(estud);
         usuarioController.text = estud;
         passwordController.text = estud;
