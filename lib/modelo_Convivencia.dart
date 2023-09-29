@@ -13,56 +13,76 @@ String modeloConvivenciaToJson(ModeloConvivencia data) =>
 class ModeloConvivencia {
   String ind;
   String estudiante;
-  String nombres;
-  String grupo;
-  String sede;
+  String docente;
+  String nombresDocente;
   String asignatura;
-  String fecha;
-  String hora;
   String tipoFalta;
-  String firmado;
+  String faltas;
+  String hora;
+  String fecha;
+  String descripcionSituacion;
+  String descargosEstudiante;
+  String positivos;
   String firma;
+  String firmaAcudiente;
+  String fechahora;
+  String year;
 
   ModeloConvivencia({
     required this.ind,
     required this.estudiante,
-    required this.nombres,
-    required this.grupo,
-    required this.sede,
+    required this.docente,
+    required this.nombresDocente,
     required this.asignatura,
-    required this.fecha,
-    required this.hora,
     required this.tipoFalta,
-    required this.firmado,
+    required this.faltas,
+    required this.hora,
+    required this.fecha,
+    required this.descripcionSituacion,
+    required this.descargosEstudiante,
+    required this.positivos,
     required this.firma,
+    required this.firmaAcudiente,
+    required this.fechahora,
+    required this.year,
   });
 
   factory ModeloConvivencia.fromJson(Map<String, dynamic> json) =>
       ModeloConvivencia(
         ind: json["ind"],
         estudiante: json["estudiante"],
-        nombres: json["nombres"],
-        grupo: json["grupo"],
-        sede: json["sede"],
+        docente: json["docente"],
+        nombresDocente: json['nombresDocente'],
         asignatura: json["asignatura"],
-        fecha: json["fecha"],
-        hora: json["hora"],
         tipoFalta: json["tipoFalta"],
-        firmado: json["firmado"],
+        faltas: json["faltas"],
+        hora: json["hora"],
+        fecha: json["fecha"],
+        descripcionSituacion: json["descripcionSituacion"],
+        descargosEstudiante: json["descargosEstudiante"],
+        positivos: json["positivos"],
         firma: json["firma"],
+        firmaAcudiente: json["firmaAcudiente"],
+        fechahora: json["fechahora"],
+        year: json["year"],
       );
 
   Map<String, dynamic> toMap() => {
         "ind": ind,
         "estudiante": estudiante,
-        "nombres": nombres,
-        "grupo": grupo,
-        "sede": sede,
+        "docente": docente,
+        "nombresDocente": nombresDocente,
         "asignatura": asignatura,
-        "fecha": fecha,
-        "hora": hora,
         "tipoFalta": tipoFalta,
-        "firmado": firmado,
+        "faltas": faltas,
+        "hora": hora,
+        "fecha": fecha,
+        "descripcionSituacion": descripcionSituacion,
+        "descargosEstudiante": descargosEstudiante,
+        "positivos": positivos,
         "firma": firma,
+        "firmaAcudiente": firmaAcudiente,
+        "fechahora": fechahora,
+        "year": year,
       };
 }

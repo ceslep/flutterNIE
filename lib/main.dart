@@ -140,8 +140,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
         inasistenciasProvider.setData(listaInasistencias);
         print({'inas1': inasistenciasProvider.data.length});
 
-        final urlConvivencia =
-            Uri.parse('$urlbase/consolidadoConvivenciaEstudiante.php');
+        final urlConvivencia = Uri.parse('$urlbase/est/php/getConvivencia.php');
         final bodyDataConvivencia = json.encode({
           'estudiante': usuarioController.text,
           'year': (DateTime.now()).year.toString()
