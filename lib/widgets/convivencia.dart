@@ -1,11 +1,18 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, avoid_print
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:notas_ie/modelo_Convivencia.dart';
 import 'package:notas_ie/widgets/convivencia_detallado.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../estudiante_provider.dart';
+import '../convivencia_provider.dart';
 
 class Convivencia extends StatefulWidget {
   final List<ModeloConvivencia> convivencia;
+
   const Convivencia({Key? key, required this.convivencia}) : super(key: key);
 
   @override
@@ -13,25 +20,69 @@ class Convivencia extends StatefulWidget {
 }
 
 class _ConvivenciaState extends State<Convivencia> {
-  late final List<ModeloConvivencia> convivenciaPeriodo = widget.convivencia;
+  late List<ModeloConvivencia> convivenciaPeriodo = widget.convivencia;
   late Map<String, dynamic> mapaModelo;
+  late EstudianteProvider estudianteProvider;
+  late ConvivenciaProvider convivenciaProvider;
+  late List<ModeloConvivencia> listConvivencia = convivenciaProvider.data;
+
+  @override
+  void initState() {
+    super.initState();
+    estudianteProvider =
+        Provider.of<EstudianteProvider>(context, listen: false);
+    convivenciaProvider =
+        Provider.of<ConvivenciaProvider>(context, listen: false);
+    listConvivencia = convivenciaProvider.data;
+
+    print({'convivencia': listConvivencia.length});
+  }
+
+  Future<void> actualizar() async {
+    await convivenciaProvider
+        .updateData(
+            estudianteProvider.estudiante, (DateTime.now()).year.toString())
+        .then((_) {
+      listConvivencia = convivenciaProvider.data;
+      convivenciaPeriodo = listConvivencia;
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return listaConvivencia(context);
+    //return listaConvivencia(context);
+    return RefreshIndicator(
+      color: Colors.white,
+      backgroundColor: Colors.blue,
+      strokeWidth: 4.0,
+      onRefresh: () async {
+        await actualizar();
+        setState(() {});
+      },
+      child: listaConvivencia(context),
+    );
   }
 
   Widget listaConvivencia(BuildContext context) {
+    int i = convivenciaPeriodo.length + 1;
+    DateTime now = DateTime.now();
+
     return ListView(
         children: convivenciaPeriodo.map(
       (convivencia) {
+        i--;
         final String tipoFalta = convivencia.tipoFalta;
         final String fecha = convivencia.fecha;
+        DateTime date = DateFormat("yyyy-MM-dd").parse(fecha);
+        int diferencia = now.difference(date).inDays;
+        print(diferencia);
         final String hora = convivencia.hora;
         final String asignatura = convivencia.asignatura;
         return ListTile(
           leading: SizedBox(
             height: double.infinity,
-            width: 50,
+            width: 30,
             child: Padding(
               padding: const EdgeInsets.only(top: 0),
               child: getIcon(tipoFalta),
@@ -39,6 +90,9 @@ class _ConvivenciaState extends State<Convivencia> {
           ),
           title: Row(
             children: [
+              BadgeText(
+                  text: i.toString(), badgeText: diferencia < 7 ? '.' : ''),
+              const SizedBox(width: 10),
               const Text('Falta'),
               const SizedBox(width: 10),
               Text(tipoFalta,
@@ -80,8 +134,8 @@ class _ConvivenciaState extends State<Convivencia> {
             ],
           ),
           trailing: SizedBox(
-            width: 100,
-            height: 100,
+            width: 80,
+            height: 80,
             child: GestureDetector(
                 child: const Icon(
                   Icons.arrow_circle_right_sharp,
@@ -117,5 +171,66 @@ class _ConvivenciaState extends State<Convivencia> {
       default:
         return const Icon(Icons.abc);
     }
+  }
+}
+
+class BadgeText extends StatefulWidget {
+  final String text;
+  final String badgeText;
+
+  const BadgeText({super.key, required this.text, required this.badgeText});
+
+  @override
+  State<BadgeText> createState() => _BadgeTextState();
+}
+
+class _BadgeTextState extends State<BadgeText> {
+  bool _isVisible = true;
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 550), (timer) {
+      setState(() {
+        _isVisible = !_isVisible; // Cambia la visibilidad del texto
+        //  print({'v': _isVisible});
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topRight,
+      children: [
+        Text('${widget.text}  ', style: const TextStyle(fontSize: 26)),
+        if (widget.badgeText.isNotEmpty)
+          Positioned(
+              width: 15,
+              height: 15,
+              top: 0,
+              right: 0,
+              child: AnimatedOpacity(
+                opacity:
+                    widget.badgeText.isNotEmpty ? (_isVisible ? 1.0 : 0.0) : 1,
+                duration: const Duration(milliseconds: 200),
+                child: Container(
+                  padding: const EdgeInsets.all(0),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.star, color: Colors.white, size: 10),
+                ),
+              )),
+      ],
+    );
   }
 }
