@@ -25,7 +25,6 @@ class _ConvivenciaDetalladoState extends State<ConvivenciaDetallado> {
     final detalle = widget.detalleConvivencia;
     final String base64Image = detalle.firma;
     Uint8List bytes = base64Decode(base64Image.split(',').last);
-    print({'image': bytes});
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
