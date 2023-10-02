@@ -95,6 +95,7 @@ class _EntradaAppState extends State<EntradaApp> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
+                      backgroundColor: Colors.white,
                       title: const Row(
                         children: [
                           Icon(Icons.info,
@@ -114,14 +115,14 @@ class _EntradaAppState extends State<EntradaApp> {
                       actions: [
                         TextButton(
                             onPressed: () {
+                              Navigator.pop(context, false);
+                            },
+                            child: const Text('Cancelar')),
+                        ElevatedButton(
+                            onPressed: () {
                               Navigator.pop(context, true);
                             },
                             child: const Text('Aceptar')),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pop(context, false);
-                            },
-                            child: const Text('Cancelar'))
                       ],
                     );
                   },
@@ -218,10 +219,10 @@ class _EntradaAppState extends State<EntradaApp> {
                                             nota.asignatura)
                                         .toList();
                                 if (detalleNotas.isNotEmpty) {
-                                  /* print({
+                                  print({
                                     'asignatura': detalleNotas[0].asignatura,
                                     'periodo': detalleNotas[0].periodo
-                                  }); */
+                                  });
                                 }
                                 return NotaListTile(
                                     nota: nota, notas: detalleNotas);

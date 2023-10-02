@@ -4,6 +4,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:notas_ie/modelo_notas.dart';
+import 'package:notas_ie/widgets/badge_text.dart';
+import 'package:intl/intl.dart';
 
 bool esDigito(String caracter) {
   return RegExp(r'^[0-9]$').hasMatch(caracter);
@@ -52,6 +54,7 @@ class _NotasDetalladasState extends State<NotasDetalladas> {
   bool _isVisible = true;
   late List<ModeloNotas> notasDetalladas;
   late Map<String, dynamic> mapaModelo;
+  List<Map<String, dynamic>> notas = [];
   late Timer _timer;
   @override
   void initState() {
@@ -73,11 +76,26 @@ class _NotasDetalladasState extends State<NotasDetalladas> {
   @override
   Widget build(BuildContext context) {
     notasDetalladas = widget.detalleNotas;
-
+    notas.clear();
     mapaModelo = notasDetalladas[0].toMap();
-    /*  mapaModelo.forEach((clave, valor) {
-      print('Clave: $clave, Valor: $valor');
-    }); */
+    for (int i = 1; i <= 12; i++) {
+      final String nota = mapaModelo['nota$i'];
+      final String aspecto = mapaModelo['aspecto$i'];
+      final String fecha = mapaModelo['fecha$i'];
+      final String porcentaje = mapaModelo['porcentaje$i'];
+      if (nota != "") {
+        notas.add({
+          'nota': nota,
+          'aspecto': aspecto,
+          'fecha': fecha,
+          'porcentaje': porcentaje,
+          'fechahora': mapaModelo['fechahora']
+        });
+      }
+    }
+    notas.sort(
+      (a, b) => b['fecha'].compareTo(a['fecha']),
+    );
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -93,105 +111,80 @@ class _NotasDetalladasState extends State<NotasDetalladas> {
               backgroundColor: Colors.lightBlueAccent,
             ),
             body: ListView(
-              children: mapaModelo.keys
-                  .where((key) =>
-                      mapaModelo[key] != '' &&
-                      key.contains('nota') &&
-                      mapaModelo['nota'] != '')
-                  .map(
-                (clave) {
-                  final numero = extraerUltimosDigitos(clave);
-                  late final String claveA;
-                  late final String claveN;
-                  late final String fechaN;
-                  late final String porcentajeN;
-                  late final String titulo;
-                  late final String subtitulo;
-                  late final String subtitulo2;
-                  late final double valuen;
-                  if (esDigito(numero.toString())) {
-                    claveA = 'aspecto$numero';
-                    claveN = 'nota$numero';
-                    fechaN = 'fecha$numero';
-                    porcentajeN = 'porcentaje$numero';
-                    titulo = mapaModelo[claveA] != ''
-                        ? mapaModelo[claveA]
-                        : 'No hay aspecto registrado';
-                    subtitulo = mapaModelo[claveN];
-                    valuen = double.parse(subtitulo);
-                    subtitulo2 = ' Fecha: ${mapaModelo[fechaN]}';
-                    print(claveA);
-                  } else {
-                    titulo = '';
-                    subtitulo = '';
-                    subtitulo2 = '';
-                    valuen = 0;
-                  }
-                  return titulo != ''
-                      ? ListTile(
-                          leading: SizedBox(
-                            height: double.infinity,
-                            width: 50,
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 14.0),
-                              child: getIcon(valuen),
+              children: notas.map(
+                (nota) {
+                  final String aspecto = nota['aspecto'];
+                  final String fecha = nota['fecha'];
+                  final String porcentaje = nota['porcentaje'];
+                  final double value = double.parse(nota['nota']);
+                  final String subtitulo = nota['nota'];
+                  final String subtitulo2 = ' Fecha: $fecha';
+                  final String fechahora = nota['fechahora'];
+                  DateTime now = DateTime.now();
+                  DateTime date = DateFormat("yyyy-MM-dd").parse(fecha);
+                  int diferencia = now.difference(date).inDays;
+                  return ListTile(
+                    leading: SizedBox(
+                      height: double.infinity,
+                      width: 50,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 14.0),
+                        child: getIcon(value),
+                      ),
+                    ),
+                    title: BadgeText(
+                        text: aspecto,
+                        badgeText: diferencia < 7 ? '.' : '',
+                        style: const TextStyle(color: Colors.green),
+                        color: Colors.blue),
+                    subtitle: Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Text('Nota: '),
+                            AnimatedOpacity(
+                              opacity: value < 3 ? (_isVisible ? 1.0 : 0.0) : 1,
+                              duration: const Duration(milliseconds: 200),
+                              child: Text(
+                                subtitulo,
+                                style: TextStyle(
+                                    color:
+                                        value < 3 ? Colors.red : Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          ),
-                          title: Text(mapaModelo[claveA],
-                              style: const TextStyle(color: Colors.green)),
-                          subtitle: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  const Text('Nota: '),
-                                  AnimatedOpacity(
-                                    opacity: valuen < 3
-                                        ? (_isVisible ? 1.0 : 0.0)
-                                        : 1,
-                                    duration: const Duration(milliseconds: 200),
-                                    child: Text(
-                                      subtitulo,
-                                      style: TextStyle(
-                                          color: valuen < 3
-                                              ? Colors.red
-                                              : Colors.black,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  Text(subtitulo2)
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Periodo: '),
-                                  Text(mapaModelo['periodo'],
-                                      style:
-                                          const TextStyle(color: Colors.blue)),
-                                  const SizedBox(width: 10),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Porcentaje: '),
-                                  Text(mapaModelo[porcentajeN] != ''
-                                      ? mapaModelo[porcentajeN]
-                                      : 'Sin porcentaje declarado')
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('Registrado:'),
-                                  const SizedBox(width: 10),
-                                  Text(mapaModelo['fechahora'],
-                                      style: const TextStyle(
-                                          fontStyle: FontStyle.italic)),
-                                ],
-                              ),
-                              const Divider()
-                            ],
-                          ),
-                        )
-                      : const Text('');
+                            Text(subtitulo2)
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Text('Periodo: '),
+                            Text(mapaModelo['periodo'],
+                                style: const TextStyle(color: Colors.blue)),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Text('Porcentaje: '),
+                            Text(porcentaje != ''
+                                ? porcentaje
+                                : 'Sin porcentaje declarado')
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Text('Registrado:'),
+                            const SizedBox(width: 10),
+                            Text(fechahora,
+                                style: const TextStyle(
+                                    fontStyle: FontStyle.italic)),
+                          ],
+                        ),
+                        const Divider()
+                      ],
+                    ),
+                  );
                 },
               ).toList(),
             )));

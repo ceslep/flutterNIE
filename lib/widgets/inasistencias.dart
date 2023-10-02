@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:notas_ie/modelo_inasistencias.dart';
+import 'package:notas_ie/widgets/badge_text.dart';
 import 'package:notas_ie/widgets/entrada_app.dart';
+import 'package:intl/intl.dart';
 
 class Inasistencias extends StatefulWidget {
   final List<ModeloInasistencias> inasistencias;
@@ -64,9 +66,15 @@ class _InasistenciasState extends State<Inasistencias> {
       itemCount: inasistenciasPeriodo.length,
       itemBuilder: (context, index) {
         final inasistencia = inasistenciasPeriodo[index];
+        DateTime now = DateTime.now();
+        DateTime date = DateFormat("yyyy-MM-dd").parse(inasistencia.fecha);
+        int diferencia = now.difference(date).inDays;
         return ListTile(
-          title: Text(inasistencia.materia,
-              style: const TextStyle(fontWeight: FontWeight.bold)),
+          title: BadgeText(
+              text: inasistencia.materia,
+              badgeText: diferencia < 7 ? '.' : '',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+              color: Colors.greenAccent),
           subtitle: Column(
             children: [
               Row(

@@ -33,13 +33,11 @@ class ConvivenciaProvider extends ChangeNotifier {
     final response = await http.post(url, body: bodyData);
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
-      if (jsonResponse['acceso'] == 'si') {
-        final dataConvivencia = jsonResponse as List<dynamic>;
-        final listaConvivencia = dataConvivencia
-            .map((item) => item as Map<String, dynamic>)
-            .toList();
-        return listaConvivencia;
-      }
+
+      final dataConvivencia = jsonResponse as List<dynamic>;
+      final listaConvivencia =
+          dataConvivencia.map((item) => item as Map<String, dynamic>).toList();
+      return listaConvivencia;
     }
     throw Exception('La solicitud falló o la respuesta no es la esperada');
   }

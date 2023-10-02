@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:notas_ie/modelo_notas.dart';
 import 'package:notas_ie/widgets/custom_alert.dart';
@@ -9,8 +8,11 @@ class NotaListTile extends StatefulWidget {
   final ModeloNotas nota;
   final List<ModeloNotas> notas;
 
-  const NotaListTile({Key? key, required this.nota, required this.notas})
-      : super(key: key);
+  const NotaListTile({
+    Key? key,
+    required this.nota,
+    required this.notas,
+  }) : super(key: key);
 
   @override
   State<NotaListTile> createState() => _NotaListTileState();
@@ -43,7 +45,7 @@ class _NotaListTileState extends State<NotaListTile> {
     return ListTile(
       title: Text(widget.nota.asignatura,
           style: const TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.green)),
+              color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold)),
       subtitle: Column(
         children: [
           Row(
@@ -96,8 +98,8 @@ class _NotaListTileState extends State<NotaListTile> {
         ],
       ),
       trailing: SizedBox(
-        width: 100,
-        height: 100,
+        width: 40,
+        height: 40,
         child: GestureDetector(
             child: const Icon(
               Icons.arrow_circle_right,

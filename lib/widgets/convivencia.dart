@@ -1,7 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, avoid_print
 
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:notas_ie/modelo_Convivencia.dart';
 import 'package:notas_ie/widgets/convivencia_detallado.dart';
@@ -134,8 +133,8 @@ class _ConvivenciaState extends State<Convivencia> {
             ],
           ),
           trailing: SizedBox(
-            width: 80,
-            height: 80,
+            width: 40,
+            height: 40,
             child: GestureDetector(
                 child: const Icon(
                   Icons.arrow_circle_right_sharp,

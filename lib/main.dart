@@ -18,6 +18,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 const String urlbase = 'https://app.iedeoccidente.com';
 
 void main() {
+  try {} catch (e) {
+    print(e);
+  }
   runApp(
     MultiProvider(
       providers: [
@@ -54,10 +57,10 @@ class MainApp extends StatelessWidget {
         showLoader: true,
         loadingText: const Text("Cargando..."),
         navigator: const PaginaPrincipal(),
-        durationInSeconds: 3,
+        durationInSeconds: 2,
       ),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
     );

@@ -24,6 +24,7 @@ class _ConvivenciaDetalladoState extends State<ConvivenciaDetallado> {
   Widget build(BuildContext context) {
     final detalle = widget.detalleConvivencia;
     final String base64Image = detalle.firma;
+    final bool tipoP = detalle.tipoFalta.startsWith('POSITIVO');
     Uint8List bytes = base64Decode(base64Image.split(',').last);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -48,18 +49,53 @@ class _ConvivenciaDetalladoState extends State<ConvivenciaDetallado> {
           children: [
             Column(
               children: [
-                const TituloDetalle(titulo: 'Reportado por el Docente'),
+                TituloDetalle(
+                    titulo: 'Reportado por el Docente',
+                    color: !tipoP ? Colors.red : Colors.green),
                 Detalle(
                   detalleConvivencia: detalle.nombresDocente,
                 ),
-                const TituloDetalle(titulo: 'Faltas al manual de Convivencia'),
-                Detalle(
-                  detalleConvivencia: detalle.faltas,
-                ),
-                const TituloDetalle(titulo: 'Descripción de la Situación'),
-                Detalle(detalleConvivencia: detalle.descripcionSituacion),
-                const TituloDetalle(titulo: 'Descargos del estudiante'),
-                Detalle(detalleConvivencia: detalle.descargosEstudiante),
+                Visibility(
+                    visible: !tipoP,
+                    child: Column(
+                      children: [
+                        const TituloDetalle(
+                            titulo: 'Faltas al manual de Convivencia'),
+                        Detalle(
+                          detalleConvivencia: detalle.faltas,
+                        )
+                      ],
+                    )),
+                Visibility(
+                    visible: !tipoP,
+                    child: Column(
+                      children: [
+                        const TituloDetalle(
+                            titulo: 'Descripción de la Situación'),
+                        Detalle(
+                            detalleConvivencia: detalle.descripcionSituacion)
+                      ],
+                    )),
+                Visibility(
+                    visible: !tipoP,
+                    child: Column(
+                      children: [
+                        const TituloDetalle(titulo: 'Descargos del estudiante'),
+                        Detalle(detalleConvivencia: detalle.descargosEstudiante)
+                      ],
+                    )),
+                Visibility(
+                    visible: tipoP,
+                    child: Column(
+                      children: [
+                        const TituloDetalle(
+                            titulo: 'Observación Reportada por el docente',
+                            color: Colors.green),
+                        Detalle(
+                          detalleConvivencia: detalle.positivos,
+                        )
+                      ],
+                    )),
               ],
             ),
             bytes.isNotEmpty ? Image.memory(bytes) : const SizedBox(width: 10)
@@ -103,7 +139,9 @@ class _DetalleState extends State<Detalle> {
 
 class TituloDetalle extends StatefulWidget {
   final String titulo;
-  const TituloDetalle({super.key, required this.titulo});
+  final Color? color;
+  const TituloDetalle(
+      {super.key, required this.titulo, this.color = Colors.red});
 
   @override
   State<TituloDetalle> createState() => _TituloDetalleState();
@@ -117,8 +155,7 @@ class _TituloDetalleState extends State<TituloDetalle> {
         padding: const EdgeInsets.all(5),
         child: Text(widget.titulo,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-                color: Colors.red, fontWeight: FontWeight.bold)),
+            style: TextStyle(color: widget.color, fontWeight: FontWeight.bold)),
       ),
     );
   }
