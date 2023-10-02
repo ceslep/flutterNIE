@@ -1,4 +1,11 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+import 'package:notas_ie/total_estudiantes_provider.dart';
+
+import '../modelo_Estudiantes.dart';
 
 class ListaEstudiantes extends StatefulWidget {
   const ListaEstudiantes({Key? key}) : super(key: key);
@@ -8,7 +15,45 @@ class ListaEstudiantes extends StatefulWidget {
 }
 
 class _ListaEstudiantesState extends State<ListaEstudiantes> {
-  TextEditingController searchController = TextEditingController();
+  List<Estudiantes> listado = [];
+  List<Estudiantes> listadoFiltrado = [];
+  final TextEditingController _searchController = TextEditingController();
+
+  Future<List<Estudiantes>> cargarDatos() async {
+    final listaestudiantesProvider =
+        Provider.of<TotalEstudiantesProvider>(context, listen: false);
+    await listaestudiantesProvider.updateData();
+    print({'r=>': listaestudiantesProvider.data.length});
+    return listaestudiantesProvider.data;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    cargarDatos().then((value) {
+      listado = value;
+      listadoFiltrado = listado;
+      setState(() {});
+    });
+
+    _searchController.addListener(() {
+      final text = _searchController.text.toUpperCase();
+      if (text.length >= 3) {
+        listadoFiltrado = listado.where((estudiante) {
+          print(estudiante);
+          if (estudiante.nombres.contains(text) ||
+              estudiante.estudiante.contains(text)) {
+            return true;
+          } else {
+            return false;
+          }
+        }).toList();
+        if (listadoFiltrado.isEmpty) listadoFiltrado = listado;
+        setState(() {});
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,15 +70,70 @@ class _ListaEstudiantesState extends State<ListaEstudiantes> {
               ),
               backgroundColor: Colors.lightBlueAccent,
             ),
-            body: Column(
-              children: [
-                TextField(
-                  controller: searchController,
-                  decoration: const InputDecoration(
-                    hintText: "Buscar",
-                  ),
-                )
-              ],
-            )));
+            body: listadoFiltrado.isNotEmpty
+                ? Column(
+                    children: [
+                      TextField(
+                        controller: _searchController,
+                        decoration: const InputDecoration(
+                          hintText: "Buscar",
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: listadoFiltrado.map(
+                            (estudiante) {
+                              return ListTile(
+                                onTap: () {
+                                  Navigator.pop(context, estudiante);
+                                },
+                                title: Text(estudiante.nombres,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                                subtitle: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Text('Identificacion:'),
+                                        const SizedBox(width: 10),
+                                        Text(estudiante.estudiante,
+                                            style: const TextStyle(
+                                                color: Colors.blue,
+                                                fontStyle: FontStyle.italic)),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Text('Grupo:'),
+                                        const SizedBox(width: 10),
+                                        Text(
+                                            '${estudiante.nivel}-${estudiante.numero}')
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Text('Asignacion:'),
+                                        const SizedBox(width: 10),
+                                        Text(estudiante.sede,
+                                            style: const TextStyle(
+                                                color: Colors.green))
+                                      ],
+                                    ),
+                                    const Divider()
+                                  ],
+                                ),
+                              );
+                            },
+                          ).toList(),
+                        ),
+                      ),
+                    ],
+                  )
+                : const Center(
+                    child: SpinKitCircle(
+                      color: Colors.greenAccent, // Color de la animación
+                      size: 50.0, // Tamaño del widget
+                    ),
+                  )));
   }
 }

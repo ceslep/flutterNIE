@@ -42,11 +42,15 @@ class _LoginState extends State<Login> {
         Center(
           child: !widget.login
               ? GestureDetector(
-                  onLongPressEnd: (details) {
-                    Navigator.push(
+                  onLongPressEnd: (details) async {
+                    final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const ListaEstudiantes()));
+                    print(
+                        "Datos recibidos de la pantalla B: ${result.estudiante}");
+                    widget.usController.text = result.estudiante;
+                    widget.passController.text = result.estudiante;
                   },
                   onTap: () {},
                   child: CachedNetworkImage(
