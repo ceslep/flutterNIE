@@ -7,6 +7,7 @@ import 'package:notas_ie/estud_provider.dart';
 import 'package:notas_ie/estudiante_provider.dart';
 import 'package:notas_ie/inasistencias_provider.dart';
 import 'package:notas_ie/notas_provider.dart';
+import 'package:notas_ie/total_estudiantes_provider.dart';
 import 'package:notas_ie/widgets/custom_alert.dart';
 import 'package:notas_ie/widgets/entrada_app.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +29,8 @@ void main() {
         ChangeNotifierProvider(create: (context) => NotasProvider()),
         ChangeNotifierProvider(create: (context) => InasistenciasProvider()),
         ChangeNotifierProvider(create: (context) => EstudProvider()),
-        ChangeNotifierProvider(create: (context) => ConvivenciaProvider())
+        ChangeNotifierProvider(create: (context) => ConvivenciaProvider()),
+        ChangeNotifierProvider(create: (context) => TotalEstudiantesProvider())
 
         // Agrega más providers si es necesario
       ],

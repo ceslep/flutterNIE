@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:notas_ie/widgets/lista_estudiantes.dart';
 
 class Login extends StatefulWidget {
   final VoidCallback onIngresar;
@@ -40,8 +41,17 @@ class _LoginState extends State<Login> {
       children: <Widget>[
         Center(
           child: !widget.login
-              ? CachedNetworkImage(
-                  imageUrl: "https://app.iedeoccidente.com/esc.png",
+              ? GestureDetector(
+                  onLongPressEnd: (details) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ListaEstudiantes()));
+                  },
+                  onTap: () {},
+                  child: CachedNetworkImage(
+                    imageUrl: "https://app.iedeoccidente.com/esc.png",
+                  ),
                 )
               : const SpinKitCircle(
                   color: Colors.blue, // Color de la animación
