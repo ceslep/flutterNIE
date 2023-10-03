@@ -36,7 +36,7 @@ class _EntradaAppState extends State<EntradaApp> {
   late List<String> periodos;
   late List<ModeloNotas> listaDeNotasFiltradas;
   late List<ModeloInasistencias> listaInasistencias;
-  late List<ModeloConvivencia> listaConvivencia;
+  List<ModeloConvivencia> listaConvivencia = [];
 
   Future<void> guardarValorLocal(String estudiante) async {
     final prefs = await SharedPreferences.getInstance();
@@ -44,9 +44,7 @@ class _EntradaAppState extends State<EntradaApp> {
         estudiante); // Reemplaza 'clave' por tu clave y true por el valor que desees almacenar
   }
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> init() async {
     estudianteProvider =
         Provider.of<EstudianteProvider>(context, listen: false);
     periodo =
@@ -65,9 +63,18 @@ class _EntradaAppState extends State<EntradaApp> {
     inasistenciasProvider =
         Provider.of<InasistenciasProvider>(context, listen: false);
     listaInasistencias = inasistenciasProvider.data;
+
     convivenciaProvider =
         Provider.of<ConvivenciaProvider>(context, listen: false);
+    await convivenciaProvider.updateData(
+        estudianteProvider.estudiante, (DateTime.now()).year.toString());
     listaConvivencia = convivenciaProvider.data;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    init();
   }
 
   void salir() {
@@ -128,6 +135,13 @@ class _EntradaAppState extends State<EntradaApp> {
                   },
                 );
                 if (result) {
+                  notasProvider.setData([]);
+                  inasistenciasProvider.setData([]);
+                  convivenciaProvider.setData([]);
+                  estudianteProvider.setEstudiante("");
+                  estudianteProvider.setGrado("");
+                  estudianteProvider.setNombresEstudiante("");
+                  estudianteProvider.setPeriodo("");
                   guardarValorLocal("").then((value) {
                     Navigator.push(
                         context,

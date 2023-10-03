@@ -1,10 +1,14 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:notas_ie/estudiante_provider.dart';
+import 'package:notas_ie/inasistencias_provider.dart';
 import 'package:notas_ie/modelo_inasistencias.dart';
 import 'package:notas_ie/widgets/badge_text.dart';
 import 'package:notas_ie/widgets/entrada_app.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class Inasistencias extends StatefulWidget {
   final List<ModeloInasistencias> inasistencias;
@@ -19,49 +23,101 @@ class Inasistencias extends StatefulWidget {
 }
 
 class _InasistenciasState extends State<Inasistencias> {
-  late final List<ModeloInasistencias> inasistenciasPeriodo = widget
-      .inasistencias
-      .where((inasistencia) => inasistencia.periodo == widget.periodoActual)
-      .toList();
+  late EstudianteProvider estudianteProvider;
+  late InasistenciasProvider inasistenciasProvider;
+  List<ModeloInasistencias> inasistenciasPeriodo = [];
+  bool spin = false;
+  Future<bool> iniciar() async {
+    spin = true;
+    estudianteProvider =
+        Provider.of<EstudianteProvider>(context, listen: false);
+    inasistenciasProvider =
+        Provider.of<InasistenciasProvider>(context, listen: false);
+    await inasistenciasProvider.updateData(
+        estudianteProvider.estudiante, (DateTime.now()).year.toString());
+    inasistenciasPeriodo = inasistenciasProvider.data;
+    setState(() {});
+    /* inasistenciasPeriodo = inasistenciasPeriodo
+        .where((inasistencia) => inasistencia.periodo == widget.periodoActual)
+        .toList(); */
+    spin = false;
+    return false;
+    /* print({'convivencia': listConvivencia.length}); */
+  }
+
   @override
   void initState() {
     super.initState();
+    iniciar();
     print({'inaslength': inasistenciasPeriodo.length});
+    spin = false;
+  }
+
+  @override
+  void dispose() {
+    spin = false;
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    iniciar().then((value) {
+      spin = value;
+      print({'spin2': value});
+    });
     return inasistenciasPeriodo.isNotEmpty
-        ? listaInasistencias(context)
-        : Center(
-            child: Card(
-              clipBehavior: Clip.hardEdge,
-              child: SizedBox(
-                height: 120,
-                width: 300,
-                child: Column(
-                  children: [
-                    const Text('No hay inasistencias para'),
-                    Text('el período ${widget.periodoActual}'),
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EntradaApp(
-                                      elPeriodo: widget.periodoActual,
-                                    )),
-                          );
-                        },
-                        child: const Text('Volver'))
-                  ],
+        ? ListaInasistencias(
+            inasistenciasPeriodo: inasistenciasPeriodo, context: context)
+        : spin
+            ? const SpinKitCircle(
+                color: Colors.blue, // Color de la animación
+                size: 40.0,
+              )
+            : Center(
+                child: Card(
+                  clipBehavior: Clip.hardEdge,
+                  child: SizedBox(
+                    height: 120,
+                    width: 300,
+                    child: Column(
+                      children: [
+                        const Text('No hay inasistencias para'),
+                        Text('el período ${widget.periodoActual}'),
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EntradaApp(
+                                          elPeriodo: widget.periodoActual,
+                                        )),
+                              );
+                            },
+                            child: const Text('Volver'))
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          );
+              );
   }
 
-  Widget listaInasistencias(BuildContext context) {
+  Widget resumenInasistencias(BuildContext context) {
+    return const Text('Hola');
+  }
+}
+
+class ListaInasistencias extends StatelessWidget {
+  const ListaInasistencias({
+    super.key,
+    required this.inasistenciasPeriodo,
+    required this.context,
+  });
+
+  final List<ModeloInasistencias> inasistenciasPeriodo;
+  final BuildContext context;
+
+  @override
+  Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: inasistenciasPeriodo.length,
       itemBuilder: (context, index) {
@@ -133,9 +189,5 @@ class _InasistenciasState extends State<Inasistencias> {
         );
       },
     );
-  }
-
-  Widget resumenInasistencias(BuildContext context) {
-    return const Text('Hola');
   }
 }

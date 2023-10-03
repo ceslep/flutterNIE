@@ -169,11 +169,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
     return false;
   }
 
-  @override
-  void initState() {
-    super.initState();
-    /*  usuarioController.text = "1016719618";
-    passwordController.text = "1016719618"; */
+  void init() {
     estud = '-1';
     iniciando = false;
     setState(() {});
@@ -202,6 +198,14 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
         passwordController.text = '';
       }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+    /*  usuarioController.text = "1016719618";
+    passwordController.text = "1016719618"; */
   }
 
   @override
@@ -239,6 +243,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
     }
 
     void ingresar() async {
+      init();
       setState(() {
         login = true;
       });

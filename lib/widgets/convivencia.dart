@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:notas_ie/modelo_Convivencia.dart';
 import 'package:notas_ie/widgets/convivencia_detallado.dart';
 import 'package:intl/intl.dart';
@@ -23,51 +24,72 @@ class _ConvivenciaState extends State<Convivencia> {
   late Map<String, dynamic> mapaModelo;
   late EstudianteProvider estudianteProvider;
   late ConvivenciaProvider convivenciaProvider;
-  late List<ModeloConvivencia> listConvivencia = convivenciaProvider.data;
-
-  void iniciar() {
+  List<ModeloConvivencia> listConvivencia = [];
+  bool spin = false;
+  Future<bool> iniciar() async {
+    spin = true;
     estudianteProvider =
         Provider.of<EstudianteProvider>(context, listen: false);
     convivenciaProvider =
         Provider.of<ConvivenciaProvider>(context, listen: false);
-    convivenciaProvider.updateData(
+    await convivenciaProvider.updateData(
         estudianteProvider.estudiante, (DateTime.now()).year.toString());
+    listConvivencia = [];
     listConvivencia = convivenciaProvider.data;
-
+    convivenciaPeriodo = listConvivencia;
     print({'convivencia': listConvivencia.length});
+    setState(() {});
+    spin = false;
+    return false;
   }
 
   @override
   void initState() {
     super.initState();
     iniciar();
+    spin = false;
+  }
+
+  @override
+  void dispose() {
+    spin = false;
+    convivenciaPeriodo = [];
+    super.dispose();
   }
 
   Future<void> actualizar() async {
-    await convivenciaProvider
-        .updateData(
-            estudianteProvider.estudiante, (DateTime.now()).year.toString())
-        .then((_) {
-      listConvivencia = convivenciaProvider.data;
-      convivenciaPeriodo = listConvivencia;
-      setState(() {});
-    });
+    await convivenciaProvider.updateData(
+        estudianteProvider.estudiante, (DateTime.now()).year.toString());
+    listConvivencia = convivenciaProvider.data;
+    convivenciaPeriodo = listConvivencia;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    //return listaConvivencia(context);
-    iniciar();
+    /* print({'spin1': spin});
+    iniciar().then((value) {
+      spin = false;
+      print({'spin2': value});
+      print({'totalccccc': listConvivencia.length});
+      setState(() {});
+    }); */
     return RefreshIndicator(
-      color: Colors.white,
-      backgroundColor: Colors.blue,
-      strokeWidth: 4.0,
-      onRefresh: () async {
-        await actualizar();
-        setState(() {});
-      },
-      child: listaConvivencia(context),
-    );
+        color: Colors.white,
+        backgroundColor: Colors.blue,
+        strokeWidth: 4.0,
+        onRefresh: () async {
+          await actualizar();
+          setState(() {});
+        },
+        child: convivenciaPeriodo.isNotEmpty
+            ? listaConvivencia(context)
+            : const Text(
+                'No hay reportes') /* const SpinKitCircle(
+                color: Colors.blue, // Color de la animación
+                size: 40.0,
+              ) */
+        );
   }
 
   Widget listaConvivencia(BuildContext context) {
