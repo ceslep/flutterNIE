@@ -1,9 +1,29 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:notas_ie/modelo_Convivencia.dart';
 import 'dart:convert';
 import 'dart:typed_data';
+
+List<String> separarTexto(String texto) {
+  List<String> textosSeparados = [];
+  final RegExp regex = RegExp(r'\d+\.');
+
+  List<RegExpMatch> matches = regex.allMatches(texto).toList();
+
+  int start = 0;
+
+  for (RegExpMatch match in matches) {
+    textosSeparados.add(texto.substring(start, match.start).trim());
+    start = match.end;
+  }
+
+  if (start < texto.length) {
+    textosSeparados.add(texto.substring(start).trim());
+  }
+
+  return textosSeparados;
+}
 
 class ConvivenciaDetallado extends StatefulWidget {
   final ModeloConvivencia detalleConvivencia;
@@ -23,9 +43,86 @@ class _ConvivenciaDetalladoState extends State<ConvivenciaDetallado> {
   @override
   Widget build(BuildContext context) {
     final detalle = widget.detalleConvivencia;
+    final faltas = widget.detalleConvivencia.faltas.replaceAll('Array', '');
     final String base64Image = detalle.firma;
     final bool tipoP = detalle.tipoFalta.startsWith('POSITIVO');
     Uint8List bytes = base64Decode(base64Image.split(',').last);
+    List<String> lasfaltas = separarTexto(faltas);
+
+    print(lasfaltas);
+    final widgets = [
+      Visibility(
+          visible: true,
+          child: Column(
+            children: [
+              TituloDetalle(
+                  titulo: 'Reportado por el Docente',
+                  color: !tipoP ? Colors.red : Colors.green),
+              Detalle(
+                detalleConvivencia: detalle.nombresDocente,
+              ),
+            ],
+          )),
+      Visibility(
+          visible: !tipoP,
+          child: Column(
+            children: [
+              const TituloDetalle(titulo: 'Faltas al manual de Convivencia'),
+              Column(
+                children: lasfaltas
+                    .map((falta) => Row(
+                          children: [
+                            Expanded(
+                                child: falta.isNotEmpty
+                                    ? Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              falta.substring(
+                                                  0, falta.length - 1),
+                                              textAlign: TextAlign.justify,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : const Text('')),
+                          ],
+                        ))
+                    .toList(),
+              )
+            ],
+          )),
+      Visibility(
+          visible: !tipoP,
+          child: Column(
+            children: [
+              const TituloDetalle(titulo: 'Descripción de la Situación'),
+              Detalle(detalleConvivencia: detalle.descripcionSituacion)
+            ],
+          )),
+      Visibility(
+          visible: !tipoP,
+          child: Column(
+            children: [
+              const TituloDetalle(titulo: 'Descargos del estudiante'),
+              Detalle(detalleConvivencia: detalle.descargosEstudiante)
+            ],
+          )),
+      Visibility(
+          visible: tipoP,
+          child: Column(
+            children: [
+              const TituloDetalle(
+                  titulo: 'Observación Reportada por el docente',
+                  color: Colors.green),
+              Detalle(
+                detalleConvivencia: detalle.positivos,
+              )
+            ],
+          )),
+      bytes.isNotEmpty ? Image.memory(bytes) : const SizedBox(width: 10)
+    ];
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -45,61 +142,11 @@ class _ConvivenciaDetalladoState extends State<ConvivenciaDetallado> {
             onPressed: () => Navigator.pop(context),
           ),
         ),
-        body: Column(
-          children: [
-            Column(
-              children: [
-                TituloDetalle(
-                    titulo: 'Reportado por el Docente',
-                    color: !tipoP ? Colors.red : Colors.green),
-                Detalle(
-                  detalleConvivencia: detalle.nombresDocente,
-                ),
-                Visibility(
-                    visible: !tipoP,
-                    child: Column(
-                      children: [
-                        const TituloDetalle(
-                            titulo: 'Faltas al manual de Convivencia'),
-                        Detalle(
-                          detalleConvivencia: detalle.faltas,
-                        )
-                      ],
-                    )),
-                Visibility(
-                    visible: !tipoP,
-                    child: Column(
-                      children: [
-                        const TituloDetalle(
-                            titulo: 'Descripción de la Situación'),
-                        Detalle(
-                            detalleConvivencia: detalle.descripcionSituacion)
-                      ],
-                    )),
-                Visibility(
-                    visible: !tipoP,
-                    child: Column(
-                      children: [
-                        const TituloDetalle(titulo: 'Descargos del estudiante'),
-                        Detalle(detalleConvivencia: detalle.descargosEstudiante)
-                      ],
-                    )),
-                Visibility(
-                    visible: tipoP,
-                    child: Column(
-                      children: [
-                        const TituloDetalle(
-                            titulo: 'Observación Reportada por el docente',
-                            color: Colors.green),
-                        Detalle(
-                          detalleConvivencia: detalle.positivos,
-                        )
-                      ],
-                    )),
-              ],
-            ),
-            bytes.isNotEmpty ? Image.memory(bytes) : const SizedBox(width: 10)
-          ],
+        body: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: ListView(
+            children: widgets,
+          ),
         ),
       ),
     );
@@ -125,10 +172,12 @@ class _DetalleState extends State<Detalle> {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(
-              widget.detalleConvivencia,
-              style: const TextStyle(fontSize: 16),
-              textAlign: TextAlign.justify,
+            child: Expanded(
+              child: Text(
+                widget.detalleConvivencia,
+                style: const TextStyle(fontSize: 16),
+                textAlign: TextAlign.justify,
+              ),
             ),
           ),
         ),

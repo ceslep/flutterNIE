@@ -27,30 +27,38 @@ class _ListaEstudiantesState extends State<ListaEstudiantes> {
     return listaestudiantesProvider.data;
   }
 
+  void filterListado(String text) {
+    if (text.length >= 4) {
+      listadoFiltrado = listado.where((estudiante) {
+        print(estudiante);
+        if (estudiante.nombres.contains(text) ||
+            estudiante.estudiante.contains(text) ||
+            estudiante.sede.contains(text)) {
+          return true;
+        } else {
+          return false;
+        }
+      }).toList();
+    } else {
+      listadoFiltrado = listado;
+    }
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
     cargarDatos().then((value) {
       listado = value;
       listadoFiltrado = listado;
+      filterListado('');
       setState(() {});
     });
 
     _searchController.addListener(() {
       final text = _searchController.text.toUpperCase();
-      if (text.length >= 3) {
-        listadoFiltrado = listado.where((estudiante) {
-          print(estudiante);
-          if (estudiante.nombres.contains(text) ||
-              estudiante.estudiante.contains(text)) {
-            return true;
-          } else {
-            return false;
-          }
-        }).toList();
-        if (listadoFiltrado.isEmpty) listadoFiltrado = listado;
-        setState(() {});
-      }
+      filterListado(text);
+      print('----->');
     });
   }
 
@@ -73,10 +81,21 @@ class _ListaEstudiantesState extends State<ListaEstudiantes> {
             body: listadoFiltrado.isNotEmpty
                 ? Column(
                     children: [
-                      TextField(
-                        controller: _searchController,
-                        decoration: const InputDecoration(
-                          hintText: "Buscar",
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            hintText: "Buscar",
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                _searchController.clear();
+                                // _searchController.
+                                setState(() {});
+                              },
+                            ),
+                          ),
                         ),
                       ),
                       Expanded(

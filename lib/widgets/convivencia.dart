@@ -25,16 +25,22 @@ class _ConvivenciaState extends State<Convivencia> {
   late ConvivenciaProvider convivenciaProvider;
   late List<ModeloConvivencia> listConvivencia = convivenciaProvider.data;
 
-  @override
-  void initState() {
-    super.initState();
+  void iniciar() {
     estudianteProvider =
         Provider.of<EstudianteProvider>(context, listen: false);
     convivenciaProvider =
         Provider.of<ConvivenciaProvider>(context, listen: false);
+    convivenciaProvider.updateData(
+        estudianteProvider.estudiante, (DateTime.now()).year.toString());
     listConvivencia = convivenciaProvider.data;
 
     print({'convivencia': listConvivencia.length});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    iniciar();
   }
 
   Future<void> actualizar() async {
@@ -51,6 +57,7 @@ class _ConvivenciaState extends State<Convivencia> {
   @override
   Widget build(BuildContext context) {
     //return listaConvivencia(context);
+    iniciar();
     return RefreshIndicator(
       color: Colors.white,
       backgroundColor: Colors.blue,

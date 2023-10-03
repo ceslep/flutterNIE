@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -21,7 +23,7 @@ class ConvivenciaProvider extends ChangeNotifier {
   Future<void> updateData(String estudiante, String year) async {
     final List<Map<String, dynamic>> data =
         await fetchDataFromJson(estudiante, year);
-    print({'data': data.length});
+    print({'lengthdataconvivencia': data.length});
     setData(data);
   }
 

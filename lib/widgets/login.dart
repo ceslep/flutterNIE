@@ -51,8 +51,8 @@ class _LoginState extends State<Login> {
                         "Datos recibidos de la pantalla B: ${result.estudiante}");
                     widget.usController.text = result.estudiante;
                     widget.passController.text = result.estudiante;
+                    widget.onIngresar();
                   },
-                  onTap: () {},
                   child: CachedNetworkImage(
                     imageUrl: "https://app.iedeoccidente.com/esc.png",
                   ),
