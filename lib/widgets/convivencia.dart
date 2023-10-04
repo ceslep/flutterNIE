@@ -8,6 +8,29 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../estudiante_provider.dart';
 import '../convivencia_provider.dart';
+import 'package:logger/logger.dart';
+
+var logger = Logger(
+  printer: PrettyPrinter(),
+);
+
+ModeloConvivencia modConvi = ModeloConvivencia(
+    ind: '',
+    estudiante: '',
+    docente: '',
+    nombresDocente: '',
+    asignatura: '',
+    tipoFalta: '',
+    faltas: '',
+    hora: '',
+    fecha: '',
+    descripcionSituacion: '',
+    descargosEstudiante: '',
+    positivos: '',
+    firma: '',
+    firmaAcudiente: '',
+    fechahora: '',
+    year: (DateTime.now()).year.toString());
 
 class Convivencia extends StatefulWidget {
   final List<ModeloConvivencia> convivencia;
@@ -19,11 +42,11 @@ class Convivencia extends StatefulWidget {
 }
 
 class _ConvivenciaState extends State<Convivencia> {
-  late List<ModeloConvivencia> convivenciaPeriodo = widget.convivencia;
+  List<ModeloConvivencia> convivenciaPeriodo = [modConvi];
   late Map<String, dynamic> mapaModelo;
   late EstudianteProvider estudianteProvider;
   late ConvivenciaProvider convivenciaProvider;
-  List<ModeloConvivencia> listConvivencia = [];
+  List<ModeloConvivencia> listConvivencia = [modConvi];
   bool spin = false;
   Future<bool> iniciar() async {
     spin = true;
@@ -36,8 +59,16 @@ class _ConvivenciaState extends State<Convivencia> {
     listConvivencia = [];
     listConvivencia = convivenciaProvider.data;
     convivenciaPeriodo = listConvivencia;
+    if (convivenciaPeriodo.isEmpty) {
+      convivenciaPeriodo.add(modConvi);
+      setState(() {});
+    } else {
+      if (mounted) {
+        setState(() {});
+      }
+    }
     print({'convivencia': listConvivencia.length});
-    setState(() {});
+    logger.d('Log message with 2 methods');
     spin = false;
     return false;
   }
@@ -52,7 +83,8 @@ class _ConvivenciaState extends State<Convivencia> {
   @override
   void dispose() {
     spin = false;
-    convivenciaPeriodo = [];
+    convivenciaPeriodo.clear();
+    convivenciaPeriodo.add(modConvi);
     listConvivencia = [];
     print({'liberando': 'si'});
     super.dispose();
@@ -63,18 +95,16 @@ class _ConvivenciaState extends State<Convivencia> {
         estudianteProvider.estudiante, (DateTime.now()).year.toString());
     listConvivencia = convivenciaProvider.data;
     convivenciaPeriodo = listConvivencia;
+    if (convivenciaPeriodo.isEmpty) {
+      convivenciaPeriodo.add(modConvi);
+    }
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    /* print({'spin1': spin});
-    iniciar().then((value) {
-      spin = false;
-      print({'spin2': value});
-      print({'totalccccc': listConvivencia.length});
-      setState(() {});
-    }); */
+    print({'spin1': spin});
+    // iniciar();
     return RefreshIndicator(
         color: Colors.white,
         backgroundColor: Colors.blue,
@@ -90,34 +120,41 @@ class _ConvivenciaState extends State<Convivencia> {
     int i = convivenciaPeriodo.length + 1;
     DateTime now = DateTime.now();
 
-    return convivenciaPeriodo.isNotEmpty
-        ? ListView(
-            children: convivenciaPeriodo.map(
-            (convivencia) {
-              i--;
-              final String tipoFalta = convivencia.tipoFalta;
-              final String fecha = convivencia.fecha;
-              DateTime date = DateFormat("yyyy-MM-dd").parse(fecha);
-              int diferencia = now.difference(date).inDays;
-              print(diferencia);
-              final String hora = convivencia.hora;
-              final String asignatura = convivencia.asignatura;
-              return ListTile(
-                leading: SizedBox(
-                  height: double.infinity,
-                  width: 30,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 0),
-                    child: getIcon(tipoFalta),
-                  ),
-                ),
-                title: Row(
+    return ListView(
+        children: convivenciaPeriodo.map(
+      (convivencia) {
+        i--;
+        final String tipoFalta = convivencia.tipoFalta;
+        final String fecha = convivencia.fecha;
+        late int diferencia;
+        if (fecha != "") {
+          DateTime date = DateFormat("yyyy-MM-dd").parse(fecha);
+          diferencia = now.difference(date).inDays;
+        } else {
+          diferencia = 0;
+        }
+        print(diferencia);
+        final String hora = convivencia.hora;
+        final String asignatura = convivencia.asignatura;
+        return ListTile(
+          leading: SizedBox(
+            height: double.infinity,
+            width: 30,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 0),
+              child: getIcon(tipoFalta),
+            ),
+          ),
+          title: tipoFalta != ''
+              ? Row(
                   children: [
                     BadgeText(
                         text: i.toString(),
-                        badgeText: diferencia < 7 ? '.' : ''),
+                        badgeText: diferencia < 7 && diferencia > 0 ? '.' : ''),
                     const SizedBox(width: 10),
-                    const Text('Falta'),
+                    !tipoFalta.contains('POSITIVO')
+                        ? const Text('Falta')
+                        : const Text('Reporte'),
                     const SizedBox(width: 10),
                     Text(tipoFalta,
                         style: TextStyle(
@@ -126,8 +163,10 @@ class _ConvivenciaState extends State<Convivencia> {
                                 : const Color.fromARGB(255, 0, 127, 53),
                             fontWeight: FontWeight.bold))
                   ],
-                ),
-                subtitle: Column(
+                )
+              : const Text('No hay registros de Convivencia'),
+          subtitle: tipoFalta != ''
+              ? Column(
                   children: [
                     Row(
                       children: [
@@ -158,8 +197,14 @@ class _ConvivenciaState extends State<Convivencia> {
                     ),
                     const Divider()
                   ],
+                )
+              : const Expanded(
+                  child: Text(
+                      'Hasta la fecha no se ha realizado algún tipo de anotación en el seguimiento de eventos de convivencia o reportes positivos por parte de algún docente',
+                      textAlign: TextAlign.justify),
                 ),
-                trailing: SizedBox(
+          trailing: tipoFalta != ""
+              ? SizedBox(
                   width: 40,
                   height: 40,
                   child: GestureDetector(
@@ -176,11 +221,11 @@ class _ConvivenciaState extends State<Convivencia> {
                                       detalleConvivencia: convivencia,
                                     )));
                       }),
-                ),
-              );
-            },
-          ).toList())
-        : const Text('No hay registros');
+                )
+              : const Text(''),
+        );
+      },
+    ).toList());
   }
 
   Icon getIcon(String value) {
@@ -196,7 +241,8 @@ class _ConvivenciaState extends State<Convivencia> {
         return const Icon(Icons.sentiment_very_dissatisfied,
             color: Colors.redAccent, size: tam);
       default:
-        return const Icon(Icons.abc);
+        return const Icon(Icons.face_retouching_natural,
+            color: Colors.blue, size: 45);
     }
   }
 }

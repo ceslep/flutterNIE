@@ -66,10 +66,10 @@ class _InasistenciasState extends State<Inasistencias> {
 
   @override
   Widget build(BuildContext context) {
-    iniciar().then((value) {
+    /*  iniciar().then((value) {
       spin = value;
       print({'spin2': value});
-    });
+    }); */
     return inasistenciasPeriodo.isNotEmpty
         ? ListaInasistencias(
             inasistenciasPeriodo: inasistenciasPeriodo, context: context)

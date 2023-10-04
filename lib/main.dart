@@ -52,7 +52,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: EasySplashScreen(
-        logo: Image.network('https://app.iedeoccidente.com/escudoNuevo.png'),
+        logo: Image.network('https://app.iedeoccidente.com/escudoNuevo2.png'),
         title: const Text(
           "Institución Educativa de Occidente.",
           style: TextStyle(
@@ -150,7 +150,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
         inasistenciasProvider.setData(listaInasistencias);
         print({'inas1': inasistenciasProvider.data.length});
 
-        final urlConvivencia = Uri.parse('$urlbase/est/php/getConvivencia.php');
+        /* final urlConvivencia = Uri.parse('$urlbase/est/php/getConvivencia.php');
         final bodyDataConvivencia = json.encode({
           'estudiante': usuarioController.text,
           'year': (DateTime.now()).year.toString()
@@ -165,7 +165,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
 
         final convivenciaProvider =
             Provider.of<ConvivenciaProvider>(context, listen: false);
-        convivenciaProvider.setData(listaConvivencia);
+        convivenciaProvider.setData(listaConvivencia); */
 
         guardarValorLocal(estudianteProvider.estudiante);
       }

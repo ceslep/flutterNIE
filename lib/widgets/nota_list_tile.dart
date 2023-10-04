@@ -19,24 +19,26 @@ class NotaListTile extends StatefulWidget {
 }
 
 class _NotaListTileState extends State<NotaListTile> {
-  bool _isVisible = true;
-  late Timer _timer;
+  late bool _isVisible;
+  late Timer? _timer;
   late List<ModeloNotas> notasDetallado = widget.notas;
   @override
   void initState() {
+    _isVisible = true;
     super.initState();
     _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      setState(() {
-        _isVisible = !_isVisible; // Cambia la visibilidad del texto
-        //  print({'v': _isVisible});
-      });
+      if (mounted) {
+        super.setState(
+          () {},
+        );
+      }
     });
 //    notasDetallado = widget.notas;
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 

@@ -54,7 +54,7 @@ class _LoginState extends State<Login> {
                     widget.onIngresar();
                   },
                   child: CachedNetworkImage(
-                    imageUrl: "https://app.iedeoccidente.com/escudoNuevo.png",
+                    imageUrl: "https://app.iedeoccidente.com/escudoNuevo2.png",
                   ),
                 )
               : const SpinKitCircle(

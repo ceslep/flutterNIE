@@ -11,22 +11,22 @@ String modeloConvivenciaToJson(ModeloConvivencia data) =>
     json.encode(data.toMap());
 
 class ModeloConvivencia {
-  String ind;
-  String estudiante;
-  String docente;
-  String nombresDocente;
-  String asignatura;
-  String tipoFalta;
-  String faltas;
-  String hora;
-  String fecha;
-  String descripcionSituacion;
-  String descargosEstudiante;
-  String positivos;
-  String firma;
-  String firmaAcudiente;
-  String fechahora;
-  String year;
+  String ind = '';
+  String estudiante = '';
+  String docente = '';
+  String nombresDocente = '';
+  String asignatura = '';
+  String tipoFalta = '';
+  String faltas = '';
+  String hora = '';
+  String fecha = '';
+  String descripcionSituacion = '';
+  String descargosEstudiante = '';
+  String positivos = '';
+  String firma = '';
+  String firmaAcudiente = '';
+  String fechahora = '';
+  String year = '';
 
   ModeloConvivencia({
     required this.ind,
