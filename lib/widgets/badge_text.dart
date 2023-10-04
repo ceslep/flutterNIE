@@ -20,22 +20,24 @@ class BadgeText extends StatefulWidget {
 
 class _BadgeTextState extends State<BadgeText> {
   bool _isVisible = true;
-  late Timer _timer;
+  late Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     _timer = Timer.periodic(const Duration(milliseconds: 550), (timer) {
-      setState(() {
-        _isVisible = !_isVisible; // Cambia la visibilidad del texto
-        //  print({'v': _isVisible});
-      });
+      _isVisible = !_isVisible; // Cambia la visibilidad del texto
+      if (mounted) {
+        super.setState(
+          () {},
+        );
+      }
     });
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 

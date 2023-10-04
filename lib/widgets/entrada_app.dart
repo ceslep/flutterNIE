@@ -25,7 +25,8 @@ class EntradaApp extends StatefulWidget {
   State<EntradaApp> createState() => _EntradaAppState();
 }
 
-class _EntradaAppState extends State<EntradaApp> {
+class _EntradaAppState extends State<EntradaApp>
+    with SingleTickerProviderStateMixin {
   bool salida = false;
   String periodo = "";
   late EstudianteProvider estudianteProvider;
@@ -71,9 +72,21 @@ class _EntradaAppState extends State<EntradaApp> {
     listaConvivencia = convivenciaProvider.data;
   }
 
+  static const List<Tab> tabs = <Tab>[
+    Tab(
+      icon: Icon(Icons.calculate_sharp, color: Colors.yellowAccent),
+      child: Text('Notas', style: TextStyle(color: Colors.yellow)),
+    ),
+    Tab(icon: Icon(Icons.access_time_filled), child: Text('Inasistencias')),
+    Tab(icon: Icon(Icons.settings_accessibility), child: Text('Convivencia')),
+  ];
+
+  late TabController _tabController;
+
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(vsync: this, length: tabs.length);
     init();
   }
 
@@ -92,12 +105,13 @@ class _EntradaAppState extends State<EntradaApp> {
           colorScheme:
               ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent)),
       home: DefaultTabController(
-        length: 3,
+        length: tabs.length,
         child: Scaffold(
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () async {
+                _tabController.index = 0;
                 bool result = await showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -142,6 +156,10 @@ class _EntradaAppState extends State<EntradaApp> {
                   estudianteProvider.setGrado("");
                   estudianteProvider.setNombresEstudiante("");
                   estudianteProvider.setPeriodo("");
+                  listaConvivencia = [];
+                  listaInasistencias = [];
+                  setState(() {});
+
                   guardarValorLocal("").then((value) {
                     Navigator.push(
                         context,
@@ -152,23 +170,19 @@ class _EntradaAppState extends State<EntradaApp> {
               },
             ),
             backgroundColor: Colors.lightBlueAccent,
-            bottom: const TabBar(
-              tabs: [
-                Tab(
-                  icon: Icon(Icons.calculate_sharp, color: Colors.yellowAccent),
-                  child: Text('Notas', style: TextStyle(color: Colors.yellow)),
-                ),
-                Tab(
-                    icon: Icon(Icons.access_time_filled),
-                    child: Text('Inasistencias')),
-                Tab(
-                    icon: Icon(Icons.settings_accessibility),
-                    child: Text('Convivencia')),
-              ],
+            bottom: TabBar(
+              onTap: (index) async {
+                listaConvivencia = [];
+                await actualizar();
+                setState(() {});
+              },
+              controller: _tabController,
+              tabs: tabs,
             ),
             title: const Text('Notas IedeOccidente'),
           ),
           body: TabBarView(
+            controller: _tabController,
             children: [
               Column(
                 children: [

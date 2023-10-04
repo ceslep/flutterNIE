@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 import 'dart:convert';
+import 'dart:io';
+import 'package:desktop_window/desktop_window.dart';
 import 'package:easy_splash_screen/easy_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:notas_ie/convivencia_provider.dart';
@@ -37,6 +39,9 @@ void main() {
       child: const MainApp(),
     ),
   );
+  if (Platform.isWindows) {
+    DesktopWindow.setWindowSize(const Size(480, 1040));
+  }
 }
 
 class MainApp extends StatelessWidget {
@@ -47,7 +52,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: EasySplashScreen(
-        logo: Image.network('https://app.iedeoccidente.com/esc.png'),
+        logo: Image.network('https://app.iedeoccidente.com/escudoNuevo.png'),
         title: const Text(
           "Institución Educativa de Occidente.",
           style: TextStyle(

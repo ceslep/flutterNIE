@@ -25,7 +25,6 @@ class Estudiantes {
   String activo;
   String banda;
   String hed;
-  String maestra;
   String acudiente;
   String telefono1;
   String telefono2;
@@ -47,7 +46,6 @@ class Estudiantes {
     required this.activo,
     required this.banda,
     required this.hed,
-    required this.maestra,
     required this.acudiente,
     required this.telefono1,
     required this.telefono2,
@@ -70,7 +68,6 @@ class Estudiantes {
         activo: json["activo"],
         banda: json["banda"],
         hed: json["HED"],
-        maestra: json["maestra"],
         acudiente: json["acudiente"],
         telefono1: json["telefono1"],
         telefono2: json["telefono2"],
@@ -93,7 +90,6 @@ class Estudiantes {
         "activo": activo,
         "banda": banda,
         "HED": hed,
-        "maestra": maestra,
         "acudiente": acudiente,
         "telefono1": telefono1,
         "telefono2": telefono2,

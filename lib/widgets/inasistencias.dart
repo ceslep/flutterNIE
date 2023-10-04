@@ -36,7 +36,12 @@ class _InasistenciasState extends State<Inasistencias> {
     await inasistenciasProvider.updateData(
         estudianteProvider.estudiante, (DateTime.now()).year.toString());
     inasistenciasPeriodo = inasistenciasProvider.data;
-    setState(() {});
+    if (mounted) {
+      super.setState(
+        () {},
+      );
+    }
+
     /* inasistenciasPeriodo = inasistenciasPeriodo
         .where((inasistencia) => inasistencia.periodo == widget.periodoActual)
         .toList(); */

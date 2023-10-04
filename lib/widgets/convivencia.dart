@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:notas_ie/modelo_Convivencia.dart';
 import 'package:notas_ie/widgets/convivencia_detallado.dart';
 import 'package:intl/intl.dart';
@@ -54,6 +53,8 @@ class _ConvivenciaState extends State<Convivencia> {
   void dispose() {
     spin = false;
     convivenciaPeriodo = [];
+    listConvivencia = [];
+    print({'liberando': 'si'});
     super.dispose();
   }
 
@@ -82,106 +83,104 @@ class _ConvivenciaState extends State<Convivencia> {
           await actualizar();
           setState(() {});
         },
-        child: convivenciaPeriodo.isNotEmpty
-            ? listaConvivencia(context)
-            : const Text(
-                'No hay reportes') /* const SpinKitCircle(
-                color: Colors.blue, // Color de la animación
-                size: 40.0,
-              ) */
-        );
+        child: listaConvivencia(context));
   }
 
   Widget listaConvivencia(BuildContext context) {
     int i = convivenciaPeriodo.length + 1;
     DateTime now = DateTime.now();
 
-    return ListView(
-        children: convivenciaPeriodo.map(
-      (convivencia) {
-        i--;
-        final String tipoFalta = convivencia.tipoFalta;
-        final String fecha = convivencia.fecha;
-        DateTime date = DateFormat("yyyy-MM-dd").parse(fecha);
-        int diferencia = now.difference(date).inDays;
-        print(diferencia);
-        final String hora = convivencia.hora;
-        final String asignatura = convivencia.asignatura;
-        return ListTile(
-          leading: SizedBox(
-            height: double.infinity,
-            width: 30,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 0),
-              child: getIcon(tipoFalta),
-            ),
-          ),
-          title: Row(
-            children: [
-              BadgeText(
-                  text: i.toString(), badgeText: diferencia < 7 ? '.' : ''),
-              const SizedBox(width: 10),
-              const Text('Falta'),
-              const SizedBox(width: 10),
-              Text(tipoFalta,
-                  style: TextStyle(
-                      color: tipoFalta.contains('TIPO')
-                          ? const Color.fromARGB(255, 207, 55, 55)
-                          : const Color.fromARGB(255, 0, 127, 53),
-                      fontWeight: FontWeight.bold))
-            ],
-          ),
-          subtitle: Column(
-            children: [
-              Row(
-                children: [
-                  const Text('Fecha:',
-                      style: TextStyle(
-                          color: Colors.green, fontWeight: FontWeight.bold)),
-                  const SizedBox(width: 10),
-                  Text(fecha)
-                ],
-              ),
-              Row(
-                children: [
-                  const Text('Hora:', style: TextStyle(color: Colors.cyan)),
-                  const SizedBox(width: 10),
-                  Text(hora)
-                ],
-              ),
-              Row(
-                children: [
-                  const Text('Asignatura:',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 154, 2, 149))),
-                  const SizedBox(width: 10),
-                  Text(asignatura)
-                ],
-              ),
-              const Divider()
-            ],
-          ),
-          trailing: SizedBox(
-            width: 40,
-            height: 40,
-            child: GestureDetector(
-                child: const Icon(
-                  Icons.arrow_circle_right_sharp,
-                  color: Color.fromARGB(255, 9, 174, 0),
-                  size: 38,
+    return convivenciaPeriodo.isNotEmpty
+        ? ListView(
+            children: convivenciaPeriodo.map(
+            (convivencia) {
+              i--;
+              final String tipoFalta = convivencia.tipoFalta;
+              final String fecha = convivencia.fecha;
+              DateTime date = DateFormat("yyyy-MM-dd").parse(fecha);
+              int diferencia = now.difference(date).inDays;
+              print(diferencia);
+              final String hora = convivencia.hora;
+              final String asignatura = convivencia.asignatura;
+              return ListTile(
+                leading: SizedBox(
+                  height: double.infinity,
+                  width: 30,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 0),
+                    child: getIcon(tipoFalta),
+                  ),
                 ),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ConvivenciaDetallado(
-                                detalleConvivencia: convivencia,
-                              )));
-                }),
-          ),
-        );
-      },
-    ).toList());
+                title: Row(
+                  children: [
+                    BadgeText(
+                        text: i.toString(),
+                        badgeText: diferencia < 7 ? '.' : ''),
+                    const SizedBox(width: 10),
+                    const Text('Falta'),
+                    const SizedBox(width: 10),
+                    Text(tipoFalta,
+                        style: TextStyle(
+                            color: tipoFalta.contains('TIPO')
+                                ? const Color.fromARGB(255, 207, 55, 55)
+                                : const Color.fromARGB(255, 0, 127, 53),
+                            fontWeight: FontWeight.bold))
+                  ],
+                ),
+                subtitle: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Text('Fecha:',
+                            style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 10),
+                        Text(fecha)
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Text('Hora:',
+                            style: TextStyle(color: Colors.cyan)),
+                        const SizedBox(width: 10),
+                        Text(hora)
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Text('Asignatura:',
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 154, 2, 149))),
+                        const SizedBox(width: 10),
+                        Text(asignatura)
+                      ],
+                    ),
+                    const Divider()
+                  ],
+                ),
+                trailing: SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: GestureDetector(
+                      child: const Icon(
+                        Icons.arrow_circle_right_sharp,
+                        color: Color.fromARGB(255, 9, 174, 0),
+                        size: 38,
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ConvivenciaDetallado(
+                                      detalleConvivencia: convivencia,
+                                    )));
+                      }),
+                ),
+              );
+            },
+          ).toList())
+        : const Text('No hay registros');
   }
 
   Icon getIcon(String value) {
@@ -220,10 +219,8 @@ class _BadgeTextState extends State<BadgeText> {
   void initState() {
     super.initState();
     _timer = Timer.periodic(const Duration(milliseconds: 550), (timer) {
-      setState(() {
-        _isVisible = !_isVisible; // Cambia la visibilidad del texto
-        //  print({'v': _isVisible});
-      });
+      _isVisible = !_isVisible; // Cambia la visibilidad del texto
+      setState(() {});
     });
   }
 
