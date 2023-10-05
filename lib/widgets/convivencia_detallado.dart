@@ -172,12 +172,10 @@ class _DetalleState extends State<Detalle> {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Expanded(
-              child: Text(
-                widget.detalleConvivencia,
-                style: const TextStyle(fontSize: 16),
-                textAlign: TextAlign.justify,
-              ),
+            child: Text(
+              widget.detalleConvivencia,
+              style: const TextStyle(fontSize: 16),
+              textAlign: TextAlign.justify,
             ),
           ),
         ),

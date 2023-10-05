@@ -198,11 +198,9 @@ class _ConvivenciaState extends State<Convivencia> {
                     const Divider()
                   ],
                 )
-              : const Expanded(
-                  child: Text(
-                      'Hasta la fecha no se ha realizado algún tipo de anotación en el seguimiento de eventos de convivencia o reportes positivos por parte de algún docente',
-                      textAlign: TextAlign.justify),
-                ),
+              : const Text(
+                  'Hasta la fecha no se ha realizado algún tipo de anotación en el seguimiento de eventos de convivencia o reportes positivos por parte de algún docente',
+                  textAlign: TextAlign.justify),
           trailing: tipoFalta != ""
               ? SizedBox(
                   width: 40,

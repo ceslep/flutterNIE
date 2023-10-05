@@ -48,7 +48,7 @@ class _BadgeTextState extends State<BadgeText> {
       children: [
         Row(
           children: [
-            Expanded(child: Text('${widget.text}  ', style: widget.style)),
+            Text('${widget.text}  ', style: widget.style),
           ],
         ),
         if (widget.badgeText.isNotEmpty)
