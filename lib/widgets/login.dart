@@ -47,11 +47,13 @@ class _LoginState extends State<Login> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => const ListaEstudiantes()));
-                    print(
-                        "Datos recibidos de la pantalla B: ${result.estudiante}");
-                    widget.usController.text = result.estudiante;
-                    widget.passController.text = result.estudiante;
-                    widget.onIngresar();
+                    if (result != null) {
+                      print(
+                          "Datos recibidos de la pantalla B: ${result.estudiante}");
+                      widget.usController.text = result.estudiante;
+                      widget.passController.text = result.estudiante;
+                      widget.onIngresar();
+                    }
                   },
                   child: CachedNetworkImage(
                     imageUrl: "https://app.iedeoccidente.com/escudoNuevo2.png",

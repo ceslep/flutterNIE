@@ -36,16 +36,16 @@ class _InasistenciasState extends State<Inasistencias> {
     await inasistenciasProvider.updateData(
         estudianteProvider.estudiante, (DateTime.now()).year.toString());
     inasistenciasPeriodo = inasistenciasProvider.data;
+    spin = false;
+
+    inasistenciasPeriodo = inasistenciasPeriodo
+        .where((inasistencia) => inasistencia.periodo == widget.periodoActual)
+        .toList();
     if (mounted) {
       super.setState(
         () {},
       );
     }
-
-    /* inasistenciasPeriodo = inasistenciasPeriodo
-        .where((inasistencia) => inasistencia.periodo == widget.periodoActual)
-        .toList(); */
-    spin = false;
     return false;
     /* print({'convivencia': listConvivencia.length}); */
   }
@@ -55,7 +55,6 @@ class _InasistenciasState extends State<Inasistencias> {
     super.initState();
     iniciar();
     print({'inaslength': inasistenciasPeriodo.length});
-    spin = false;
   }
 
   @override
@@ -74,35 +73,37 @@ class _InasistenciasState extends State<Inasistencias> {
         ? ListaInasistencias(
             inasistenciasPeriodo: inasistenciasPeriodo, context: context)
         : spin
-            ? const SpinKitCircle(
+            ? const SpinKitCubeGrid(
                 color: Colors.blue, // Color de la animación
-                size: 40.0,
+                size: 46.0,
               )
             : Center(
-                child: Card(
-                  clipBehavior: Clip.hardEdge,
-                  child: SizedBox(
-                    height: 120,
-                    width: 300,
-                    child: Column(
-                      children: [
-                        const Text('No hay inasistencias para'),
-                        Text('el período ${widget.periodoActual}'),
-                        ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => EntradaApp(
-                                          elPeriodo: widget.periodoActual,
-                                        )),
-                              );
-                            },
-                            child: const Text('Volver'))
-                      ],
-                    ),
-                  ),
-                ),
+                child: !spin
+                    ? Card(
+                        clipBehavior: Clip.hardEdge,
+                        child: SizedBox(
+                          height: 120,
+                          width: 300,
+                          child: Column(
+                            children: [
+                              const Text('No hay inasistencias para'),
+                              Text('el período ${widget.periodoActual}'),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EntradaApp(
+                                                elPeriodo: widget.periodoActual,
+                                              )),
+                                    );
+                                  },
+                                  child: const Text('Volver'))
+                            ],
+                          ),
+                        ),
+                      )
+                    : const SpinKitCubeGrid(color: Colors.blueAccent, size: 46),
               );
   }
 
@@ -151,11 +152,13 @@ class ListaInasistencias extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Text(
-                    inasistencia.detalle != ''
-                        ? inasistencia.detalle
-                        : 'Sin detalle',
-                    style: TextStyle(color: Colors.green.shade300),
+                  Expanded(
+                    child: Text(
+                      inasistencia.detalle != ''
+                          ? inasistencia.detalle
+                          : 'Sin detalle',
+                      style: TextStyle(color: Colors.green.shade300),
+                    ),
                   ),
                   const SizedBox(width: 10),
                 ],

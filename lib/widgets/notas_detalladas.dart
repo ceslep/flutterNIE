@@ -123,66 +123,92 @@ class _NotasDetalladasState extends State<NotasDetalladas> {
                   DateTime now = DateTime.now();
                   DateTime date = DateFormat("yyyy-MM-dd").parse(fecha);
                   int diferencia = now.difference(date).inDays;
-                  return ListTile(
-                    leading: SizedBox(
-                      height: double.infinity,
-                      width: 50,
+                  return Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Card(
+                      elevation: 2,
+                      color: const Color.fromARGB(255, 246, 248, 242),
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 14.0),
-                        child: getIcon(value),
-                      ),
-                    ),
-                    title: BadgeText(
-                        text: aspecto,
-                        badgeText: diferencia < 7 ? '.' : '',
-                        style: const TextStyle(color: Colors.green),
-                        color: Colors.blue),
-                    subtitle: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Text('Nota: '),
-                            AnimatedOpacity(
-                              opacity: value < 3 ? (_isVisible ? 1.0 : 0.0) : 1,
-                              duration: const Duration(milliseconds: 200),
-                              child: Text(
-                                subtitulo,
-                                style: TextStyle(
-                                    color:
-                                        value < 3 ? Colors.red : Colors.black,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                        padding: const EdgeInsets.all(5.0),
+                        child: ListTile(
+                          leading: SizedBox(
+                            height: double.infinity,
+                            width: 50,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 14.0),
+                              child: getIcon(value),
                             ),
-                            Text(subtitulo2)
-                          ],
+                          ),
+                          title: Row(
+                            children: [
+                              Expanded(
+                                  child: Text(aspecto,
+                                      style: const TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold))),
+                              const SizedBox(width: 10),
+                              BadgeText(
+                                  text: '   ',
+                                  badgeText: diferencia < 7 ? '.' : '',
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(255, 228, 55, 168)),
+                                  color: Colors.blue),
+                            ],
+                          ),
+                          subtitle: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  const Text('Nota: '),
+                                  AnimatedOpacity(
+                                    opacity: value < 3
+                                        ? (_isVisible ? 1.0 : 0.0)
+                                        : 1,
+                                    duration: const Duration(milliseconds: 200),
+                                    child: Text(
+                                      subtitulo,
+                                      style: TextStyle(
+                                          color: value < 3
+                                              ? Colors.red
+                                              : Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Text(subtitulo2)
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  const Text('Periodo: '),
+                                  Text(mapaModelo['periodo'],
+                                      style:
+                                          const TextStyle(color: Colors.blue)),
+                                  const SizedBox(width: 10),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  const Text('Porcentaje: '),
+                                  Text(porcentaje != ''
+                                      ? porcentaje
+                                      : 'Sin porcentaje declarado')
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  const Text('Registrado:'),
+                                  const SizedBox(width: 10),
+                                  Text(fechahora,
+                                      style: const TextStyle(
+                                          fontStyle: FontStyle.italic)),
+                                ],
+                              ),
+                              /*  const Divider() */
+                            ],
+                          ),
                         ),
-                        Row(
-                          children: [
-                            const Text('Periodo: '),
-                            Text(mapaModelo['periodo'],
-                                style: const TextStyle(color: Colors.blue)),
-                            const SizedBox(width: 10),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            const Text('Porcentaje: '),
-                            Text(porcentaje != ''
-                                ? porcentaje
-                                : 'Sin porcentaje declarado')
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            const Text('Registrado:'),
-                            const SizedBox(width: 10),
-                            Text(fechahora,
-                                style: const TextStyle(
-                                    fontStyle: FontStyle.italic)),
-                          ],
-                        ),
-                        const Divider()
-                      ],
+                      ),
                     ),
                   );
                 },

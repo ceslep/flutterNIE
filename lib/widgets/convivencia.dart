@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:notas_ie/modelo_Convivencia.dart';
 import 'package:notas_ie/widgets/convivencia_detallado.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../estudiante_provider.dart';
@@ -59,6 +60,7 @@ class _ConvivenciaState extends State<Convivencia> {
     listConvivencia = [];
     listConvivencia = convivenciaProvider.data;
     convivenciaPeriodo = listConvivencia;
+    spin = false;
     if (convivenciaPeriodo.isEmpty) {
       convivenciaPeriodo.add(modConvi);
       setState(() {});
@@ -69,7 +71,6 @@ class _ConvivenciaState extends State<Convivencia> {
     }
     print({'convivencia': listConvivencia.length});
     logger.d('Log message with 2 methods');
-    spin = false;
     return false;
   }
 
@@ -77,7 +78,6 @@ class _ConvivenciaState extends State<Convivencia> {
   void initState() {
     super.initState();
     iniciar();
-    spin = false;
   }
 
   @override
@@ -142,7 +142,7 @@ class _ConvivenciaState extends State<Convivencia> {
             width: 30,
             child: Padding(
               padding: const EdgeInsets.only(top: 0),
-              child: getIcon(tipoFalta),
+              child: !spin ? getIcon(tipoFalta) : const Text(''),
             ),
           ),
           title: tipoFalta != ''
@@ -164,7 +164,9 @@ class _ConvivenciaState extends State<Convivencia> {
                             fontWeight: FontWeight.bold))
                   ],
                 )
-              : const Text('No hay registros de Convivencia'),
+              : !spin
+                  ? const Text('No hay registros de Convivencia')
+                  : const Text(''),
           subtitle: tipoFalta != ''
               ? Column(
                   children: [
@@ -198,9 +200,14 @@ class _ConvivenciaState extends State<Convivencia> {
                     const Divider()
                   ],
                 )
-              : const Text(
-                  'Hasta la fecha no se ha realizado algún tipo de anotación en el seguimiento de eventos de convivencia o reportes positivos por parte de algún docente',
-                  textAlign: TextAlign.justify),
+              : !spin
+                  ? const Text(
+                      'Hasta la fecha no se ha realizado algún tipo de anotación en el seguimiento de eventos de convivencia o reportes positivos por parte de algún docente',
+                      textAlign: TextAlign.justify)
+                  : const Center(
+                      child: SpinKitCubeGrid(
+                          size: 46, color: Color.fromARGB(255, 89, 191, 243)),
+                    ),
           trailing: tipoFalta != ""
               ? SizedBox(
                   width: 40,

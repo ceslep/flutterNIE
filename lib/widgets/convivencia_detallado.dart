@@ -77,10 +77,36 @@ class _ConvivenciaDetalladoState extends State<ConvivenciaDetallado> {
                                     ? Row(
                                         children: [
                                           Expanded(
-                                            child: Text(
-                                              falta.substring(
-                                                  0, falta.length - 1),
-                                              textAlign: TextAlign.justify,
+                                            child: Card(
+                                              child: Row(
+                                                children: [
+                                                  const Padding(
+                                                    padding:
+                                                        EdgeInsets.all(8.0),
+                                                    child: Icon(
+                                                        color: Colors.red,
+                                                        shadows: [
+                                                          Shadow(
+                                                              color: Colors.red)
+                                                        ],
+                                                        size: 18,
+                                                        Icons.check_circle),
+                                                  ),
+                                                  Expanded(
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Text(
+                                                        falta.substring(0,
+                                                            falta.length - 1),
+                                                        textAlign:
+                                                            TextAlign.justify,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -126,13 +152,13 @@ class _ConvivenciaDetalladoState extends State<ConvivenciaDetallado> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          colorScheme:
-              ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent)),
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: tipoP ? Colors.lightGreenAccent : Colors.redAccent)),
       home: Scaffold(
         appBar: AppBar(
           title: Row(
             children: [
-              const Text('Falta'),
+              tipoP ? const Text('Reporte') : const Text('Falta'),
               const SizedBox(width: 10),
               Text(detalle.tipoFalta),
             ],
