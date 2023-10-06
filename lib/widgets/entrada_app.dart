@@ -8,6 +8,7 @@ import 'package:notas_ie/modelo_Convivencia.dart';
 import 'package:notas_ie/modelo_inasistencias.dart';
 import 'package:notas_ie/modelo_notas.dart';
 import 'package:notas_ie/notas_provider.dart';
+import 'package:notas_ie/widgets/concentrador.dart';
 import 'package:notas_ie/widgets/convivencia.dart';
 import 'package:notas_ie/widgets/desi_alert.dart';
 import 'package:notas_ie/widgets/inasistencias.dart';
@@ -35,6 +36,7 @@ class _EntradaAppState extends State<EntradaApp>
   late ConvivenciaProvider convivenciaProvider;
   late List<ModeloNotas> listaDeNotas = notasProvider.data;
   late List<String> periodos;
+  late List<String> asignaturas;
   late List<ModeloNotas> listaDeNotasFiltradas;
   late List<ModeloInasistencias> listaInasistencias;
   List<ModeloConvivencia> listaConvivencia = [];
@@ -61,6 +63,7 @@ class _EntradaAppState extends State<EntradaApp>
     if (!periodos.contains(periodo)) {
       periodos.add(periodo);
     }
+    asignaturas = listaDeNotas.map((e) => e.asignatura).toSet().toList();
     inasistenciasProvider =
         Provider.of<InasistenciasProvider>(context, listen: false);
     listaInasistencias = inasistenciasProvider.data;
@@ -74,11 +77,17 @@ class _EntradaAppState extends State<EntradaApp>
 
   static const List<Tab> tabs = <Tab>[
     Tab(
-      icon: Icon(Icons.calculate_sharp, color: Colors.yellowAccent),
-      child: Text('Notas', style: TextStyle(color: Colors.yellow)),
+      icon: Icon(Icons.calculate_sharp),
     ),
-    Tab(icon: Icon(Icons.access_time_filled), child: Text('Inasistencias')),
-    Tab(icon: Icon(Icons.settings_accessibility), child: Text('Convivencia')),
+    Tab(
+      icon: Icon(Icons.access_time_filled),
+    ),
+    Tab(
+      icon: Icon(Icons.settings_accessibility),
+    ),
+    Tab(
+      icon: Icon(Icons.grid_4x4),
+    ),
   ];
 
   late TabController _tabController;
@@ -263,6 +272,11 @@ class _EntradaAppState extends State<EntradaApp>
               Inasistencias(
                   inasistencias: listaInasistencias, periodoActual: periodo),
               Convivencia(convivencia: listaConvivencia),
+              Concentrador(
+                notasPeriodo: listaDeNotas,
+                periodos: periodos,
+                asignaturas: asignaturas,
+              )
               // Elimina la pestaña adicional
             ],
           ),
