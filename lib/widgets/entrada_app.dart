@@ -273,7 +273,7 @@ class _EntradaAppState extends State<EntradaApp>
                   inasistencias: listaInasistencias, periodoActual: periodo),
               Convivencia(convivencia: listaConvivencia),
               Concentrador(
-                notasPeriodo: listaDeNotas,
+                notasPeriodos: listaDeNotas,
                 periodos: periodos,
                 asignaturas: asignaturas,
               )

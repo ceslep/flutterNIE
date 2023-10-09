@@ -1,0 +1,61 @@
+GridView.builder(
+      itemCount: 6 * widget.asignaturas.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 6,
+          crossAxisSpacing: 0,
+          mainAxisSpacing: 0,
+          childAspectRatio: 1,
+          
+          ),
+      itemBuilder: (context, index) {
+        int idx = (index % 6);
+        int ida = fila(index);
+        String cellText = "";
+        TextStyle style = const TextStyle(color: Colors.black);
+        List<ModeloNotas> notas = [];
+        if (idx == 0) {
+          cellText = widget.asignaturas[ida];
+          asignatura = cellText;
+          style = const TextStyle(color: Colors.black);
+        } else if (idx >= 1 && idx <= 4) {
+          periodo = widget.periodos[idx - 1];
+          notas = widget.notasPeriodos
+              .where((notas) =>
+                  notas.asignatura == asignatura && notas.periodo == periodo)
+              .toList();
+          style = const TextStyle(color: Colors.blue);
+          if (notas.isNotEmpty) {
+            cellText = notas[0].valoracion;
+            if (double.parse(notas[0].valoracion) < 3) {
+              style = const TextStyle(color: Colors.red);
+            }
+          }
+        }
+        if (idx == 0) {
+          return Container(
+            width: 200,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.black, width: 1)),
+            child: Text(
+              cellText,
+              style: style,
+            ),
+          );
+        } else {
+          if (cellText != "") {
+            return Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black, width: 1)),
+              child: Center(
+                child: Text(
+                  cellText,
+                  style: style,
+                ),
+              ),
+            );
+          } else {
+            return const SizedBox(width: 0);
+          }
+        }
+      },
+    )

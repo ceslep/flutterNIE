@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:notas_ie/modelo_notas.dart';
 
@@ -46,12 +48,13 @@ int fila(int numero) {
 }
 
 class Concentrador extends StatefulWidget {
-  final List<ModeloNotas> notasPeriodo;
+  final List<ModeloNotas> notasPeriodos;
   final List<String> periodos;
   final List<String> asignaturas;
+
   const Concentrador(
       {Key? key,
-      required this.notasPeriodo,
+      required this.notasPeriodos,
       required this.periodos,
       required this.asignaturas})
       : super(key: key);
@@ -61,19 +64,40 @@ class Concentrador extends StatefulWidget {
 }
 
 class _ConcentradorState extends State<Concentrador> {
+  String asignatura = "";
+  String periodo = "";
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      itemCount: 6 * widget.asignaturas.length,
-      gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 6),
-      itemBuilder: (context, index) {
-        int idx = (index % 6);
-        int ida = fila(index);
-        /*String cell = "";
-        if (dx == 0) cell = asignaturas[ida]; */
-        return Text(widget.asignaturas[ida]);
-      },
+    return Table(
+      border: TableBorder.all(),
+      children: [
+        TableRow(children: <Widget>[
+          TableCell(
+              child: Container(
+            padding: const EdgeInsets.all(8.0),
+            color: Colors.green,
+            width: 100.0, // Ancho personalizado para la celda 3
+            child: const Center(
+              child: Text('Asignatura'),
+            ),
+          )),
+          const TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: Center(child: Text('P1'))),
+          const TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: Center(child: Text('P2'))),
+          const TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: Center(child: Text('P3'))),
+          const TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: Center(child: Text('P4'))),
+          const TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: Center(child: Text('Def'))),
+        ])
+      ],
     );
   }
 }
