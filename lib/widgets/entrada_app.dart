@@ -1,19 +1,19 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:notas_ie/convivencia_provider.dart';
-import 'package:notas_ie/inasistencias_provider.dart';
-import 'package:notas_ie/main.dart';
-import 'package:notas_ie/modelo_Convivencia.dart';
-import 'package:notas_ie/modelo_inasistencias.dart';
-import 'package:notas_ie/modelo_notas.dart';
-import 'package:notas_ie/notas_provider.dart';
-import 'package:notas_ie/widgets/concentrador.dart';
-import 'package:notas_ie/widgets/convivencia.dart';
-import 'package:notas_ie/widgets/desi_alert.dart';
-import 'package:notas_ie/widgets/inasistencias.dart';
-import 'package:notas_ie/widgets/menu_periodos.dart';
-import 'package:notas_ie/widgets/nota_list_tile.dart';
+import 'package:com_celesoft_notasieo/convivencia_provider.dart';
+import 'package:com_celesoft_notasieo/inasistencias_provider.dart';
+import 'package:com_celesoft_notasieo/main.dart';
+import 'package:com_celesoft_notasieo/modelo_Convivencia.dart';
+import 'package:com_celesoft_notasieo/modelo_inasistencias.dart';
+import 'package:com_celesoft_notasieo/modelo_notas.dart';
+import 'package:com_celesoft_notasieo/notas_provider.dart';
+import 'package:com_celesoft_notasieo/widgets/concentrador.dart';
+import 'package:com_celesoft_notasieo/widgets/convivencia.dart';
+import 'package:com_celesoft_notasieo/widgets/desi_alert.dart';
+import 'package:com_celesoft_notasieo/widgets/inasistencias.dart';
+import 'package:com_celesoft_notasieo/widgets/menu_periodos.dart';
+import 'package:com_celesoft_notasieo/widgets/nota_list_tile.dart';
 import 'package:provider/provider.dart';
 import '../estudiante_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

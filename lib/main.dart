@@ -1,17 +1,19 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
+//keytool -genkey -v -keystore key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key
 import 'dart:convert';
 import 'dart:io';
+import 'package:com_celesoft_notasieo/convivencia_provider.dart';
+import 'package:com_celesoft_notasieo/estud_provider.dart';
+import 'package:com_celesoft_notasieo/estudiante_provider.dart';
+import 'package:com_celesoft_notasieo/inasistencias_provider.dart';
+import 'package:com_celesoft_notasieo/notas_provider.dart';
+import 'package:com_celesoft_notasieo/total_estudiantes_provider.dart';
+import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
+import 'package:com_celesoft_notasieo/widgets/entrada_app.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:easy_splash_screen/easy_splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:notas_ie/convivencia_provider.dart';
-import 'package:notas_ie/estud_provider.dart';
-import 'package:notas_ie/estudiante_provider.dart';
-import 'package:notas_ie/inasistencias_provider.dart';
-import 'package:notas_ie/notas_provider.dart';
-import 'package:notas_ie/total_estudiantes_provider.dart';
-import 'package:notas_ie/widgets/custom_alert.dart';
-import 'package:notas_ie/widgets/entrada_app.dart';
+
 import 'package:provider/provider.dart';
 import 'widgets/login.dart';
 import 'package:localstorage/localstorage.dart';

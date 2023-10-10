@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:notas_ie/modelo_notas.dart';
+import 'package:com_celesoft_notasieo/modelo_notas.dart';
 
 int fila(int numero) {
   if (numero >= 0 && numero <= 5) {
@@ -68,35 +68,120 @@ class _ConcentradorState extends State<Concentrador> {
   String periodo = "";
   @override
   Widget build(BuildContext context) {
-    return Table(
-      border: TableBorder.all(),
-      children: [
-        TableRow(children: <Widget>[
-          TableCell(
-              child: Container(
-            padding: const EdgeInsets.all(8.0),
-            color: Colors.green,
-            width: 100.0, // Ancho personalizado para la celda 3
-            child: const Center(
-              child: Text('Asignatura'),
+    return CustomScrollView(
+      slivers: [
+        const SliverAppBar(
+          floating: false,
+          pinned: true,
+          flexibleSpace: FlexibleSpaceBar(
+            title: Text('Concentrador'),
+          ),
+        ),
+        SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+          asignatura = widget.asignaturas[index];
+          TextStyle styleHeader = const TextStyle(fontWeight: FontWeight.bold);
+          List<ModeloNotas> notas = widget.notasPeriodos
+              .where((nota) => nota.asignatura == asignatura)
+              .toList();
+          return ListTile(
+            title: Column(
+              children: [
+                index == 0
+                    ? Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(
+                                        0.5), // Color y opacidad de la sombra
+                                    spreadRadius:
+                                        5, // Radio de propagación de la sombra
+                                    blurRadius:
+                                        7, // Radio de desenfoque de la sombra
+                                    offset: const Offset(0,
+                                        3), // Desplazamiento de la sombra en x y y
+                                  ),
+                                ],
+                                color: Colors.green),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                    width: 120,
+                                    child: Text(
+                                      'Asignatura',
+                                      style: styleHeader,
+                                    )),
+                                SizedBox(
+                                    width: 50,
+                                    child: Center(
+                                        child: Text(
+                                      'P1',
+                                      style: styleHeader,
+                                    ))),
+                                SizedBox(
+                                    width: 50,
+                                    child: Center(
+                                        child: Text(
+                                      'P2',
+                                      style: styleHeader,
+                                    ))),
+                                SizedBox(
+                                    width: 50,
+                                    child: Center(
+                                        child: Text(
+                                      'P3',
+                                      style: styleHeader,
+                                    ))),
+                                SizedBox(
+                                    width: 50,
+                                    child: Center(
+                                        child: Text(
+                                      'P4',
+                                      style: styleHeader,
+                                    ))),
+                                SizedBox(
+                                    width: 50,
+                                    child: Center(
+                                        child: Text(
+                                      'Def',
+                                      style: styleHeader,
+                                    ))),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20)
+                        ],
+                      )
+                    : const SizedBox(
+                        width: 0,
+                      ),
+                Row(
+                  children: [
+                    SizedBox(
+                        width: 120, child: Text(widget.asignaturas[index])),
+                    Row(
+                      children: notas.map((nota) {
+                        double value = double.parse(nota.valoracion);
+                        TextStyle style = value < 3
+                            ? const TextStyle(color: Colors.red)
+                            : const TextStyle(color: Colors.blue);
+                        return SizedBox(
+                            width: 50,
+                            child: Center(
+                                child: Text(nota.valoracion, style: style)));
+                      }).toList(),
+                    )
+                    //  notas.map((nota) => Text(nota.valoracion))
+                  ],
+                ),
+                const Divider()
+              ],
             ),
-          )),
-          const TableCell(
-              verticalAlignment: TableCellVerticalAlignment.middle,
-              child: Center(child: Text('P1'))),
-          const TableCell(
-              verticalAlignment: TableCellVerticalAlignment.middle,
-              child: Center(child: Text('P2'))),
-          const TableCell(
-              verticalAlignment: TableCellVerticalAlignment.middle,
-              child: Center(child: Text('P3'))),
-          const TableCell(
-              verticalAlignment: TableCellVerticalAlignment.middle,
-              child: Center(child: Text('P4'))),
-          const TableCell(
-              verticalAlignment: TableCellVerticalAlignment.middle,
-              child: Center(child: Text('Def'))),
-        ])
+          );
+        }, childCount: widget.asignaturas.length))
       ],
     );
   }
