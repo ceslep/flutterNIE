@@ -26,9 +26,11 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   late final bool llogin;
+  late String currentYear;
   @override
   void initState() {
     super.initState();
+    currentYear = DateTime.now().year.toString();
     llogin = widget.login;
     print({'login': llogin});
   }
@@ -92,6 +94,31 @@ class _LoginState extends State<Login> {
             decoration: const InputDecoration(
               labelText: "Contraseña",
             ),
+          ),
+        ),
+        Container(
+          width: double.infinity,
+          padding:
+              const EdgeInsets.only(left: 30, right: 30, top: 0, bottom: 20),
+          child: DropdownButton<String>(
+            // Valor inicial seleccionado
+            value: currentYear,
+            // Función que se ejecuta cuando se selecciona un elemento
+            onChanged: (newValue) {
+              // Aquí puedes manejar la lógica cuando se selecciona un elemento
+              print('Seleccionado: $newValue');
+              currentYear = newValue!;
+              setState(() {});
+              //
+            },
+            // Lista de elementos desplegables
+            items: ['2021', '2022', '2023', '2024']
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
           ),
         ),
         botones(widget.onIngresar, widget.login)
