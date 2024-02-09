@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:notas_ie/estudiante_provider.dart';
-import 'package:notas_ie/inasistencias_provider.dart';
-import 'package:notas_ie/modelo_inasistencias.dart';
-import 'package:notas_ie/widgets/badge_text.dart';
-import 'package:notas_ie/widgets/entrada_app.dart';
+import 'package:com_celesoft_notasieo/estudiante_provider.dart';
+import 'package:com_celesoft_notasieo/inasistencias_provider.dart';
+import 'package:com_celesoft_notasieo/modelo_inasistencias.dart';
+import 'package:com_celesoft_notasieo/widgets/badge_text.dart';
+import 'package:com_celesoft_notasieo/widgets/entrada_app.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 

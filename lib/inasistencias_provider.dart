@@ -1,5 +1,5 @@
+import 'package:com_celesoft_notasieo/modelo_inasistencias.dart';
 import 'package:flutter/material.dart';
-import 'package:notas_ie/modelo_inasistencias.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 

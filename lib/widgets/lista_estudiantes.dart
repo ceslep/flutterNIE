@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
-import 'package:notas_ie/total_estudiantes_provider.dart';
+import 'package:com_celesoft_notasieo/total_estudiantes_provider.dart';
 
 import '../modelo_Estudiantes.dart';
 

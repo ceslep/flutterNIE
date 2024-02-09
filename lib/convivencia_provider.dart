@@ -1,9 +1,9 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+import 'package:com_celesoft_notasieo/modelo_Convivencia.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:notas_ie/modelo_Convivencia.dart';
 
 const String urlbase = 'https://app.iedeoccidente.com';
 

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:notas_ie/modelo_notas.dart';
-import 'package:notas_ie/widgets/custom_alert.dart';
-import 'package:notas_ie/widgets/notas_detalladas.dart';
+import 'package:com_celesoft_notasieo/modelo_notas.dart';
+import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
+import 'package:com_celesoft_notasieo/widgets/notas_detalladas.dart';
 
 class NotaListTile extends StatefulWidget {
   final ModeloNotas nota;

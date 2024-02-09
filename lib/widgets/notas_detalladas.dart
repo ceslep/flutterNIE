@@ -3,8 +3,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:notas_ie/modelo_notas.dart';
-import 'package:notas_ie/widgets/badge_text.dart';
+import 'package:com_celesoft_notasieo/modelo_notas.dart';
+import 'package:com_celesoft_notasieo/widgets/badge_text.dart';
 import 'package:intl/intl.dart';
 
 bool esDigito(String caracter) {

@@ -1,7 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, avoid_print
 
+import 'package:com_celesoft_notasieo/modelo_Convivencia.dart';
 import 'package:flutter/material.dart';
-import 'package:notas_ie/modelo_Convivencia.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
