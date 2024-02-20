@@ -15,7 +15,13 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
         theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue)),
         home: Scaffold(
-          appBar: AppBar(title: const Text('Docente')),
+          appBar: AppBar(
+            title: const Text('Docente'),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
           body: Container(
             padding: const EdgeInsets.all(16),
             child: const Center(
