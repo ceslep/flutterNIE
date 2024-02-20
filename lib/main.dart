@@ -10,6 +10,8 @@ import 'package:com_celesoft_notasieo/notas_provider.dart';
 import 'package:com_celesoft_notasieo/total_estudiantes_provider.dart';
 import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
 import 'package:com_celesoft_notasieo/widgets/entrada_app.dart';
+import 'package:com_celesoft_notasieo/widgets/entrada_docentes.dart';
+import 'package:com_celesoft_notasieo/year_provider.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:easy_splash_screen/easy_splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -34,8 +36,8 @@ void main() {
         ChangeNotifierProvider(create: (context) => InasistenciasProvider()),
         ChangeNotifierProvider(create: (context) => EstudProvider()),
         ChangeNotifierProvider(create: (context) => ConvivenciaProvider()),
-        ChangeNotifierProvider(create: (context) => TotalEstudiantesProvider())
-
+        ChangeNotifierProvider(create: (context) => TotalEstudiantesProvider()),
+        ChangeNotifierProvider(create: (context) => YearProvider())
         // Agrega más providers si es necesario
       ],
       child: const MainApp(),
@@ -86,11 +88,17 @@ class PaginaPrincipal extends StatefulWidget {
 class _PaginaPrincipalState extends State<PaginaPrincipal> {
   LocalStorage storage = LocalStorage('app.json');
   bool login = false;
+  bool docente = false;
   late String estud;
   bool iniciando = false;
+  List<String> years = [];
   //variables de estado
-  TextEditingController usuarioController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController usuarioController =
+      TextEditingController(text: '10288864');
+  TextEditingController passwordController =
+      TextEditingController(text: 'hjbalzate');
+  TextEditingController yearController = TextEditingController();
+  String theYear = DateTime.now().year.toString();
 
   Future<String> obtenerValorLocal() async {
     final prefs = await SharedPreferences.getInstance();
@@ -105,27 +113,53 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
         estudiante); // Reemplaza 'clave' por tu clave y true por el valor que desees almacenar
   }
 
-  Future<bool> fetchDataFromJson() async {
-    final url = Uri.parse('$urlbase/est/php/login.php');
+  Future getYears() async {
+    final url = Uri.parse('$urlbase/getYearsData.php');
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final theyears = json.decode(response.body);
+      final List<String> years = theyears
+          .map((item) => (item as Map<String, dynamic>)['year'].toString())
+          .toList()
+          .cast<String>();
+      return years;
+    } else {
+      return [DateTime.now().year.toString()];
+    }
+  }
 
+  Future<bool> fetchDataFromJson() async {
+    final yearProvider = Provider.of<YearProvider>(context, listen: false);
+    print({"yearProvider Main.dart": yearProvider.year});
+    if (yearProvider.year.isEmpty) {
+      yearProvider.setYear(DateTime.now().year.toString());
+    }
+    final url = Uri.parse('$urlbase/est/php/login.php');
+    print({"url": url});
     final bodyData = json.encode({
       'identificacion': usuarioController.text,
-      'pass': passwordController.text
+      'pass': passwordController.text,
+      'year': yearProvider.year
     });
+
+    print({"bodyData": bodyData});
 
     final response = await http.post(url, body: bodyData);
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
-      if (jsonResponse['acceso'] == 'si') {
+      if (jsonResponse.containsKey('docente')) {
+        print({"docente"});
+        docente = true;
+        return true;
+      } else if (jsonResponse['acceso'] == 'si') {
         final urlInasistencias = Uri.parse('$urlbase/est/php/getInasist.php');
-        final bodyDataInasistencias = json.encode({
-          'estudiante': usuarioController.text,
-        });
+        final bodyDataInasistencias = json.encode(
+            {'estudiante': usuarioController.text, 'year': yearProvider.year});
         final responseInasistencias =
             await http.post(urlInasistencias, body: bodyDataInasistencias);
         final jsonResponseInasistencias =
             json.decode(responseInasistencias.body);
-        //  print(jsonResponse);
+        print(jsonResponse);
         final misNotas = Provider.of<NotasProvider>(context, listen: false);
         final dataNotas = jsonResponse['dataNotas'] as List<dynamic>;
 
@@ -152,23 +186,6 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
         inasistenciasProvider.setData(listaInasistencias);
         print({'inas1': inasistenciasProvider.data.length});
 
-        /* final urlConvivencia = Uri.parse('$urlbase/est/php/getConvivencia.php');
-        final bodyDataConvivencia = json.encode({
-          'estudiante': usuarioController.text,
-          'year': (DateTime.now()).year.toString()
-        });
-        final responseConvivencia =
-            await http.post(urlConvivencia, body: bodyDataConvivencia);
-        final jsonResponseConvivencia = json.decode(responseConvivencia.body);
-        final dataConvivencia = jsonResponseConvivencia as List<dynamic>;
-        final listaConvivencia = dataConvivencia
-            .map((item) => item as Map<String, dynamic>)
-            .toList();
-
-        final convivenciaProvider =
-            Provider.of<ConvivenciaProvider>(context, listen: false);
-        convivenciaProvider.setData(listaConvivencia); */
-
         guardarValorLocal(estudianteProvider.estudiante);
       }
       return jsonResponse['acceso'] == 'si';
@@ -181,6 +198,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
     iniciando = false;
     setState(() {});
     final estudProvider = Provider.of<EstudProvider>(context, listen: false);
+    //yearProvider.setYear(DateTime.now().year.toString());
     obtenerValorLocal().then((value) {
       estud = value;
       if (estud != '') {
@@ -190,6 +208,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
         estudProvider.setEstud(estud);
         usuarioController.text = estud;
         passwordController.text = estud;
+
         fetchDataFromJson().then((value) {
           print({'estud': estud});
           if (estud != "") {
@@ -201,8 +220,13 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
           }
         });
       } else {
-        usuarioController.text = '';
-        passwordController.text = '';
+        getYears().then((value) {
+          print({value});
+          years = value;
+          setState(() {});
+        });
+        /*  usuarioController.text = '';
+        passwordController.text = ''; */
       }
     });
   }
@@ -211,8 +235,6 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
   void initState() {
     super.initState();
     init();
-    /*  usuarioController.text = "1016719618";
-    passwordController.text = "1016719618"; */
   }
 
   @override
@@ -250,7 +272,12 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
     }
 
     void ingresar() async {
-      init();
+      // init();
+      final yearProvider = Provider.of<YearProvider>(context, listen: false);
+      print({"yp": yearProvider.year});
+      if (yearProvider.year.isEmpty) {
+        yearProvider.setYear(DateTime.now().year.toString());
+      }
       setState(() {
         login = true;
       });
@@ -259,10 +286,17 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
         login = false;
       });
       if (acceso) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const EntradaApp(elPeriodo: '')));
+        if (docente) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const EntradaDocentes()));
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const EntradaApp(
+                        elPeriodo: '',
+                      )));
+        }
       } else {
         mostrarAlert(
             context, 'Acceso Denegado', 'Estudiante o contraseña erróneas');
@@ -277,9 +311,11 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
         ),
         // ignore: unnecessary_null_comparison
         body: Login(
-            usController: usuarioController,
-            passController: passwordController,
-            onIngresar: ingresar,
-            login: login));
+          usController: usuarioController,
+          passController: passwordController,
+          onIngresar: ingresar,
+          login: login,
+          years: years,
+        ));
   }
 }

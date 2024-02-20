@@ -5,19 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:com_celesoft_notasieo/widgets/lista_estudiantes.dart';
+import 'package:provider/provider.dart';
+import 'package:com_celesoft_notasieo/year_provider.dart';
 
 class Login extends StatefulWidget {
   final VoidCallback onIngresar;
   final TextEditingController usController;
   final TextEditingController passController;
   final bool login;
-  const Login(
-      {Key? key,
-      required this.usController,
-      required this.passController,
-      required this.onIngresar,
-      required this.login})
-      : super(key: key);
+  final List<String> years;
+  const Login({
+    Key? key,
+    required this.usController,
+    required this.passController,
+    required this.onIngresar,
+    required this.login,
+    required this.years,
+  }) : super(key: key);
   // ignore: library_private_types_in_public_api
   @override
   // ignore: library_private_types_in_public_api
@@ -27,16 +31,20 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   late final bool llogin;
   late String currentYear;
+
   @override
   void initState() {
     super.initState();
     currentYear = DateTime.now().year.toString();
+
     llogin = widget.login;
     print({'login': llogin});
   }
 
   @override
   Widget build(BuildContext context) {
+    final yearProvider = Provider.of<YearProvider>(context, listen: false);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -77,6 +85,7 @@ class _LoginState extends State<Login> {
               FilteringTextInputFormatter.digitsOnly, // Permite solo números
             ],
             controller: widget.usController,
+
             decoration: const InputDecoration(
               labelText: "Usuario",
             ),
@@ -86,9 +95,9 @@ class _LoginState extends State<Login> {
           padding: const EdgeInsets.all(35),
           child: TextField(
             keyboardType: TextInputType.number, // Tipo de teclado numérico
-            inputFormatters: <TextInputFormatter>[
+            /* inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.digitsOnly, // Permite solo números
-            ],
+            ], */
             controller: widget.passController,
             obscureText: true,
             decoration: const InputDecoration(
@@ -108,12 +117,13 @@ class _LoginState extends State<Login> {
               // Aquí puedes manejar la lógica cuando se selecciona un elemento
               print('Seleccionado: $newValue');
               currentYear = newValue!;
+              yearProvider.setYear(currentYear);
+              print({"yearProvider": yearProvider.year});
               setState(() {});
               //
             },
             // Lista de elementos desplegables
-            items: ['2021', '2022', '2023', '2024']
-                .map<DropdownMenuItem<String>>((String value) {
+            items: widget.years.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
