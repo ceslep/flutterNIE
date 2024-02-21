@@ -8,7 +8,16 @@ const String urlbase = 'https://app.iedeoccidente.com';
 
 class EntradaDocentes extends StatefulWidget {
   final String docente;
-  const EntradaDocentes({Key? key, required this.docente}) : super(key: key);
+  final String nombresDocente;
+  final String asignacionDocente;
+  final String periodo;
+  const EntradaDocentes(
+      {Key? key,
+      required this.docente,
+      required this.nombresDocente,
+      required this.asignacionDocente,
+      required this.periodo})
+      : super(key: key);
 
   @override
   State<EntradaDocentes> createState() => _EntradaDocentesState();
@@ -50,7 +59,10 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue)),
         home: Scaffold(
           appBar: AppBar(
-            title: const Text('Docente'),
+            title: Text(
+              widget.nombresDocente,
+              style: const TextStyle(fontSize: 14),
+            ),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context),
@@ -66,14 +78,26 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
                 List<String> aasignaturas = [];
                 aasignaturas =
                     asignaturas.map((e) => e['asignatura'].toString()).toList();
-
+                String nivel = jsonData[index]['nivel'];
+                String numero = jsonData[index]['numero'];
                 if (kDebugMode) {
                   print(aasignaturas);
                 }
                 return ListTile(
                   title: Row(
                     children: [
-                      Text('Grado: $grado'),
+                      Text(
+                        'Grado: $grado',
+                        style: const TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Asignaturas ${aasignaturas.length.toString()}'),
+                      const Divider()
                     ],
                   ),
                   trailing: SizedBox(
@@ -90,8 +114,15 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => AsignaturasDocente(
-                                  asignaturas: aasignaturas,
-                                  docente: widget.docente),
+                                asignaturas: aasignaturas,
+                                grado: grado,
+                                nivel: nivel,
+                                numero: numero,
+                                docente: widget.docente,
+                                nombresDocente: widget.nombresDocente,
+                                asignacion: widget.asignacionDocente,
+                                periodo: widget.periodo,
+                              ),
                             ));
                       },
                     ),

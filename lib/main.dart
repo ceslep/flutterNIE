@@ -89,6 +89,9 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
   LocalStorage storage = LocalStorage('app.json');
   bool login = false;
   bool docente = false;
+  String nombresDocente = "";
+  String asignacionDocente = "";
+  String periodo = "";
   late String estud;
   bool iniciando = false;
   List<String> years = [];
@@ -148,8 +151,11 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       if (jsonResponse.containsKey('docente')) {
-        print({"docente"});
+        print({"docente": jsonResponse});
         docente = true;
+        nombresDocente = jsonResponse['nombres'];
+        asignacionDocente = jsonResponse['asignacion'];
+        periodo = jsonResponse['periodo'];
         return true;
       } else if (jsonResponse['acceso'] == 'si') {
         final urlInasistencias = Uri.parse('$urlbase/est/php/getInasist.php');
@@ -292,6 +298,9 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
               MaterialPageRoute(
                   builder: (context) => EntradaDocentes(
                         docente: usuarioController.text,
+                        nombresDocente: nombresDocente,
+                        asignacionDocente: asignacionDocente,
+                        periodo: periodo,
                       )));
         } else {
           Navigator.push(
