@@ -287,8 +287,12 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
       });
       if (acceso) {
         if (docente) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const EntradaDocentes()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EntradaDocentes(
+                        docente: usuarioController.text,
+                      )));
         } else {
           Navigator.push(
               context,
