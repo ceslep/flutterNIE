@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:com_celesoft_notasieo/key_value.dart';
+import 'package:com_celesoft_notasieo/widgets/notas_docente_individuales.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -5,11 +9,13 @@ class NotasDocente extends StatefulWidget {
   final List<Map<String, dynamic>> notas;
   final String asignatura;
   final String grado;
+  final String docente;
   const NotasDocente(
       {Key? key,
       required this.notas,
       required this.asignatura,
-      required this.grado})
+      required this.grado,
+      required this.docente})
       : super(key: key);
 
   @override
@@ -41,6 +47,16 @@ class _NotasDocenteState extends State<NotasDocente> {
                   }
                   String nombres = nota['Nombres'];
                   String valoracion = nota['Val'] ?? '';
+                  List<KeyValuePair> keyValuePairs = nota.entries
+                      .map((entry) => KeyValuePair(entry.key, entry.value))
+                      .toList();
+
+// Access key-value pairs
+                  for (var pair in keyValuePairs) {
+                    if (kDebugMode) {
+                      print('Key: ${pair.key}, Value: ${pair.value}');
+                    }
+                  }
                   double val =
                       double.parse(valoracion != '' ? valoracion : '0');
                   return Card(
@@ -84,8 +100,20 @@ class _NotasDocenteState extends State<NotasDocente> {
                                         MaterialStateProperty.all(Colors.blue),
                                     foregroundColor: MaterialStateProperty.all(
                                         Colors.white)),
-                                child: const Text('Notas'),
-                                onPressed: () {},
+                                child: const Icon(Icons.apps),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            NotasDocenteIndividuales(
+                                                keyValuePairs: keyValuePairs,
+                                                docente: widget.docente,
+                                                grado: widget.grado,
+                                                asignatura: widget.asignatura,
+                                                nombres: nombres),
+                                      ));
+                                },
                               ),
                               ElevatedButton(
                                 style: ButtonStyle(
@@ -93,7 +121,7 @@ class _NotasDocenteState extends State<NotasDocente> {
                                         Colors.yellow),
                                     foregroundColor: MaterialStateProperty.all(
                                         Colors.black)),
-                                child: const Text('Inasistencia'),
+                                child: const Icon(Icons.sick),
                                 onPressed: () {},
                               ),
                               ElevatedButton(
@@ -102,7 +130,7 @@ class _NotasDocenteState extends State<NotasDocente> {
                                         MaterialStateProperty.all(Colors.red),
                                     foregroundColor: MaterialStateProperty.all(
                                         Colors.white)),
-                                child: const Text('Convivencia'),
+                                child: const Icon(Icons.accessibility),
                                 onPressed: () {},
                               ),
                             ],
