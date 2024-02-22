@@ -1,3 +1,4 @@
+import 'package:com_celesoft_notasieo/widgets/notas_docente.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -54,7 +55,11 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
     aasignatura = "";
     setState(() {});
     if (response.statusCode == 200) {
-      return jsonDecode(response.body).cast<Map<String, dynamic>>();
+      notas = jsonDecode(response.body).cast<Map<String, dynamic>>();
+      notas.sort(
+        (a, b) => a['Nombres'].compareTo(b['Nombres']),
+      );
+      return notas;
     }
 
     return [];
@@ -97,8 +102,25 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
                               foregroundColor:
                                   MaterialStateProperty.all(Colors.white),
                             ),
-                            onPressed: () async {
-                              notas = await getNotas(asignatura);
+                            onPressed: () {
+                              getNotas(asignatura).then((value) {
+                                notas = value;
+                                if (kDebugMode) {
+                                  print(notas);
+                                }
+                                if (notas.isNotEmpty) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => NotasDocente(
+                                          notas: notas,
+                                          asignatura: asignatura,
+                                          grado: widget.grado,
+                                        ),
+                                      ));
+                                }
+                              });
+
                               if (kDebugMode) {
                                 print({"notas": notas});
                               }
