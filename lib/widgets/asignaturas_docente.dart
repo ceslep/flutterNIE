@@ -136,10 +136,10 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
 
                                 consultando &&
                                         aasignatura == widget.asignaturas[index]
-                                    ? const SpinKitCircle(
+                                    ? const SpinKitChasingDots(
                                         color: Colors
-                                            .white, // Color de la animación
-                                        size: 30.0,
+                                            .yellow, // Color de la animación
+                                        size: 15.0,
                                       )
                                     : const Icon(Icons.cloud_download), // )
                               ],

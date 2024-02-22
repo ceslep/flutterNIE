@@ -22,8 +22,8 @@ class _NotasDocenteState extends State<NotasDocente> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-            colorScheme:
-                ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent)),
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color.fromARGB(255, 221, 255, 182))),
         home: Scaffold(
             appBar: AppBar(
               title: Text('${widget.asignatura} ${widget.grado}'),
@@ -44,11 +44,23 @@ class _NotasDocenteState extends State<NotasDocente> {
                   double val =
                       double.parse(valoracion != '' ? valoracion : '0');
                   return Card(
-                    color: Colors.lightGreen.shade100,
+                    color: index % 2 == 0
+                        ? Colors.lightGreen.shade100
+                        : const Color.fromARGB(255, 209, 222, 194),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         children: <Widget>[
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              (index + 1).toString(),
+                              style: const TextStyle(
+                                  color: Colors.indigoAccent,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
                           Text(
                             nombres,
                             style: const TextStyle(
