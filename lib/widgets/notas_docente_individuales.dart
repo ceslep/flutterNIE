@@ -61,20 +61,35 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
     );
   }
 
-  void showNumberDialog(
-      BuildContext context, String title, String value, int indice) {
+  void showNumberDialog(BuildContext context, String title, String subtitle,
+      String value, int indice) {
     final TextEditingController controller = TextEditingController(text: value);
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(title),
+          title: Column(
+            children: [
+              Text(title),
+              Text(subtitle,
+                  style: const TextStyle(fontSize: 10, color: Colors.blue))
+            ],
+          ),
           content: TextField(
             keyboardType: TextInputType.number, // Tipo de teclado numérico
             controller: controller,
           ),
           actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, "-1");
+              },
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context, controller.text);
@@ -85,7 +100,10 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
         );
       },
     ).then((value) {
-      if ((value != null) && (value != "") && (value != " ")) {
+      if ((value != null) &&
+          (value != "") &&
+          (value != " ") &&
+          (value != "-1")) {
         double val = double.parse(value);
         if ((val > 5) || (val < 1)) {
           mostrarAlert(context, 'Error en la nota', 'Valor no permitido');
@@ -94,7 +112,10 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           widget.keyValuePairs[indice].value = value;
         }
       } else {
-        mostrarAlert(context, 'Error en el valor', 'No puede estar en blanco');
+        if (value != "-1") {
+          mostrarAlert(
+              context, 'Error en el valor', 'No puede estar en blanco');
+        }
       }
     });
   }
@@ -155,6 +176,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                           showNumberDialog(
                               context,
                               'Nota $numero',
+                              widget.keyValuePairs[indiceAnotacion].value ?? '',
                               widget.keyValuePairs[indiceNota].value ?? '',
                               indiceNota);
                         },
@@ -165,6 +187,12 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                 ),
               ));
             },
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              // Handle button press
+            },
+            child: const Icon(Icons.upload, color: Colors.lightGreenAccent),
           ),
         ));
   }
