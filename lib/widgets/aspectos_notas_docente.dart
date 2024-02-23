@@ -252,7 +252,9 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                                   date.toString().split(' ')[0];
                               aspectos[index].fecha =
                                   aspectos[index].fechaController.text;
-                              print(aspectos[index].fecha);
+                              if (kDebugMode) {
+                                print(aspectos[index].fecha);
+                              }
                               if (date != null) {
                                 setState(() {
                                   _selectedDate = date;
