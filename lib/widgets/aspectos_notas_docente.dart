@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 const String urlbase = 'https://app.iedeoccidente.com';
 
@@ -67,10 +68,15 @@ class AspectosNotasDocente extends StatefulWidget {
 class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
   List<Aspectos> aspectos = [];
   var _selectedDate = DateTime.now();
+  bool guardando = false;
+
+  late FToast fToast;
 
   @override
   void initState() {
     super.initState();
+    fToast = FToast();
+    fToast.init(context);
     for (int i = 0; i < 12; i++) {
       aspectos.add(Aspectos(
           widget.docente,
@@ -87,9 +93,42 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
     }
   }
 
+  _showToast() {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: Colors.greenAccent,
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check),
+          SizedBox(
+            width: 12.0,
+          ),
+          Text("Aspectos almacenados correctamente"),
+        ],
+      ),
+    );
+
+    fToast.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: const Duration(seconds: 3),
+    );
+  }
+
   Future<bool> guardarAspectos(json) async {
-    final url = Uri.parse('$urlbase/guardaAspectosIndividuales.php');
+    final url = Uri.parse('$urlbase/guardarAspectosIndividuales.php');
     final response = await http.post(url, body: json);
+    if (response.statusCode == 200) {
+      var result = jsonDecode(response.body);
+      if (kDebugMode) {
+        print(result['msg']);
+      }
+      return result['msg'] == 'exito';
+    }
     return false;
   }
 
@@ -108,7 +147,9 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
           ),
           actions: [
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                guardando = true;
+                setState(() {});
                 String json = '[';
                 for (var aspecto in aspectos) {
                   json += '${toJson(aspecto)},';
@@ -117,11 +158,21 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                     0, json.length - 1); // Eliminar la última coma
                 json += ']';
 
-                if (kDebugMode) {
-                  print(json);
+                if (await guardarAspectos(json)) {
+                  if (kDebugMode) {
+                    print("guardado");
+                  }
                 }
+                guardando = false;
+                setState(() {});
+                _showToast();
               },
-              child: const Icon(Icons.save, color: Colors.lightGreenAccent),
+              child: !guardando
+                  ? const Icon(Icons.save, color: Colors.lightGreenAccent)
+                  : const SpinKitCircle(
+                      color: Colors.white, // Color de la animación
+                      size: 30.0,
+                    ),
             ),
           ],
         ),

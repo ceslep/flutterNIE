@@ -24,6 +24,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const String urlbase = 'https://app.iedeoccidente.com';
 
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() {
   try {} catch (e) {
     print(e);
@@ -54,6 +56,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       home: EasySplashScreen(
         logo: Image.network('https://app.iedeoccidente.com/escudoNuevo2.png'),
