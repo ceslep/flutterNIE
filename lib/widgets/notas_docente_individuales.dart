@@ -135,6 +135,12 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
               icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context),
             ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {},
+                child: const Icon(Icons.save, color: Colors.lightGreenAccent),
+              ),
+            ],
           ),
           body: ListView.builder(
             itemCount: anotas.length,
@@ -187,12 +193,6 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                 ),
               ));
             },
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              // Handle button press
-            },
-            child: const Icon(Icons.upload, color: Colors.lightGreenAccent),
           ),
         ));
   }

@@ -117,6 +117,7 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
                                           asignatura: asignatura,
                                           grado: widget.grado,
                                           docente: widget.docente,
+                                          periodo: widget.periodo,
                                         ),
                                       ));
                                 }
