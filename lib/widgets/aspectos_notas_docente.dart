@@ -1,3 +1,4 @@
+import 'package:com_celesoft_notasieo/modelo_aspectos.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -53,12 +54,14 @@ class AspectosNotasDocente extends StatefulWidget {
   final String grado;
   final String asignatura;
   final String periodo;
+  final String year;
   const AspectosNotasDocente(
       {Key? key,
       required this.docente,
       required this.grado,
       required this.asignatura,
-      required this.periodo})
+      required this.periodo,
+      required this.year})
       : super(key: key);
 
   @override
@@ -69,12 +72,39 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
   List<Aspectos> aspectos = [];
   var _selectedDate = DateTime.now();
   bool guardando = false;
-
+  List<MAspectos> maspectos = [];
   late FToast fToast;
+
+  Future<List<Aspectos>> obtenerAspectos() async {
+    List<Aspectos> resultAspectos = [];
+    final url = Uri.parse('$urlbase/obtenerAspectosIndividuales.php');
+    final bodyAspectos = json.encode({
+      'docente': widget.docente,
+      'asignatura': widget.asignatura,
+      'periodo': widget.periodo,
+      'year': widget.year
+    });
+    final response = await http.post(url, body: bodyAspectos);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as List<Map<String, dynamic>>;
+      print(data);
+      resultAspectos = data.map((item) => item as Aspectos).toList();
+      print(resultAspectos);
+    } else {
+      print(response.statusCode);
+    }
+    return resultAspectos;
+  }
 
   @override
   void initState() {
     super.initState();
+    obtenerAspectos().then(
+      (value) {
+        print({value});
+        maspectos = value.cast<MAspectos>();
+      },
+    );
     fToast = FToast();
     fToast.init(context);
     for (int i = 0; i < 12; i++) {
@@ -138,7 +168,10 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.amberAccent,
-        title: const Text("Configuración de aspectos"),
+        title: const Text("Configuración de aspectos",
+            style: TextStyle(
+              fontSize: 14,
+            )),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),

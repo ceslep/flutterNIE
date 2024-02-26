@@ -304,6 +304,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
                 nombresDocente: nombresDocente,
                 asignacionDocente: asignacionDocente,
                 periodo: periodo,
+                year: yearProvider.year,
               ),
             ),
           );

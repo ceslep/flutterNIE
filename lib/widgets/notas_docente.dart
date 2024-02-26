@@ -10,6 +10,7 @@ class NotasDocente extends StatefulWidget {
   final String grado;
   final String docente;
   final String periodo;
+  final String year;
   const NotasDocente({
     Key? key,
     required this.notas,
@@ -17,6 +18,7 @@ class NotasDocente extends StatefulWidget {
     required this.grado,
     required this.docente,
     required this.periodo,
+    required this.year,
   }) : super(key: key);
 
   @override
@@ -48,6 +50,7 @@ class _NotasDocenteState extends State<NotasDocente> {
                       grado: widget.grado,
                       asignatura: widget.asignatura,
                       periodo: widget.periodo,
+                      year: widget.year,
                     ),
                   ));
             },

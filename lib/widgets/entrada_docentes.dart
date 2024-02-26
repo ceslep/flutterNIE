@@ -12,12 +12,14 @@ class EntradaDocentes extends StatefulWidget {
   final String nombresDocente;
   final String asignacionDocente;
   final String periodo;
+  final String year;
   const EntradaDocentes(
       {Key? key,
       required this.docente,
       required this.nombresDocente,
       required this.asignacionDocente,
-      required this.periodo})
+      required this.periodo,
+      required this.year})
       : super(key: key);
 
   @override
@@ -122,15 +124,15 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => AsignaturasDocente(
-                                asignaturas: aasignaturas,
-                                grado: grado,
-                                nivel: nivel,
-                                numero: numero,
-                                docente: widget.docente,
-                                nombresDocente: widget.nombresDocente,
-                                asignacion: widget.asignacionDocente,
-                                periodo: widget.periodo,
-                              ),
+                                  asignaturas: aasignaturas,
+                                  grado: grado,
+                                  nivel: nivel,
+                                  numero: numero,
+                                  docente: widget.docente,
+                                  nombresDocente: widget.nombresDocente,
+                                  asignacion: widget.asignacionDocente,
+                                  periodo: widget.periodo,
+                                  year: widget.year),
                             ),
                           );
                           print({"resulti": result});
