@@ -109,35 +109,41 @@ class _LoginState extends State<Login> {
           width: double.infinity,
           padding:
               const EdgeInsets.only(left: 30, right: 30, top: 0, bottom: 20),
-          child: DropdownButton<String>(
-            // Valor inicial seleccionado
-            value: currentYear,
-            // Función que se ejecuta cuando se selecciona un elemento
-            onChanged: (newValue) {
-              // Aquí puedes manejar la lógica cuando se selecciona un elemento
-              print('Seleccionado: $newValue');
-              currentYear = newValue!;
-              yearProvider.setYear(currentYear);
-              print({"yearProvider": yearProvider.year});
-              setState(() {});
-              //
-            },
-            // Lista de elementos desplegables
-            items: widget.years.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
+          child: widget.years.isNotEmpty
+              ? DropdownButton<String>(
+                  // Valor inicial seleccionado
+                  value: currentYear,
+                  // Función que se ejecuta cuando se selecciona un elemento
+                  onChanged: (newValue) {
+                    // Aquí puedes manejar la lógica cuando se selecciona un elemento
+                    print('Seleccionado: $newValue');
+                    currentYear = newValue!;
+                    yearProvider.setYear(currentYear);
+                    print({"yearProvider": yearProvider.year});
+                    setState(() {});
+                    //
+                  },
+                  // Lista de elementos desplegables
+                  items: widget.years
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                )
+              : const SpinKitCircle(
+                  color: Colors.black,
+                  size: 15,
+                ),
         ),
-        botones(widget.onIngresar, widget.login)
+        botones(widget.onIngresar, widget.login, widget.years.isNotEmpty)
       ],
     );
   }
 }
 
-Widget botones(VoidCallback onIngresar, bool login) {
+Widget botones(VoidCallback onIngresar, bool login, enabled) {
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
     // Botón Registrarse
     ElevatedButton(
@@ -159,10 +165,11 @@ Widget botones(VoidCallback onIngresar, bool login) {
         backgroundColor: MaterialStateProperty.all(Colors.greenAccent),
         foregroundColor: MaterialStateProperty.all(Colors.black),
       ),
-      onPressed: onIngresar,
+      onPressed: enabled ? onIngresar : null,
       child: Row(mainAxisSize: MainAxisSize.min, children: [
-        const Text("Ingresar"),
-        const Icon(Icons.login),
+        Text("Ingresar",
+            style: TextStyle(color: enabled ? Colors.black : Colors.grey)),
+        Icon(Icons.login, color: enabled ? Colors.black : Colors.grey),
         login
             ? const SpinKitCircle(
                 color: Colors.blue, // Color de la animación

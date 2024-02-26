@@ -40,7 +40,7 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
     aasignatura = asignatura;
     setState(() {});
     const String urlbase = 'https://app.iedeoccidente.com';
-
+    print({"asignatura": asignatura});
     final url = Uri.parse('$urlbase/getNotas.php');
     final bodyData = json.encode({
       'docente': widget.docente,
@@ -50,17 +50,35 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
       'asignatura': asignatura,
       'periodo': widget.periodo
     });
+    print({"bodyData", bodyData});
+    try {
+      final response = await http.post(url, body: bodyData);
 
-    final response = await http.post(url, body: bodyData);
-    consultando = false;
-    aasignatura = "";
-    setState(() {});
-    if (response.statusCode == 200) {
-      notas = jsonDecode(response.body).cast<Map<String, dynamic>>();
-      notas.sort(
-        (a, b) => a['Nombres'].compareTo(b['Nombres']),
-      );
-      return notas;
+      print(response.statusCode);
+      consultando = false;
+      aasignatura = "";
+      setState(() {});
+      if (response.statusCode == 200) {
+        notas = jsonDecode(response.body).cast<Map<String, dynamic>>();
+        notas.sort(
+          (a, b) => a['Nombres'].compareTo(b['Nombres']),
+        );
+        return notas;
+      }
+    } catch (e) {
+      AlertDialog(
+          title: const Text("Hay un error al obtener los datos"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                'Aceptar',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ]);
     }
 
     return [];
@@ -76,11 +94,13 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
               Text(widget.nombresDocente, style: const TextStyle(fontSize: 14)),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(
+              context,
+            ),
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context, false),
+              onPressed: () => Navigator.pop(context, {"data": "home"}),
               child: const Icon(Icons.home, color: Colors.lightGreenAccent),
             ),
           ],
@@ -108,23 +128,29 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
                               MaterialStateProperty.all(Colors.white),
                         ),
                         onPressed: () {
-                          getNotas(asignatura).then((value) {
+                          getNotas(asignatura).then((value) async {
                             notas = value;
                             if (kDebugMode) {
                               print(notas);
                             }
                             if (notas.isNotEmpty) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => NotasDocente(
-                                      notas: notas,
-                                      asignatura: asignatura,
-                                      grado: widget.grado,
-                                      docente: widget.docente,
-                                      periodo: widget.periodo,
-                                    ),
-                                  ));
+                              var result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NotasDocente(
+                                    notas: notas,
+                                    asignatura: asignatura,
+                                    grado: widget.grado,
+                                    docente: widget.docente,
+                                    periodo: widget.periodo,
+                                  ),
+                                ),
+                              );
+                              print(result['dataND']);
+                              if (result['dataND'] == "home") {
+                                // ignore: use_build_context_synchronously
+                                Navigator.pop(context, {"data": "home"});
+                              }
                             }
                           });
 

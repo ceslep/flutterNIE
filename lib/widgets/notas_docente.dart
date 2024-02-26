@@ -33,7 +33,9 @@ class _NotasDocenteState extends State<NotasDocente> {
             style: const TextStyle(fontSize: 12)),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context, {"dataND": "home"});
+            },
             child: const Icon(Icons.home, color: Colors.brown),
           ),
           TextButton(
@@ -58,7 +60,7 @@ class _NotasDocenteState extends State<NotasDocente> {
         ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, {"dataND": "previous"}),
         ),
       ),
       body: ListView.builder(
@@ -122,8 +124,8 @@ class _NotasDocenteState extends State<NotasDocente> {
                               foregroundColor:
                                   MaterialStateProperty.all(Colors.white)),
                           child: const Icon(Icons.apps),
-                          onPressed: () {
-                            Navigator.push(
+                          onPressed: () async {
+                            var result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
@@ -134,6 +136,11 @@ class _NotasDocenteState extends State<NotasDocente> {
                                           asignatura: widget.asignatura,
                                           nombres: nombres),
                                 ));
+                            print(result["dataNDI"]);
+                            if (result["dataNDI"] == "home") {
+                              // ignore: use_build_context_synchronously
+                              Navigator.pop(context, {"dataND": "home"});
+                            }
                           },
                         ),
                         ElevatedButton(

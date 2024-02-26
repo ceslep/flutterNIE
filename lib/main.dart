@@ -100,9 +100,9 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
   List<String> years = [];
   //variables de estado
   TextEditingController usuarioController =
-      TextEditingController(text: '10288864');
+      TextEditingController(text: '1033789444');
   TextEditingController passwordController =
-      TextEditingController(text: 'hjbalzate');
+      TextEditingController(text: '1033789444*.*');
   TextEditingController yearController = TextEditingController();
   String theYear = DateTime.now().year.toString();
 
@@ -297,14 +297,16 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
       if (acceso) {
         if (docente) {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => EntradaDocentes(
-                        docente: usuarioController.text,
-                        nombresDocente: nombresDocente,
-                        asignacionDocente: asignacionDocente,
-                        periodo: periodo,
-                      )));
+            context,
+            MaterialPageRoute(
+              builder: (context) => EntradaDocentes(
+                docente: usuarioController.text,
+                nombresDocente: nombresDocente,
+                asignacionDocente: asignacionDocente,
+                periodo: periodo,
+              ),
+            ),
+          );
         } else {
           Navigator.push(
               context,

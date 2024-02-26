@@ -130,9 +130,15 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
         title: Text(widget.nombres, style: const TextStyle(fontSize: 12)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, {"dataNDI", "previous"}),
         ),
         actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, {"dataNDI": "home"});
+            },
+            child: const Icon(Icons.home, color: Colors.white),
+          ),
           TextButton(
             onPressed: () {},
             child: const Icon(Icons.save, color: Colors.black87),
@@ -154,17 +160,20 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
               .indexWhere((element) => element.key == 'N$numero');
           int indiceAnotacion = widget.keyValuePairs
               .indexWhere((element) => element.key == 'aspecto$numero');
+          String strNota = widget.keyValuePairs[indiceNota].value.trim();
+          double laNota = double.parse(strNota != "" ? strNota : "0");
           return Card(
               child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 10),
             title: Text('Nota $numero'),
             subtitle: Row(
               children: [
-                Text(widget.keyValuePairs[indiceAnotacion].value ?? '',
-                    style: const TextStyle(color: Colors.green)),
-                Text(widget.keyValuePairs[indiceNota].value ?? '',
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
-                const Spacer(flex: 1), // Add Spacer to fill remaining space
+                SizedBox(
+                  width: 0.65 * MediaQuery.of(context).size.width,
+                  child: Text(widget.keyValuePairs[indiceAnotacion].value ?? '',
+                      style: const TextStyle(color: Colors.green)),
+                ),
+                const SizedBox(width: 27), // Add Spacer to fill remaining space
                 SizedBox(
                   height: 40,
                   width: 55,
@@ -183,7 +192,10 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                           widget.keyValuePairs[indiceNota].value ?? '',
                           indiceNota);
                     },
-                    child: const Icon(Icons.edit_note_outlined, size: 30),
+                    child: Text(laNota != 0 ? laNota.toString() : '',
+                        style: TextStyle(
+                            color: laNota < 3 ? Colors.red : Colors.black,
+                            fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

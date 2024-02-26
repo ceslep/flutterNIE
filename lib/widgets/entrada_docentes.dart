@@ -1,6 +1,7 @@
 import 'package:com_celesoft_notasieo/widgets/asignaturas_docente.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -25,7 +26,7 @@ class EntradaDocentes extends StatefulWidget {
 
 class _EntradaDocentesState extends State<EntradaDocentes> {
   List<Map<String, dynamic>> jsonData = [];
-
+  bool cargado = false;
   Future<List<Map<String, dynamic>>> obtenerDatos() async {
     if (kDebugMode) {
       print({"docente": widget.docente});
@@ -42,11 +43,13 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
   @override
   void initState() {
     super.initState();
+    cargado = false;
     obtenerDatos().then((datos) {
       jsonData = datos;
       if (kDebugMode) {
         print({"data": jsonData});
       }
+      cargado = true;
       setState(() => {});
     });
   }
@@ -67,66 +70,82 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
       ),
       body: Container(
         padding: const EdgeInsets.all(6),
-        child: ListView.builder(
-          itemCount: jsonData.length,
-          itemBuilder: (context, index) {
-            String grado = jsonData[index]['grado'];
-            List<dynamic> asignaturas = jsonData[index]['asignaturas'];
-            List<String> aasignaturas = [];
-            aasignaturas =
-                asignaturas.map((e) => e['asignatura'].toString()).toList();
-            String nivel = jsonData[index]['nivel'];
-            String numero = jsonData[index]['numero'];
-            if (kDebugMode) {
-              print(aasignaturas);
-            }
-            return ListTile(
-              title: Row(
-                children: [
-                  Text(
-                    'Grado: $grado',
-                    style: const TextStyle(
-                        color: Colors.blue, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Asignaturas ${aasignaturas.length.toString()}'),
-                  const Divider()
-                ],
-              ),
-              trailing: SizedBox(
-                width: 40,
-                height: 40,
-                child: GestureDetector(
-                  child: const Icon(
-                    Icons.arrow_circle_right,
-                    color: Colors.amberAccent,
-                    size: 38,
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AsignaturasDocente(
-                            asignaturas: aasignaturas,
-                            grado: grado,
-                            nivel: nivel,
-                            numero: numero,
-                            docente: widget.docente,
-                            nombresDocente: widget.nombresDocente,
-                            asignacion: widget.asignacionDocente,
-                            periodo: widget.periodo,
-                          ),
-                        ));
-                  },
+        child: !cargado
+            ? const Center(
+                child: SpinKitCubeGrid(
+                  color: Colors.blue,
+                  size: 40,
                 ),
+              )
+            : ListView.builder(
+                itemCount: jsonData.length,
+                itemBuilder: (context, index) {
+                  String grado = jsonData[index]['grado'];
+                  List<dynamic> asignaturas = jsonData[index]['asignaturas'];
+                  List<String> aasignaturas = [];
+                  aasignaturas = asignaturas
+                      .map((e) => e['asignatura'].toString())
+                      .toList();
+                  String nivel = jsonData[index]['nivel'];
+                  String numero = jsonData[index]['numero'];
+                  if (kDebugMode) {
+                    print(aasignaturas);
+                  }
+                  return ListTile(
+                    title: Row(
+                      children: [
+                        Text(
+                          'Grado: $grado',
+                          style: const TextStyle(
+                              color: Colors.blue, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Asignaturas ${aasignaturas.length.toString()}'),
+                        const Divider()
+                      ],
+                    ),
+                    trailing: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: GestureDetector(
+                        child: const Icon(
+                          Icons.arrow_circle_right,
+                          color: Colors.amberAccent,
+                          size: 38,
+                        ),
+                        onTap: () async {
+                          var result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AsignaturasDocente(
+                                asignaturas: aasignaturas,
+                                grado: grado,
+                                nivel: nivel,
+                                numero: numero,
+                                docente: widget.docente,
+                                nombresDocente: widget.nombresDocente,
+                                asignacion: widget.asignacionDocente,
+                                periodo: widget.periodo,
+                              ),
+                            ),
+                          );
+                          print({"resulti": result});
+                          // ignore: use_build_context_synchronously
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('No hay nada para retroceder.'),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
       ),
     );
   }
