@@ -130,7 +130,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
         title: Text(widget.nombres, style: const TextStyle(fontSize: 12)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context, {"dataNDI", "previous"}),
+          onPressed: () => Navigator.pop(context, {"dataNDI": "previous"}),
         ),
         actions: [
           TextButton(

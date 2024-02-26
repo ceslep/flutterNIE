@@ -136,7 +136,7 @@ class _NotasDocenteState extends State<NotasDocente> {
                                           asignatura: widget.asignatura,
                                           nombres: nombres),
                                 ));
-                            print(result["dataNDI"]);
+                            print(result);
                             if (result["dataNDI"] == "home") {
                               // ignore: use_build_context_synchronously
                               Navigator.pop(context, {"dataND": "home"});
