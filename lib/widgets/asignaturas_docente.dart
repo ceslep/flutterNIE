@@ -14,6 +14,7 @@ class AsignaturasDocente extends StatefulWidget {
   final String nombresDocente;
   final String asignacion;
   final String periodo;
+
   const AsignaturasDocente(
       {Key? key,
       required this.asignaturas,
@@ -67,89 +68,93 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.amberAccent)),
-        home: Scaffold(
-            appBar: AppBar(
-              title: Text(widget.nombresDocente,
-                  style: const TextStyle(fontSize: 14)),
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.pop(context),
-              ),
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.green,
+          foregroundColor: Colors.white,
+          title:
+              Text(widget.nombresDocente, style: const TextStyle(fontSize: 14)),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Icon(Icons.home, color: Colors.lightGreenAccent),
             ),
-            body: ListView.builder(
-                itemCount: widget.asignaturas.length,
-                itemBuilder: (context, index) {
-                  String asignatura = widget.asignaturas[index];
-                  return ListTile(
-                    title: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text(
-                            widget.asignaturas[index],
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        const Spacer(),
-                        ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.green),
-                              foregroundColor:
-                                  MaterialStateProperty.all(Colors.white),
-                            ),
-                            onPressed: () {
-                              getNotas(asignatura).then((value) {
-                                notas = value;
-                                if (kDebugMode) {
-                                  print(notas);
-                                }
-                                if (notas.isNotEmpty) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => NotasDocente(
-                                          notas: notas,
-                                          asignatura: asignatura,
-                                          grado: widget.grado,
-                                          docente: widget.docente,
-                                          periodo: widget.periodo,
-                                        ),
-                                      ));
-                                }
-                              });
-
-                              if (kDebugMode) {
-                                print({"notas": notas});
-                              }
-                            },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(widget.grado),
-                                const Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: Text(''),
-                                ),
-
-                                consultando &&
-                                        aasignatura == widget.asignaturas[index]
-                                    ? const SpinKitChasingDots(
-                                        color: Colors
-                                            .yellow, // Color de la animación
-                                        size: 15.0,
-                                      )
-                                    : const Icon(Icons.cloud_download), // )
-                              ],
-                            ))
-                      ],
+          ],
+        ),
+        body: ListView.builder(
+            itemCount: widget.asignaturas.length,
+            itemBuilder: (context, index) {
+              String asignatura = widget.asignaturas[index];
+              return ListTile(
+                title: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        widget.asignaturas[index],
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    subtitle: const Divider(),
-                  );
-                })));
+                    const Spacer(),
+                    ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.green),
+                          foregroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                        ),
+                        onPressed: () {
+                          getNotas(asignatura).then((value) {
+                            notas = value;
+                            if (kDebugMode) {
+                              print(notas);
+                            }
+                            if (notas.isNotEmpty) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => NotasDocente(
+                                      notas: notas,
+                                      asignatura: asignatura,
+                                      grado: widget.grado,
+                                      docente: widget.docente,
+                                      periodo: widget.periodo,
+                                    ),
+                                  ));
+                            }
+                          });
+
+                          if (kDebugMode) {
+                            print({"notas": notas});
+                          }
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(widget.grado),
+                            const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Text(''),
+                            ),
+
+                            consultando &&
+                                    aasignatura == widget.asignaturas[index]
+                                ? const SpinKitChasingDots(
+                                    color:
+                                        Colors.yellow, // Color de la animación
+                                    size: 15.0,
+                                  )
+                                : const Icon(Icons.cloud_download), // )
+                          ],
+                        ))
+                  ],
+                ),
+                subtitle: const Divider(),
+              );
+            }));
   }
 }

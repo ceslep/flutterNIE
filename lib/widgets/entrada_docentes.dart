@@ -53,84 +53,81 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue)),
-        home: Scaffold(
-          appBar: AppBar(
-            title: Text(
-              widget.nombresDocente,
-              style: const TextStyle(fontSize: 14),
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-          body: Container(
-            padding: const EdgeInsets.all(6),
-            child: ListView.builder(
-              itemCount: jsonData.length,
-              itemBuilder: (context, index) {
-                String grado = jsonData[index]['grado'];
-                List<dynamic> asignaturas = jsonData[index]['asignaturas'];
-                List<String> aasignaturas = [];
-                aasignaturas =
-                    asignaturas.map((e) => e['asignatura'].toString()).toList();
-                String nivel = jsonData[index]['nivel'];
-                String numero = jsonData[index]['numero'];
-                if (kDebugMode) {
-                  print(aasignaturas);
-                }
-                return ListTile(
-                  title: Row(
-                    children: [
-                      Text(
-                        'Grado: $grado',
-                        style: const TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.bold),
-                      ),
-                    ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        title: Text(
+          widget.nombresDocente,
+          style: const TextStyle(fontSize: 14),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Container(
+        padding: const EdgeInsets.all(6),
+        child: ListView.builder(
+          itemCount: jsonData.length,
+          itemBuilder: (context, index) {
+            String grado = jsonData[index]['grado'];
+            List<dynamic> asignaturas = jsonData[index]['asignaturas'];
+            List<String> aasignaturas = [];
+            aasignaturas =
+                asignaturas.map((e) => e['asignatura'].toString()).toList();
+            String nivel = jsonData[index]['nivel'];
+            String numero = jsonData[index]['numero'];
+            if (kDebugMode) {
+              print(aasignaturas);
+            }
+            return ListTile(
+              title: Row(
+                children: [
+                  Text(
+                    'Grado: $grado',
+                    style: const TextStyle(
+                        color: Colors.blue, fontWeight: FontWeight.bold),
                   ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Asignaturas ${aasignaturas.length.toString()}'),
-                      const Divider()
-                    ],
+                ],
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Asignaturas ${aasignaturas.length.toString()}'),
+                  const Divider()
+                ],
+              ),
+              trailing: SizedBox(
+                width: 40,
+                height: 40,
+                child: GestureDetector(
+                  child: const Icon(
+                    Icons.arrow_circle_right,
+                    color: Colors.amberAccent,
+                    size: 38,
                   ),
-                  trailing: SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: GestureDetector(
-                      child: const Icon(
-                        Icons.arrow_circle_right,
-                        color: Colors.amberAccent,
-                        size: 38,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AsignaturasDocente(
-                                asignaturas: aasignaturas,
-                                grado: grado,
-                                nivel: nivel,
-                                numero: numero,
-                                docente: widget.docente,
-                                nombresDocente: widget.nombresDocente,
-                                asignacion: widget.asignacionDocente,
-                                periodo: widget.periodo,
-                              ),
-                            ));
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ));
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AsignaturasDocente(
+                            asignaturas: aasignaturas,
+                            grado: grado,
+                            nivel: nivel,
+                            numero: numero,
+                            docente: widget.docente,
+                            nombresDocente: widget.nombresDocente,
+                            asignacion: widget.asignacionDocente,
+                            periodo: widget.periodo,
+                          ),
+                        ));
+                  },
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 }

@@ -134,82 +134,97 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlueAccent)),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Configuración de aspectos"),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () async {
-                guardando = true;
-                setState(() {});
-                String json = '[';
-                for (var aspecto in aspectos) {
-                  json += '${toJson(aspecto)},';
-                }
-                json = json.substring(
-                    0, json.length - 1); // Eliminar la última coma
-                json += ']';
-
-                if (await guardarAspectos(json)) {
-                  if (kDebugMode) {
-                    print("guardado");
-                  }
-                }
-                guardando = false;
-                setState(() {});
-                _showToast();
-              },
-              child: !guardando
-                  ? const Icon(Icons.save, color: Colors.lightGreenAccent)
-                  : const SpinKitCircle(
-                      color: Colors.white, // Color de la animación
-                      size: 30.0,
-                    ),
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.amberAccent,
+        title: const Text("Configuración de aspectos"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
-        body: ListView.builder(
-          itemCount: aspectos.length,
-          itemBuilder: (context, index) {
-            return ExpansionTile(
-              title: Text('Aspecto ${index + 1}'),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: TextField(
-                    onChanged: (value) {
-                      aspectos[index].aspecto =
-                          aspectos[index].aspectoController.text;
-                      aspectos[index].nota = (index + 1).toString();
-                      if (kDebugMode) {
-                        print({'oc': value});
-                        print({"aspecto": aspectos[index].aspecto});
-                      }
-                    },
-                    controller: aspectos[index].aspectoController,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      labelText: "Descripción del Aspecto ${index + 1}",
-                    ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              guardando = true;
+              setState(() {});
+              String json = '[';
+              for (var aspecto in aspectos) {
+                json += '${toJson(aspecto)},';
+              }
+              json =
+                  json.substring(0, json.length - 1); // Eliminar la última coma
+              json += ']';
+
+              if (await guardarAspectos(json)) {
+                if (kDebugMode) {
+                  print("guardado");
+                }
+              }
+              guardando = false;
+              setState(() {});
+              _showToast();
+            },
+            child: !guardando
+                ? const Icon(Icons.save, color: Colors.amberAccent)
+                : const SpinKitCircle(
+                    color: Colors.white, // Color de la animación
+                    size: 30.0,
+                  ),
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: aspectos.length,
+        itemBuilder: (context, index) {
+          return ExpansionTile(
+            title: Text('Aspecto ${index + 1}'),
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: TextField(
+                  onChanged: (value) {
+                    aspectos[index].aspecto =
+                        aspectos[index].aspectoController.text;
+                    aspectos[index].nota = (index + 1).toString();
+                    if (kDebugMode) {
+                      print({'oc': value});
+                      print({"aspecto": aspectos[index].aspecto});
+                    }
+                  },
+                  controller: aspectos[index].aspectoController,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    labelText: "Descripción del Aspecto ${index + 1}",
                   ),
                 ),
-                Padding(
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: TextField(
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter
+                        .digitsOnly, // Permite solo números
+                  ],
+                  onChanged: (value) {
+                    if (kDebugMode) {
+                      aspectos[index].porcentaje =
+                          aspectos[index].porcentajeController.text;
+                      print({'oc': value});
+                      print({"porcentaje": aspectos[index].porcentaje});
+                    }
+                  },
+                  controller: aspectos[index].porcentajeController,
+                  decoration: InputDecoration(
+                    labelText: "Porcentaje del Aspecto ${index + 1}",
+                  ),
+                ),
+              ),
+              Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   child: TextField(
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter
-                          .digitsOnly, // Permite solo números
-                    ],
                     onChanged: (value) {
                       if (kDebugMode) {
                         aspectos[index].porcentaje =
@@ -218,57 +233,39 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                         print({"porcentaje": aspectos[index].porcentaje});
                       }
                     },
-                    controller: aspectos[index].porcentajeController,
+                    readOnly: true,
+                    controller: aspectos[index].fechaController,
                     decoration: InputDecoration(
-                      labelText: "Porcentaje del Aspecto ${index + 1}",
-                    ),
-                  ),
-                ),
-                Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    child: TextField(
-                      onChanged: (value) {
-                        if (kDebugMode) {
-                          aspectos[index].porcentaje =
-                              aspectos[index].porcentajeController.text;
-                          print({'oc': value});
-                          print({"porcentaje": aspectos[index].porcentaje});
-                        }
-                      },
-                      readOnly: true,
-                      controller: aspectos[index].fechaController,
-                      decoration: InputDecoration(
-                        labelText: 'Fecha del aspecto ${index + 1}',
-                        icon: IconButton(
-                          icon: const Icon(Icons.calendar_today),
-                          onPressed: () {
-                            showDatePicker(
-                              context: context,
-                              initialDate: _selectedDate,
-                              firstDate: DateTime(2023, 1, 1),
-                              lastDate: DateTime(2024, 12, 31),
-                            ).then((date) {
-                              aspectos[index].fechaController.text =
-                                  date.toString().split(' ')[0];
-                              aspectos[index].fecha =
-                                  aspectos[index].fechaController.text;
-                              if (kDebugMode) {
-                                print(aspectos[index].fecha);
-                              }
-                              if (date != null) {
-                                setState(() {
-                                  _selectedDate = date;
-                                });
-                              }
-                            });
-                          },
-                        ),
+                      labelText: 'Fecha del aspecto ${index + 1}',
+                      icon: IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: () {
+                          showDatePicker(
+                            context: context,
+                            initialDate: _selectedDate,
+                            firstDate: DateTime(2023, 1, 1),
+                            lastDate: DateTime(2024, 12, 31),
+                          ).then((date) {
+                            aspectos[index].fechaController.text =
+                                date.toString().split(' ')[0];
+                            aspectos[index].fecha =
+                                aspectos[index].fechaController.text;
+                            if (kDebugMode) {
+                              print(aspectos[index].fecha);
+                            }
+                            if (date != null) {
+                              setState(() {
+                                _selectedDate = date;
+                              });
+                            }
+                          });
+                        },
                       ),
-                    ))
-              ],
-            );
-          },
-        ),
+                    ),
+                  ))
+            ],
+          );
+        },
       ),
     );
   }
