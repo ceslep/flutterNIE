@@ -76,7 +76,6 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
   late FToast fToast;
 
   Future<List<Map<String, dynamic>>> obtenerAspectos() async {
-    List<MAspectos> resultAspectos = [];
     final url = Uri.parse('$urlbase/obtenerAspectosIndividuales.php');
     final bodyAspectos = json.encode({
       'docente': widget.docente,
@@ -172,6 +171,11 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
           aspectos[indiceAspecto].porcentajeController.text =
               maspecto.porcentaje;
           aspectos[indiceAspecto].fechaController.text = maspecto.fecha;
+          if (mounted) {
+            setState(() {
+              // State update code here
+            });
+          }
         }
       },
     );
@@ -179,10 +183,32 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.amberAccent,
-        title: const Text("Configuración de aspectos",
-            style: TextStyle(
-              fontSize: 14,
-            )),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Configuración de aspectos",
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
+            Row(
+              children: [
+                Text(
+                  widget.asignatura,
+                  style: const TextStyle(fontSize: 12),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  widget.grado,
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -221,11 +247,25 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
       body: ListView.builder(
         itemCount: aspectos.length,
         itemBuilder: (context, index) {
+          bool boldAspecto = aspectos[index].aspectoController.text != "";
           return ExpansionTile(
-            title: Text('Aspecto ${index + 1}'),
+            title: Row(
+              children: [
+                Text('Aspecto ${index + 1}',
+                    style: TextStyle(
+                        fontWeight:
+                            boldAspecto ? FontWeight.bold : FontWeight.normal)),
+                boldAspecto
+                    ? const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                      )
+                    : const SizedBox()
+              ],
+            ),
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.only(top: 5, left: 20, right: 20),
                 child: TextField(
                   onChanged: (value) {
                     aspectos[index].aspecto =
@@ -237,10 +277,15 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                     }
                   },
                   controller: aspectos[index].aspectoController,
-                  maxLines: 4,
+                  maxLines: 3,
+                  style: TextStyle(
+                      color: boldAspecto ? Colors.blue : Colors.black),
                   decoration: InputDecoration(
-                    labelText: "Descripción del Aspecto ${index + 1}",
-                  ),
+                      fillColor:
+                          boldAspecto ? Colors.lightBlue.shade50 : Colors.white,
+                      filled: true,
+                      labelText: "Descripción del Aspecto ${index + 1}",
+                      border: const OutlineInputBorder()),
                 ),
               ),
               Padding(
@@ -287,8 +332,8 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                           showDatePicker(
                             context: context,
                             initialDate: _selectedDate,
-                            firstDate: DateTime(2023, 1, 1),
-                            lastDate: DateTime(2024, 12, 31),
+                            firstDate: DateTime(2024, 1, 1),
+                            lastDate: DateTime(2099, 12, 31),
                           ).then((date) {
                             aspectos[index].fechaController.text =
                                 date.toString().split(' ')[0];

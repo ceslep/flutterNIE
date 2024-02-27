@@ -63,10 +63,17 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
         backgroundColor: Colors.blue,
         title: Text(
           widget.nombresDocente,
-          style: const TextStyle(fontSize: 14),
+          style: const TextStyle(
+            fontSize: 14,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -101,6 +108,41 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
                           style: const TextStyle(
                               color: Colors.blue, fontWeight: FontWeight.bold),
                         ),
+                        const Spacer(flex: 2),
+                        SizedBox(
+                          width: 45,
+                          height: 45,
+                          child: GestureDetector(
+                            child: const Icon(Icons.arrow_circle_right,
+                                size: 50, color: Colors.amber),
+                            onTap: () async {
+                              var result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AsignaturasDocente(
+                                      asignaturas: aasignaturas,
+                                      grado: grado,
+                                      nivel: nivel,
+                                      numero: numero,
+                                      docente: widget.docente,
+                                      nombresDocente: widget.nombresDocente,
+                                      asignacion: widget.asignacionDocente,
+                                      periodo: widget.periodo,
+                                      year: widget.year),
+                                ),
+                              );
+                              if (kDebugMode) {
+                                print({"resulti": result});
+                              }
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('No hay nada para retroceder.'),
+                                ),
+                              );
+                            },
+                          ),
+                        )
                       ],
                     ),
                     subtitle: Column(
@@ -110,14 +152,15 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
                         const Divider()
                       ],
                     ),
-                    trailing: SizedBox(
+                    /* trailing: SizedBox(
+                      
                       width: 40,
                       height: 40,
                       child: GestureDetector(
                         child: const Icon(
                           Icons.arrow_circle_right,
                           color: Colors.amberAccent,
-                          size: 38,
+                          size: 50,
                         ),
                         onTap: () async {
                           var result = await Navigator.push(
@@ -144,7 +187,7 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
                           );
                         },
                       ),
-                    ),
+                    ), */
                   );
                 },
               ),
