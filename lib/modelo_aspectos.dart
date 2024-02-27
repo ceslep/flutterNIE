@@ -15,11 +15,11 @@ class MAspectos {
   String periodo;
   String asignatura;
   String aspecto;
-  dynamic porcentaje;
-  DateTime fecha;
+  String porcentaje;
+  String fecha;
   String nota;
   String year;
-  DateTime fechahora;
+  String fechahora;
 
   MAspectos({
     required this.ind,
@@ -42,11 +42,11 @@ class MAspectos {
         periodo: json["periodo"],
         asignatura: json["asignatura"],
         aspecto: json["aspecto"],
-        porcentaje: json["porcentaje"],
-        fecha: DateTime.parse(json["fecha"]),
+        porcentaje: json["porcentaje"] ?? '',
+        fecha: json["fecha"] ?? '',
         nota: json["nota"],
         year: json["year"],
-        fechahora: DateTime.parse(json["fechahora"]),
+        fechahora: json["fechahora"] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
@@ -57,10 +57,9 @@ class MAspectos {
         "asignatura": asignatura,
         "aspecto": aspecto,
         "porcentaje": porcentaje,
-        "fecha":
-            "${fecha.year.toString().padLeft(4, '0')}-${fecha.month.toString().padLeft(2, '0')}-${fecha.day.toString().padLeft(2, '0')}",
+        "fecha": fecha,
         "nota": nota,
         "year": year,
-        "fechahora": fechahora.toIso8601String(),
+        "fechahora": fechahora
       };
 }

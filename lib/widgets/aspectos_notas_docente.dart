@@ -75,38 +75,34 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
   List<MAspectos> maspectos = [];
   late FToast fToast;
 
-  Future<List<Aspectos>> obtenerAspectos() async {
-    List<Aspectos> resultAspectos = [];
+  Future<List<Map<String, dynamic>>> obtenerAspectos() async {
+    List<MAspectos> resultAspectos = [];
     final url = Uri.parse('$urlbase/obtenerAspectosIndividuales.php');
     final bodyAspectos = json.encode({
       'docente': widget.docente,
       'asignatura': widget.asignatura,
       'periodo': widget.periodo,
-      'year': widget.year
+      'year': widget.year,
+      'grado': widget.grado
     });
     final response = await http.post(url, body: bodyAspectos);
     if (response.statusCode == 200) {
-      final data = json.decode(response.body) as List<Map<String, dynamic>>;
-      print(data);
-      resultAspectos = data.map((item) => item as Aspectos).toList();
-      print(resultAspectos);
+      final jsonResponse = json.decode(response.body);
+      final dataAspectos = jsonResponse as List<dynamic>;
+      final listaAspectos =
+          dataAspectos.map((item) => item as Map<String, dynamic>).toList();
+      return listaAspectos;
     } else {
-      print(response.statusCode);
+      if (kDebugMode) {
+        print(response.statusCode);
+      }
     }
-    return resultAspectos;
+    return [];
   }
 
   @override
   void initState() {
     super.initState();
-    obtenerAspectos().then(
-      (value) {
-        print({value});
-        maspectos = value.cast<MAspectos>();
-      },
-    );
-    fToast = FToast();
-    fToast.init(context);
     for (int i = 0; i < 12; i++) {
       aspectos.add(Aspectos(
           widget.docente,
@@ -121,6 +117,9 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
           TextEditingController(),
           TextEditingController()));
     }
+
+    fToast = FToast();
+    fToast.init(context);
   }
 
   _showToast() {
@@ -164,6 +163,18 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
 
   @override
   Widget build(BuildContext context) {
+    obtenerAspectos().then(
+      (jsonData) {
+        maspectos = jsonData.map((json) => MAspectos.fromJson(json)).toList();
+        for (var maspecto in maspectos) {
+          int indiceAspecto = int.parse(maspecto.nota) - 1;
+          aspectos[indiceAspecto].aspectoController.text = maspecto.aspecto;
+          aspectos[indiceAspecto].porcentajeController.text =
+              maspecto.porcentaje;
+          aspectos[indiceAspecto].fechaController.text = maspecto.fecha;
+        }
+      },
+    );
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
