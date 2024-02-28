@@ -1,5 +1,6 @@
+import 'dart:convert';
+
 class NotaIndividual {
-  String ind;
   String estudiante;
   String grado;
   String asignatura;
@@ -82,7 +83,7 @@ class NotaIndividual {
   String year;
 
   NotaIndividual.fromJson(Map<String, dynamic> json)
-      : ind = json['ind'],
+        // ignore: empty_constructor_bodies
         estudiante = json['estudiante'],
         grado = json['grado'],
         asignatura = json['asignatura'],
@@ -165,7 +166,6 @@ class NotaIndividual {
         year = json['year'];
 
   Map<String, dynamic> toJson() => {
-        'ind': ind,
         'estudiante': estudiante,
         'grado': grado,
         'asignatura': asignatura,
