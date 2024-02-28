@@ -1,4 +1,5 @@
 import 'package:com_celesoft_notasieo/widgets/asignaturas_docente.dart';
+import 'package:com_celesoft_notasieo/widgets/error_internet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -38,6 +39,16 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
     final response = await http.post(url, body: bodyData);
     if (response.statusCode == 200) {
       return jsonDecode(response.body).cast<Map<String, dynamic>>();
+    } else {
+      // ignore: use_build_context_synchronously
+      String result = await errorInternet(
+          context,
+          "Error ${response.statusCode}",
+          "Se ha presentado un error de Intertet");
+      if (result == "volver") {
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
+      }
     }
     return [];
   }
@@ -135,11 +146,11 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
                                 print({"resulti": result});
                               }
                               // ignore: use_build_context_synchronously
-                              ScaffoldMessenger.of(context).showSnackBar(
+                              /* ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('No hay nada para retroceder.'),
                                 ),
-                              );
+                              ); */
                             },
                           ),
                         )
@@ -152,42 +163,6 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
                         const Divider()
                       ],
                     ),
-                    /* trailing: SizedBox(
-                      
-                      width: 40,
-                      height: 40,
-                      child: GestureDetector(
-                        child: const Icon(
-                          Icons.arrow_circle_right,
-                          color: Colors.amberAccent,
-                          size: 50,
-                        ),
-                        onTap: () async {
-                          var result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AsignaturasDocente(
-                                  asignaturas: aasignaturas,
-                                  grado: grado,
-                                  nivel: nivel,
-                                  numero: numero,
-                                  docente: widget.docente,
-                                  nombresDocente: widget.nombresDocente,
-                                  asignacion: widget.asignacionDocente,
-                                  periodo: widget.periodo,
-                                  year: widget.year),
-                            ),
-                          );
-                          print({"resulti": result});
-                          // ignore: use_build_context_synchronously
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('No hay nada para retroceder.'),
-                            ),
-                          );
-                        },
-                      ),
-                    ), */
                   );
                 },
               ),

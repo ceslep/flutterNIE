@@ -1,3 +1,4 @@
+import 'package:com_celesoft_notasieo/widgets/error_internet.dart';
 import 'package:com_celesoft_notasieo/widgets/notas_docente.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,9 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
     aasignatura = asignatura;
     setState(() {});
     const String urlbase = 'https://app.iedeoccidente.com';
-    print({"asignatura": asignatura});
+    if (kDebugMode) {
+      print({"asignatura": asignatura});
+    }
     final url = Uri.parse('$urlbase/getNotas.php');
     final bodyData = json.encode({
       'docente': widget.docente,
@@ -52,11 +55,15 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
       'asignatura': asignatura,
       'periodo': widget.periodo
     });
-    print({"bodyData", bodyData});
+    if (kDebugMode) {
+      print({"bodyData", bodyData});
+    }
     try {
       final response = await http.post(url, body: bodyData);
 
-      print(response.statusCode);
+      if (kDebugMode) {
+        print(response.statusCode);
+      }
       consultando = false;
       aasignatura = "";
       setState(() {});
@@ -66,6 +73,16 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
           (a, b) => a['Nombres'].compareTo(b['Nombres']),
         );
         return notas;
+      } else {
+        // ignore: use_build_context_synchronously
+        String result = await errorInternet(
+            context,
+            "Error ${response.statusCode}",
+            "Se ha presentado un error de Intertet");
+        if (result == "volver") {
+          // ignore: use_build_context_synchronously
+          Navigator.pop(context);
+        }
       }
     } catch (e) {
       AlertDialog(
@@ -148,7 +165,9 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
                                       year: widget.year),
                                 ),
                               );
-                              print(result['dataND']);
+                              if (kDebugMode) {
+                                print(result['dataND']);
+                              }
                               if (result['dataND'] == "home") {
                                 // ignore: use_build_context_synchronously
                                 Navigator.pop(context, {"data": "home"});

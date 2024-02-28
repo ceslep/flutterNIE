@@ -1,4 +1,5 @@
 import 'package:com_celesoft_notasieo/modelo_aspectos.dart';
+import 'package:com_celesoft_notasieo/widgets/error_internet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -92,8 +93,14 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
           dataAspectos.map((item) => item as Map<String, dynamic>).toList();
       return listaAspectos;
     } else {
-      if (kDebugMode) {
-        print(response.statusCode);
+      // ignore: use_build_context_synchronously
+      String result = await errorInternet(
+          context,
+          "Error ${response.statusCode}",
+          "Se ha presentado un error de Intertet");
+      if (result == "volver") {
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
       }
     }
     return [];
@@ -156,6 +163,13 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
         print(result['msg']);
       }
       return result['msg'] == 'exito';
+    } else {
+      // ignore: use_build_context_synchronously
+      String resultado = await errorInternet(
+          context,
+          "Error ${response.statusCode}",
+          "Se ha presentado un error de Intertet");
+      print(resultado);
     }
     return false;
   }

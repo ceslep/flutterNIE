@@ -18,19 +18,19 @@ class ModeloNotas {
   final String nota9;
   final String nota10;
   final String nota11;
-  final String? nota12;
-  final String? porcentaje1;
-  final String? porcentaje2;
-  final String? porcentaje3;
-  final String? porcentaje4;
-  final String? porcentaje5;
-  final String? porcentaje6;
-  final String? porcentaje7;
-  final String? porcentaje8;
-  final String? porcentaje9;
-  final String? porcentaje10;
-  final String? porcentaje11;
-  final String? porcentaje12;
+  final String nota12;
+  final String porcentaje1;
+  final String porcentaje2;
+  final String porcentaje3;
+  final String porcentaje4;
+  final String porcentaje5;
+  final String porcentaje6;
+  final String porcentaje7;
+  final String porcentaje8;
+  final String porcentaje9;
+  final String porcentaje10;
+  final String porcentaje11;
+  final String porcentaje12;
   final String aspecto1;
   final String aspecto2;
   final String aspecto3;
@@ -42,7 +42,7 @@ class ModeloNotas {
   final String aspecto9;
   final String aspecto10;
   final String aspecto11;
-  final String? aspecto12;
+  final String aspecto12;
   final String fecha1;
   final String fecha2;
   final String fecha3;
@@ -54,19 +54,19 @@ class ModeloNotas {
   final String fecha9;
   final String fecha10;
   final String fecha11;
-  final String? fecha12;
-  final String? anotacion1;
-  final String? anotacion2;
-  final String? anotacion3;
-  final String? anotacion4;
-  final String? anotacion5;
-  final String? anotacion6;
-  final String? anotacion7;
-  final String? anotacion8;
-  final String? anotacion9;
-  final String? anotacion10;
-  final String? anotacion11;
-  final String? anotacion12;
+  final String fecha12;
+  final String anotacion1;
+  final String anotacion2;
+  final String anotacion3;
+  final String anotacion4;
+  final String anotacion5;
+  final String anotacion6;
+  final String anotacion7;
+  final String anotacion8;
+  final String anotacion9;
+  final String anotacion10;
+  final String anotacion11;
+  final String anotacion12;
   final String fechaa1;
   final String fechaa2;
   final String fechaa3;
@@ -78,7 +78,7 @@ class ModeloNotas {
   final String fechaa9;
   final String fechaa10;
   final String fechaa11;
-  final String? fechaa12;
+  final String fechaa12;
   final String fechahora;
   final String year;
 
@@ -102,19 +102,19 @@ class ModeloNotas {
     required this.nota9,
     required this.nota10,
     required this.nota11,
-    this.nota12,
-    this.porcentaje1,
-    this.porcentaje2,
-    this.porcentaje3,
-    this.porcentaje4,
-    this.porcentaje5,
-    this.porcentaje6,
-    this.porcentaje7,
-    this.porcentaje8,
-    this.porcentaje9,
-    this.porcentaje10,
-    this.porcentaje11,
-    this.porcentaje12,
+    required this.nota12,
+    required this.porcentaje1,
+    required this.porcentaje2,
+    required this.porcentaje3,
+    required this.porcentaje4,
+    required this.porcentaje5,
+    required this.porcentaje6,
+    required this.porcentaje7,
+    required this.porcentaje8,
+    required this.porcentaje9,
+    required this.porcentaje10,
+    required this.porcentaje11,
+    required this.porcentaje12,
     required this.aspecto1,
     required this.aspecto2,
     required this.aspecto3,
@@ -126,7 +126,7 @@ class ModeloNotas {
     required this.aspecto9,
     required this.aspecto10,
     required this.aspecto11,
-    this.aspecto12,
+    required this.aspecto12,
     required this.fecha1,
     required this.fecha2,
     required this.fecha3,
@@ -138,19 +138,19 @@ class ModeloNotas {
     required this.fecha9,
     required this.fecha10,
     required this.fecha11,
-    this.fecha12,
-    this.anotacion1,
-    this.anotacion2,
-    this.anotacion3,
-    this.anotacion4,
-    this.anotacion5,
-    this.anotacion6,
-    this.anotacion7,
-    this.anotacion8,
-    this.anotacion9,
-    this.anotacion10,
-    this.anotacion11,
-    this.anotacion12,
+    required this.fecha12,
+    required this.anotacion1,
+    required this.anotacion2,
+    required this.anotacion3,
+    required this.anotacion4,
+    required this.anotacion5,
+    required this.anotacion6,
+    required this.anotacion7,
+    required this.anotacion8,
+    required this.anotacion9,
+    required this.anotacion10,
+    required this.anotacion11,
+    required this.anotacion12,
     required this.fechaa1,
     required this.fechaa2,
     required this.fechaa3,
@@ -162,7 +162,7 @@ class ModeloNotas {
     required this.fechaa9,
     required this.fechaa10,
     required this.fechaa11,
-    this.fechaa12,
+    required this.fechaa12,
     required this.fechahora,
     required this.year,
   });
