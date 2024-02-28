@@ -1,9 +1,11 @@
 import 'package:com_celesoft_notasieo/key_value.dart';
+import 'package:com_celesoft_notasieo/modelo_notas_full.dart';
 import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
 import 'package:flutter/material.dart';
 
 class NotasDocenteIndividuales extends StatefulWidget {
   final List<KeyValuePair> keyValuePairs;
+  final List<ModeloNotasFull> notasFullModelo;
   final String docente;
   final String grado;
   final String asignatura;
@@ -15,7 +17,8 @@ class NotasDocenteIndividuales extends StatefulWidget {
       required this.docente,
       required this.grado,
       required this.asignatura,
-      required this.nombres})
+      required this.nombres,
+      required this.notasFullModelo})
       : super(key: key);
 
   @override

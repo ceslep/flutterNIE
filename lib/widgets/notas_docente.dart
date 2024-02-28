@@ -1,5 +1,5 @@
 import 'package:com_celesoft_notasieo/key_value.dart';
-import 'package:com_celesoft_notasieo/modelo_notas.dart';
+import 'package:com_celesoft_notasieo/modelo_notas_full.dart';
 import 'package:com_celesoft_notasieo/widgets/aspectos_notas_docente.dart';
 import 'package:com_celesoft_notasieo/widgets/notas_docente_individuales.dart';
 import 'package:flutter/foundation.dart';
@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 class NotasDocente extends StatefulWidget {
   final List<Map<String, dynamic>> notas;
-
+  final List<ModeloNotasFull> notasFullModelo;
   final String asignatura;
   final String grado;
   final String docente;
@@ -21,6 +21,7 @@ class NotasDocente extends StatefulWidget {
     required this.docente,
     required this.periodo,
     required this.year,
+    required this.notasFullModelo,
   }) : super(key: key);
 
   @override
@@ -28,13 +29,12 @@ class NotasDocente extends StatefulWidget {
 }
 
 class _NotasDocenteState extends State<NotasDocente> {
-  ModeloNotas modelNotas = ModeloNotas(
+  ModeloNotasFull modelNotas = ModeloNotasFull(
       ind: "",
       estudiante: "",
       grado: "",
       asignatura: "",
       docente: "",
-      nombresDocente: "",
       periodo: "",
       valoracion: "",
       nota1: "",
@@ -164,7 +164,7 @@ class _NotasDocenteState extends State<NotasDocente> {
                 .map((entry) => KeyValuePair(entry.key, entry.value))
                 .toList();
 
-            modelNotas = ModeloNotas.fromJson(nota);
+            modelNotas = ModeloNotasFull.fromJson(nota);
             print(modelNotas);
 
 // Access key-value pairs
@@ -222,6 +222,8 @@ class _NotasDocenteState extends State<NotasDocente> {
                                   builder: (context) =>
                                       NotasDocenteIndividuales(
                                           keyValuePairs: keyValuePairs,
+                                          notasFullModelo:
+                                              widget.notasFullModelo,
                                           docente: widget.docente,
                                           grado: widget.grado,
                                           asignatura: widget.asignatura,
