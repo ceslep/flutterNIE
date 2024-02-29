@@ -175,6 +175,14 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           String fechaNota = widget.keyValuePairs[indiceFechaNota].value ?? '';
           String strNota = widget.keyValuePairs[indiceNota].value.trim();
           double laNota = double.parse(strNota != "" ? strNota : "0");
+          int indiceEstudiante = widget.keyValuePairs
+              .indexWhere((element) => element.key == 'estudiante');
+          String estudiante = widget.keyValuePairs[indiceEstudiante].value;
+          int indiceEstudianteNFM = widget.notasFullModelo
+              .indexWhere((element) => element.estudiante == estudiante);
+          ModeloNotasFull modelNota =
+              widget.notasFullModelo[indiceEstudianteNFM];
+          modelNota.nota1=    
           return Card(
               child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 10),

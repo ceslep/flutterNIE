@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:com_celesoft_notasieo/key_value.dart';
 import 'package:com_celesoft_notasieo/modelo_notas_full.dart';
 import 'package:com_celesoft_notasieo/widgets/aspectos_notas_docente.dart';
@@ -29,88 +31,6 @@ class NotasDocente extends StatefulWidget {
 }
 
 class _NotasDocenteState extends State<NotasDocente> {
-  ModeloNotasFull modelNotas = ModeloNotasFull(
-      ind: "",
-      estudiante: "",
-      grado: "",
-      asignatura: "",
-      docente: "",
-      periodo: "",
-      valoracion: "",
-      nota1: "",
-      nota2: "",
-      nota3: "",
-      nota4: "",
-      nota5: "",
-      nota6: "",
-      nota7: "",
-      nota8: "",
-      nota9: "",
-      nota10: "",
-      nota11: "",
-      nota12: "",
-      porcentaje1: "",
-      porcentaje2: "",
-      porcentaje3: "",
-      porcentaje4: "",
-      porcentaje5: "",
-      porcentaje6: "",
-      porcentaje7: "",
-      porcentaje8: "",
-      porcentaje9: "",
-      porcentaje10: "",
-      porcentaje11: "",
-      porcentaje12: "",
-      aspecto1: "",
-      aspecto2: "",
-      aspecto3: "",
-      aspecto4: "",
-      aspecto5: "",
-      aspecto6: "",
-      aspecto7: "",
-      aspecto8: "",
-      aspecto9: "",
-      aspecto10: "",
-      aspecto11: "",
-      aspecto12: "",
-      fecha1: "",
-      fecha2: "",
-      fecha3: "",
-      fecha4: "",
-      fecha5: "",
-      fecha6: "",
-      fecha7: "",
-      fecha8: "",
-      fecha9: "",
-      fecha10: "",
-      fecha11: "",
-      fecha12: "",
-      anotacion1: "",
-      anotacion2: "",
-      anotacion3: "",
-      anotacion4: "",
-      anotacion5: "",
-      anotacion6: "",
-      anotacion7: "",
-      anotacion8: "",
-      anotacion9: "",
-      anotacion10: "",
-      anotacion11: "",
-      anotacion12: "",
-      fechaa1: "",
-      fechaa2: "",
-      fechaa3: "",
-      fechaa4: "",
-      fechaa5: "",
-      fechaa6: "",
-      fechaa7: "",
-      fechaa8: "",
-      fechaa9: "",
-      fechaa10: "",
-      fechaa11: "",
-      fechaa12: "",
-      fechahora: "",
-      year: "");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,12 +80,10 @@ class _NotasDocenteState extends State<NotasDocente> {
             }
             String nombres = nota['Nombres'];
             String valoracion = nota['Val'] ?? '';
+
             List<KeyValuePair> keyValuePairs = nota.entries
                 .map((entry) => KeyValuePair(entry.key, entry.value))
                 .toList();
-
-            modelNotas = ModeloNotasFull.fromJson(nota);
-            print(modelNotas);
 
 // Access key-value pairs
             for (var pair in keyValuePairs) {
@@ -229,7 +147,6 @@ class _NotasDocenteState extends State<NotasDocente> {
                                           asignatura: widget.asignatura,
                                           nombres: nombres),
                                 ));
-                            print(result);
                             if (result["dataNDI"] == "home") {
                               // ignore: use_build_context_synchronously
                               Navigator.pop(context, {"dataND": "home"});
