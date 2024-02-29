@@ -1,11 +1,45 @@
+// ignore_for_file: avoid_print
+
 import 'package:com_celesoft_notasieo/key_value.dart';
 import 'package:com_celesoft_notasieo/modelo_notas_full.dart';
 import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
+
+String obtenerNota(String numeroNota) {
+  switch (numeroNota) {
+    case "N1":
+      return "nota1";
+    case "N2":
+      return "nota2";
+    case "N3":
+      return "nota3";
+    case "N4":
+      return "nota4";
+    case "N5":
+      return "nota5";
+    case "N6":
+      return "nota6";
+    case "N7":
+      return "nota7";
+    case "N8":
+      return "nota8";
+    case "N9":
+      return "nota9";
+    case "N10":
+      return "nota10";
+    case "N11":
+      return "nota11";
+    case "N12":
+      return "nota12";
+    default:
+      return "No se encontró una nota para $numeroNota";
+  }
+}
 
 class NotasDocenteIndividuales extends StatefulWidget {
   final List<KeyValuePair> keyValuePairs;
-  final List<ModeloNotasFull> notasFullModelo;
+  final ModeloNotasFull notasFullModelo;
   final String docente;
   final String grado;
   final String asignatura;
@@ -64,8 +98,9 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
     );
   }
 
-  void showNumberDialog(BuildContext context, String title, String subtitle,
-      String value, int indice) {
+  Future<String> showNumberDialog(BuildContext context, String title,
+      String subtitle, String value, int indice) async {
+    Completer<String> completer = Completer();
     final TextEditingController controller = TextEditingController(text: value);
 
     showDialog(
@@ -96,6 +131,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context, controller.text);
+                completer.complete(controller.text);
               },
               child: const Text('Aceptar'),
             ),
@@ -121,6 +157,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
         }
       }
     });
+    return completer.future;
   }
 
   @override
@@ -150,7 +187,26 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
             child: const Icon(Icons.home, color: Colors.white),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              int indiceEstudiante = widget.keyValuePairs
+                  .indexWhere((element) => element.key == "estudiante");
+              String estudiante = widget.keyValuePairs[indiceEstudiante].value;
+              print({"eskp": estudiante});
+              print({"esnfm": widget.notasFullModelo.estudiante});
+              widget.notasFullModelo.toMap().forEach((key, value) {
+                print({"$key:$value"});
+              });
+              var a = widget.notasFullModelo.toMap().map((key, value) {
+                if (key.startsWith("nota")) {
+                  int indiceNota = widget.keyValuePairs
+                      .indexWhere((element) => obtenerNota(element.key) == key);
+                  String nota = widget.keyValuePairs[indiceNota].value;
+                  value = nota;
+                }
+                return MapEntry(key, value);
+              });
+              print(a);
+            },
             child: const Icon(Icons.save, color: Colors.black87),
           ),
         ],
@@ -175,14 +231,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           String fechaNota = widget.keyValuePairs[indiceFechaNota].value ?? '';
           String strNota = widget.keyValuePairs[indiceNota].value.trim();
           double laNota = double.parse(strNota != "" ? strNota : "0");
-          int indiceEstudiante = widget.keyValuePairs
-              .indexWhere((element) => element.key == 'estudiante');
-          String estudiante = widget.keyValuePairs[indiceEstudiante].value;
-          int indiceEstudianteNFM = widget.notasFullModelo
-              .indexWhere((element) => element.estudiante == estudiante);
-          ModeloNotasFull modelNota =
-              widget.notasFullModelo[indiceEstudianteNFM];
-          modelNota.nota1=    
+
           return Card(
               child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 10),
@@ -211,14 +260,17 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                                 MaterialStatePropertyAll(Colors.amberAccent),
                             foregroundColor:
                                 MaterialStatePropertyAll(Colors.black)),
-                        onPressed: () {
+                        onPressed: () async {
                           // Handle button press
-                          showNumberDialog(
+                          String result = await showNumberDialog(
                               context,
                               'Nota $numero',
                               widget.keyValuePairs[indiceAnotacion].value ?? '',
                               widget.keyValuePairs[indiceNota].value ?? '',
                               indiceNota);
+                          print(result);
+                          widget.keyValuePairs[indiceNota].value = result;
+                          setState(() {});
                         },
                         child: Text(laNota != 0 ? laNota.toString() : '',
                             style: TextStyle(

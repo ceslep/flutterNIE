@@ -80,6 +80,10 @@ class _NotasDocenteState extends State<NotasDocente> {
             }
             String nombres = nota['Nombres'];
             String valoracion = nota['Val'] ?? '';
+            String estudiante = nota['estudiante'];
+
+            int indiceEstudiante = widget.notasFullModelo
+                .indexWhere((element) => element.estudiante == estudiante);
 
             List<KeyValuePair> keyValuePairs = nota.entries
                 .map((entry) => KeyValuePair(entry.key, entry.value))
@@ -141,7 +145,8 @@ class _NotasDocenteState extends State<NotasDocente> {
                                       NotasDocenteIndividuales(
                                           keyValuePairs: keyValuePairs,
                                           notasFullModelo:
-                                              widget.notasFullModelo,
+                                              widget.notasFullModelo[
+                                                  indiceEstudiante],
                                           docente: widget.docente,
                                           grado: widget.grado,
                                           asignatura: widget.asignatura,
