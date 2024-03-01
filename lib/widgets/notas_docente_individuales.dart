@@ -265,7 +265,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                 if (key.startsWith("nota")) {
                   int indiceNota = widget.keyValuePairs
                       .indexWhere((element) => obtenerNota(element.key) == key);
-                  String nota = widget.keyValuePairs[indiceNota].value;
+                  String nota = widget.keyValuePairs[indiceNota].value ?? '';
                   value = nota;
                 }
                 return MapEntry(key, value);
@@ -294,7 +294,8 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           int indiceFechaNota = widget.keyValuePairs
               .indexWhere((element) => element.key == 'fecha$numero');
           String fechaNota = widget.keyValuePairs[indiceFechaNota].value ?? '';
-          String strNota = widget.keyValuePairs[indiceNota].value.trim();
+          String sNota = widget.keyValuePairs[indiceNota].value ?? '';
+          String strNota = sNota != "" ? sNota.trim() : "";
           double laNota = double.parse(strNota != "" ? strNota : "0");
 
           return Card(
