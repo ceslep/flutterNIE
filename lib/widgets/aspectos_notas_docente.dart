@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:com_celesoft_notasieo/modelo_aspectos.dart';
 import 'package:com_celesoft_notasieo/widgets/error_internet.dart';
 import 'package:flutter/foundation.dart';

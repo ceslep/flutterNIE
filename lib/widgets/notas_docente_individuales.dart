@@ -67,6 +67,8 @@ class NotasDocenteIndividuales extends StatefulWidget {
 
 class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
   List<KeyValuePair> anotas = [];
+  bool isvalid = true;
+  final TextEditingController controller = TextEditingController(text: "");
   @override
   void initState() {
     super.initState();
@@ -106,45 +108,87 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
   Future<String> showNumberDialog(BuildContext context, String title,
       String subtitle, String value, int indice) async {
     Completer<String> completer = Completer();
-    final TextEditingController controller = TextEditingController(text: value);
 
     showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Column(
-            children: [
-              Text(title),
-              Text(subtitle,
-                  style: const TextStyle(fontSize: 10, color: Colors.blue))
-            ],
-          ),
-          content: TextField(
-            keyboardType: TextInputType.number, // Tipo de teclado numérico
-            controller: controller,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, "-1");
-              },
-              child: const Text(
-                'Cancelar',
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, controller.text);
-                completer.complete(controller.text);
-              },
-              child: const Text('Aceptar'),
-            ),
-          ],
-        );
-      },
-    ).then((value) {
-      if ((value != null) &&
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, setState) {
+              return AlertDialog(
+                title: Column(
+                  children: [
+                    Text(title),
+                    Text(subtitle,
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.blue))
+                  ],
+                ),
+                content: TextField(
+                  onChanged: (value) {
+                    double valor = 0;
+                    if (value.isEmpty) {
+                      isvalid = false;
+                      setState(() {});
+                      return;
+                    }
+                    try {
+                      valor = double.parse(value);
+                    } catch (e) {
+                      print(e);
+                    }
+                    if (valor.isNaN) {
+                      isvalid = false;
+                      setState(() {});
+                      return;
+                    }
+                    if (valor >= 1 && valor <= 5) {
+                      isvalid = true;
+                    } else {
+                      isvalid = false;
+                    }
+                    setState(() {});
+                  },
+
+                  keyboardType:
+                      TextInputType.number, // Tipo de teclado numérico
+                  controller: controller,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    errorText:
+                        !isvalid ? "El valor ingresado no está permitido" : "",
+                    errorBorder: OutlineInputBorder(
+                      borderSide: !isvalid
+                          ? const BorderSide(color: Colors.red)
+                          : const BorderSide(color: Colors.black),
+                    ),
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, "-1");
+                    },
+                    child: const Text(
+                      'Cancelar',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (isvalid) {
+                        Navigator.pop(context, controller.text);
+                        completer.complete(controller.text);
+                      }
+                    },
+                    child: const Text('Aceptar'),
+                  ),
+                ],
+              );
+            },
+          );
+        }).then((value) {
+      /*  if ((value != null) &&
           (value != "") &&
           (value != " ") &&
           (value != "-1")) {
@@ -160,7 +204,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           mostrarAlert(
               context, 'Error en el valor', 'No puede estar en blanco');
         }
-      }
+      } */
     });
     return completer.future;
   }
@@ -282,6 +326,8 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                             foregroundColor:
                                 MaterialStatePropertyAll(Colors.black)),
                         onPressed: () async {
+                          controller.text =
+                              widget.keyValuePairs[indiceNota].value ?? '';
                           // Handle button press
                           String result = await showNumberDialog(
                               context,
