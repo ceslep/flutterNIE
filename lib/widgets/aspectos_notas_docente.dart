@@ -83,7 +83,7 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
       'asignatura': widget.asignatura,
       'periodo': widget.periodo,
       'year': widget.year,
-      'grado': widget.grado
+      'grado': widget.grado,
     });
     final response = await http.post(url, body: bodyAspectos);
     if (response.statusCode == 200) {

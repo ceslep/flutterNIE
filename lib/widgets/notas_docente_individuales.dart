@@ -2,6 +2,7 @@
 
 import 'package:com_celesoft_notasieo/key_value.dart';
 import 'package:com_celesoft_notasieo/modelo_notas_full.dart';
+import 'package:com_celesoft_notasieo/widgets/aspectos_notas_docente.dart';
 import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -44,6 +45,8 @@ class NotasDocenteIndividuales extends StatefulWidget {
   final String grado;
   final String asignatura;
   final String nombres;
+  final String periodo;
+  final String year;
 
   const NotasDocenteIndividuales(
       {Key? key,
@@ -52,7 +55,9 @@ class NotasDocenteIndividuales extends StatefulWidget {
       required this.grado,
       required this.asignatura,
       required this.nombres,
-      required this.notasFullModelo})
+      required this.notasFullModelo,
+      required this.periodo,
+      required this.year})
       : super(key: key);
 
   @override
@@ -185,6 +190,22 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
               Navigator.pop(context, {"dataNDI": "home"});
             },
             child: const Icon(Icons.home, color: Colors.white),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AspectosNotasDocente(
+                      docente: widget.docente,
+                      grado: widget.grado,
+                      asignatura: widget.asignatura,
+                      periodo: widget.periodo,
+                      year: widget.year,
+                    ),
+                  ));
+            },
+            child: const Icon(Icons.note_alt_outlined, color: Colors.yellow),
           ),
           TextButton(
             onPressed: () {

@@ -143,14 +143,16 @@ class _NotasDocenteState extends State<NotasDocente> {
                                 MaterialPageRoute(
                                   builder: (context) =>
                                       NotasDocenteIndividuales(
-                                          keyValuePairs: keyValuePairs,
-                                          notasFullModelo:
-                                              widget.notasFullModelo[
-                                                  indiceEstudiante],
-                                          docente: widget.docente,
-                                          grado: widget.grado,
-                                          asignatura: widget.asignatura,
-                                          nombres: nombres),
+                                    keyValuePairs: keyValuePairs,
+                                    notasFullModelo: widget
+                                        .notasFullModelo[indiceEstudiante],
+                                    docente: widget.docente,
+                                    grado: widget.grado,
+                                    asignatura: widget.asignatura,
+                                    nombres: nombres,
+                                    periodo: widget.periodo,
+                                    year: widget.year,
+                                  ),
                                 ));
                             if (result["dataNDI"] == "home") {
                               // ignore: use_build_context_synchronously
