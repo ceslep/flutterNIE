@@ -16,6 +16,7 @@ class Aspectos {
   String docente;
   String grado;
   String periodo;
+
   String asignatura;
   String aspecto;
   String porcentaje;
@@ -279,6 +280,12 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                     : const SizedBox()
               ],
             ),
+            subtitle: Text(aspectos[index].aspectoController.text,
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: Colors.green,
+                  fontStyle: FontStyle.italic,
+                )),
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 5, left: 20, right: 20),

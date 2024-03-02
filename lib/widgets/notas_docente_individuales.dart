@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:com_celesoft_notasieo/key_value.dart';
+import 'package:com_celesoft_notasieo/modelo_aspectos.dart';
 import 'package:com_celesoft_notasieo/modelo_notas_full.dart';
 import 'package:com_celesoft_notasieo/widgets/aspectos_notas_docente.dart';
 import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
@@ -41,6 +42,7 @@ String obtenerNota(String numeroNota) {
 class NotasDocenteIndividuales extends StatefulWidget {
   final List<KeyValuePair> keyValuePairs;
   final ModeloNotasFull notasFullModelo;
+  final List<MAspectos> aspectos;
   final String docente;
   final String grado;
   final String asignatura;
@@ -57,7 +59,8 @@ class NotasDocenteIndividuales extends StatefulWidget {
       required this.nombres,
       required this.notasFullModelo,
       required this.periodo,
-      required this.year})
+      required this.year,
+      required this.aspectos})
       : super(key: key);
 
   @override
@@ -187,25 +190,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
               );
             },
           );
-        }).then((value) {
-      /*  if ((value != null) &&
-          (value != "") &&
-          (value != " ") &&
-          (value != "-1")) {
-        double val = double.parse(value);
-        if ((val > 5) || (val < 1)) {
-          mostrarAlert(context, 'Error en la nota', 'Valor no permitido');
-        } else {
-          // Procesar el valor ingresado
-          widget.keyValuePairs[indice].value = value;
-        }
-      } else {
-        if (value != "-1") {
-          mostrarAlert(
-              context, 'Error en el valor', 'No puede estar en blanco');
-        }
-      } */
-    });
+        }).then((value) {});
     return completer.future;
   }
 
@@ -293,10 +278,21 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
               .indexWhere((element) => element.key == 'aspecto$numero');
           int indiceFechaNota = widget.keyValuePairs
               .indexWhere((element) => element.key == 'fecha$numero');
+          int indicePorcentaje = widget.keyValuePairs
+              .indexWhere((element) => element.key == 'porcentaje$numero');
           String fechaNota = widget.keyValuePairs[indiceFechaNota].value ?? '';
           String sNota = widget.keyValuePairs[indiceNota].value ?? '';
           String strNota = sNota != "" ? sNota.trim() : "";
           double laNota = double.parse(strNota != "" ? strNota : "0");
+
+          String aspecto = widget.keyValuePairs[indiceAnotacion].value ?? '';
+          String porcentaje =
+              widget.keyValuePairs[indicePorcentaje].value ?? '';
+          if (aspecto == '') {
+            if (numero <= widget.aspectos.length) {
+              aspecto = widget.aspectos[numero - 1].aspecto;
+            }
+          }
 
           return Card(
               child: ListTile(
@@ -311,8 +307,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                   children: [
                     SizedBox(
                       width: 0.65 * MediaQuery.of(context).size.width,
-                      child: Text(
-                          widget.keyValuePairs[indiceAnotacion].value ?? '',
+                      child: Text(aspecto,
                           style: const TextStyle(color: Colors.green)),
                     ),
                     const SizedBox(
@@ -350,7 +345,15 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [Text('Fecha: $fechaNota')],
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Fecha: $fechaNota'),
+                        Text(porcentaje != '' ? 'Porcentaje: $porcentaje' : ''),
+                      ],
+                    ),
+                  ],
                 )
               ],
             ),

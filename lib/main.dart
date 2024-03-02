@@ -100,9 +100,9 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
   List<String> years = [];
   //variables de estado
   TextEditingController usuarioController =
-      TextEditingController(text: '1033789444');
+      TextEditingController(text: '75081186');
   TextEditingController passwordController =
-      TextEditingController(text: '1033789444*.*');
+      TextEditingController(text: '75081186@');
   TextEditingController yearController = TextEditingController();
   String theYear = DateTime.now().year.toString();
 

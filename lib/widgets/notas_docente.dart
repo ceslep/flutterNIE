@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:com_celesoft_notasieo/key_value.dart';
+import 'package:com_celesoft_notasieo/modelo_aspectos.dart';
 import 'package:com_celesoft_notasieo/modelo_notas_full.dart';
 import 'package:com_celesoft_notasieo/widgets/aspectos_notas_docente.dart';
 import 'package:com_celesoft_notasieo/widgets/notas_docente_individuales.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 class NotasDocente extends StatefulWidget {
   final List<Map<String, dynamic>> notas;
   final List<ModeloNotasFull> notasFullModelo;
+  final List<MAspectos> maspectos;
 
   final String asignatura;
   final String grado;
@@ -25,6 +27,7 @@ class NotasDocente extends StatefulWidget {
     required this.periodo,
     required this.year,
     required this.notasFullModelo,
+    required this.maspectos,
   }) : super(key: key);
 
   @override
@@ -33,6 +36,7 @@ class NotasDocente extends StatefulWidget {
 
 class _NotasDocenteState extends State<NotasDocente> {
   late ModeloNotasFull notasVacias;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -244,6 +248,7 @@ class _NotasDocenteState extends State<NotasDocente> {
                                     nombres: nombres,
                                     periodo: widget.periodo,
                                     year: widget.year,
+                                    aspectos: widget.maspectos,
                                   ),
                                 ));
                             if (result["dataNDI"] == "home") {

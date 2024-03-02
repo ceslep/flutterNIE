@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:com_celesoft_notasieo/modelo_aspectos.dart';
 import 'package:com_celesoft_notasieo/modelo_notas_full.dart';
 import 'package:com_celesoft_notasieo/widgets/error_internet.dart';
 import 'package:com_celesoft_notasieo/widgets/notas_docente.dart';
@@ -8,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+const String urlbase = 'https://app.iedeoccidente.com';
 
 class AsignaturasDocente extends StatefulWidget {
   final List<String> asignaturas;
@@ -41,6 +44,8 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
   List<Map<String, dynamic>> notas = [];
   List<Map<String, dynamic>> notasFull = [];
   List<ModeloNotasFull> notasFullModelo = [];
+  List<Map<String, dynamic>> aspectosJSON = [];
+  List<MAspectos> maspectos = [];
   bool consultando = false;
   String aasignatura = "";
   Future<List<Map<String, dynamic>>> getNotas(String asignatura) async {
@@ -169,6 +174,36 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
     return [];
   }
 
+  Future<List<Map<String, dynamic>>> obtenerAspectos(asignatura) async {
+    final url = Uri.parse('$urlbase/obtenerAspectosIndividuales.php');
+    final bodyAspectos = json.encode({
+      'docente': widget.docente,
+      'asignatura': asignatura,
+      'periodo': widget.periodo,
+      'year': widget.year,
+      'grado': widget.grado,
+    });
+    final response = await http.post(url, body: bodyAspectos);
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final dataAspectos = jsonResponse as List<dynamic>;
+      final listaAspectos =
+          dataAspectos.map((item) => item as Map<String, dynamic>).toList();
+      return listaAspectos;
+    } else {
+      // ignore: use_build_context_synchronously
+      String result = await errorInternet(
+          context,
+          "Error ${response.statusCode}",
+          "Se ha presentado un error de Intertet");
+      if (result == "volver") {
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
+      }
+    }
+    return [];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -217,31 +252,44 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
                             notas = value;
                             getNotasFull(asignatura).then((valueNF) async {
                               notasFull = valueNF;
-                              notasFullModelo = notasFull
-                                  .map((jsonNota) =>
-                                      ModeloNotasFull.fromJson(jsonNota))
-                                  .toList();
-                              print(notasFullModelo);
-                              if (notas.isNotEmpty &&
-                                  notasFullModelo.isNotEmpty) {
-                                var result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => NotasDocente(
-                                        notas: notas,
-                                        notasFullModelo: notasFullModelo,
-                                        asignatura: asignatura,
-                                        grado: widget.grado,
-                                        docente: widget.docente,
-                                        periodo: widget.periodo,
-                                        year: widget.year),
-                                  ),
-                                );
-                                if (result['dataND'] == "home") {
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.pop(context, {"data": "home"});
-                                }
-                              }
+                              obtenerAspectos(asignatura).then(
+                                (value) async {
+                                  aspectosJSON = value;
+                                  notasFullModelo = notasFull
+                                      .map((jsonNota) =>
+                                          ModeloNotasFull.fromJson(jsonNota))
+                                      .toList();
+                                  print(notasFullModelo);
+                                  maspectos = aspectosJSON
+                                      .map(
+                                        (aspectoJSON) =>
+                                            MAspectos.fromJson(aspectoJSON),
+                                      )
+                                      .toList();
+                                  if (notas.isNotEmpty &&
+                                      notasFullModelo.isNotEmpty) {
+                                    var result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => NotasDocente(
+                                          notas: notas,
+                                          notasFullModelo: notasFullModelo,
+                                          asignatura: asignatura,
+                                          grado: widget.grado,
+                                          docente: widget.docente,
+                                          periodo: widget.periodo,
+                                          year: widget.year,
+                                          maspectos: maspectos,
+                                        ),
+                                      ),
+                                    );
+                                    if (result['dataND'] == "home") {
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.pop(context, {"data": "home"});
+                                    }
+                                  }
+                                },
+                              );
                             });
                           });
                         },
