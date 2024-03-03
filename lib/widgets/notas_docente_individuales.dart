@@ -12,6 +12,7 @@ String obtenerNota(String numeroNota) {
   switch (numeroNota) {
     case "N1":
       return "nota1";
+
     case "N2":
       return "nota2";
     case "N3":
@@ -262,102 +263,159 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
         ],
       ),
       body: ListView.builder(
-        itemCount: anotas.length,
+        itemCount: anotas.length + 1,
         itemBuilder: (context, index) {
-          KeyValuePair data = anotas[index];
-          String str = data.key;
-
-          int indiceNumero = str.indexOf(RegExp(r'\d'));
-          String numeroStr = str.substring(indiceNumero);
-
-          int numero = int.parse(numeroStr);
-
-          int indiceNota = widget.keyValuePairs
-              .indexWhere((element) => element.key == 'N$numero');
-          int indiceAnotacion = widget.keyValuePairs
-              .indexWhere((element) => element.key == 'aspecto$numero');
-          int indiceFechaNota = widget.keyValuePairs
-              .indexWhere((element) => element.key == 'fecha$numero');
-          int indicePorcentaje = widget.keyValuePairs
-              .indexWhere((element) => element.key == 'porcentaje$numero');
-          String fechaNota = widget.keyValuePairs[indiceFechaNota].value ?? '';
-          String sNota = widget.keyValuePairs[indiceNota].value ?? '';
-          String strNota = sNota != "" ? sNota.trim() : "";
-          double laNota = double.parse(strNota != "" ? strNota : "0");
-
-          String aspecto = widget.keyValuePairs[indiceAnotacion].value ?? '';
-          String porcentaje =
-              widget.keyValuePairs[indicePorcentaje].value ?? '';
-          if (aspecto == '') {
-            if (numero <= widget.aspectos.length) {
-              aspecto = widget.aspectos[numero - 1].aspecto;
-            }
-          }
-
-          return Card(
-              child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-            title: Text(
-              'Nota $numero',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Column(
-              children: [
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 0.65 * MediaQuery.of(context).size.width,
-                      child: Text(aspecto,
-                          style: const TextStyle(color: Colors.green)),
-                    ),
-                    const SizedBox(
-                        width: 27), // Add Spacer to fill remaining space
-                    SizedBox(
-                      height: 40,
-                      width: 55,
-                      child: TextButton(
-                        style: const ButtonStyle(
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.amberAccent),
-                            foregroundColor:
-                                MaterialStatePropertyAll(Colors.black)),
-                        onPressed: () async {
-                          controller.text =
-                              widget.keyValuePairs[indiceNota].value ?? '';
-                          // Handle button press
-                          String result = await showNumberDialog(
-                              context,
-                              'Nota $numero',
-                              widget.keyValuePairs[indiceAnotacion].value ?? '',
-                              widget.keyValuePairs[indiceNota].value ?? '',
-                              indiceNota);
-                          print(result);
-                          widget.keyValuePairs[indiceNota].value = result;
-                          setState(() {});
-                        },
-                        child: Text(laNota != 0 ? laNota.toString() : '',
+          if (index == 0) {
+            String valor = widget.keyValuePairs[2].value ?? '0';
+            double valoracion = double.parse(valor);
+            return Card(
+              color: Theme.of(context).focusColor,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7)),
+              elevation: 7,
+              margin: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(widget.keyValuePairs[1].value,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Row(
+                        children: [
+                          const Text(
+                            'Valoracion:',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          Text(
+                            widget.keyValuePairs[2].value,
                             style: TextStyle(
-                                color: laNota < 3 ? Colors.red : Colors.black,
-                                fontWeight: FontWeight.bold)),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25,
+                                color: valoracion < 3
+                                    ? Colors.red.shade600
+                                    : Colors.greenAccent),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const Expanded(child: Text('')),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        widget.periodo,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.indigoAccent),
                       ),
                     ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Fecha: $fechaNota'),
-                        Text(porcentaje != '' ? 'Porcentaje: $porcentaje' : ''),
-                      ],
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ));
+                  )
+                ],
+              ),
+            );
+          } else {
+            KeyValuePair data = anotas[index - 1];
+            String str = data.key;
+
+            int indiceNumero = str.indexOf(RegExp(r'\d'));
+            String numeroStr = str.substring(indiceNumero);
+
+            int numero = int.parse(numeroStr);
+
+            int indiceNota = widget.keyValuePairs
+                .indexWhere((element) => element.key == 'N$numero');
+            int indiceAnotacion = widget.keyValuePairs
+                .indexWhere((element) => element.key == 'aspecto$numero');
+            int indiceFechaNota = widget.keyValuePairs
+                .indexWhere((element) => element.key == 'fecha$numero');
+            int indicePorcentaje = widget.keyValuePairs
+                .indexWhere((element) => element.key == 'porcentaje$numero');
+            String fechaNota =
+                widget.keyValuePairs[indiceFechaNota].value ?? '';
+            String sNota = widget.keyValuePairs[indiceNota].value ?? '';
+            String strNota = sNota != "" ? sNota.trim() : "";
+            double laNota = double.parse(strNota != "" ? strNota : "0");
+
+            String aspecto = widget.keyValuePairs[indiceAnotacion].value ?? '';
+            String porcentaje =
+                widget.keyValuePairs[indicePorcentaje].value ?? '';
+            if (aspecto == '') {
+              if (numero <= widget.aspectos.length) {
+                aspecto = widget.aspectos[numero - 1].aspecto;
+              }
+            }
+
+            return Card(
+                child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+              title: Text(
+                'Nota $numero',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 0.65 * MediaQuery.of(context).size.width,
+                        child: Text(aspecto,
+                            style: const TextStyle(color: Colors.green)),
+                      ),
+                      const SizedBox(
+                          width: 27), // Add Spacer to fill remaining space
+                      SizedBox(
+                        height: 40,
+                        width: 55,
+                        child: TextButton(
+                          style: const ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.amberAccent),
+                              foregroundColor:
+                                  MaterialStatePropertyAll(Colors.black)),
+                          onPressed: () async {
+                            controller.text =
+                                widget.keyValuePairs[indiceNota].value ?? '';
+                            // Handle button press
+                            String result = await showNumberDialog(
+                                context,
+                                'Nota $numero',
+                                widget.keyValuePairs[indiceAnotacion].value ??
+                                    '',
+                                widget.keyValuePairs[indiceNota].value ?? '',
+                                indiceNota);
+                            print(result);
+                            widget.keyValuePairs[indiceNota].value = result;
+                            setState(() {});
+                          },
+                          child: Text(laNota != 0 ? laNota.toString() : '',
+                              style: TextStyle(
+                                  color: laNota < 3 ? Colors.red : Colors.black,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Fecha: $fechaNota'),
+                          Text(porcentaje != ''
+                              ? 'Porcentaje: $porcentaje'
+                              : ''),
+                        ],
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ));
+          }
         },
       ),
     );

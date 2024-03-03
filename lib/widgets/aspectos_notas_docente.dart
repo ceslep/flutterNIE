@@ -76,10 +76,15 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
   List<Aspectos> aspectos = [];
   var _selectedDate = DateTime.now();
   bool guardando = false;
+  bool cargandoAspectos = false;
   List<MAspectos> maspectos = [];
   late FToast fToast;
 
   Future<List<Map<String, dynamic>>> obtenerAspectos() async {
+    if (mounted) {
+      cargandoAspectos = true;
+      setState(() {});
+    }
     final url = Uri.parse('$urlbase/obtenerAspectosIndividuales.php');
     final bodyAspectos = json.encode({
       'docente': widget.docente,
@@ -94,6 +99,10 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
       final dataAspectos = jsonResponse as List<dynamic>;
       final listaAspectos =
           dataAspectos.map((item) => item as Map<String, dynamic>).toList();
+      cargandoAspectos = false;
+      if (mounted) {
+        setState(() {});
+      }
       return listaAspectos;
     } else {
       // ignore: use_build_context_synchronously
@@ -277,7 +286,13 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                         Icons.check_circle,
                         color: Colors.green,
                       )
-                    : const SizedBox()
+                    : const SizedBox(),
+                !cargandoAspectos
+                    ? const SpinKitHourGlass(
+                        color: Colors.blueAccent,
+                        size: 20,
+                      )
+                    : const SizedBox(),
               ],
             ),
             subtitle: Text(aspectos[index].aspectoController.text,

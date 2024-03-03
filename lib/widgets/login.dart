@@ -94,7 +94,6 @@ class _LoginState extends State<Login> {
         Padding(
           padding: const EdgeInsets.all(35),
           child: TextField(
-            keyboardType: TextInputType.number, // Tipo de teclado numérico
             /* inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.digitsOnly, // Permite solo números
             ], */
@@ -137,7 +136,11 @@ class _LoginState extends State<Login> {
                   size: 15,
                 ),
         ),
-        botones(widget.onIngresar, widget.login, widget.years.isNotEmpty)
+        SizedBox(
+            width: 0.85 * MediaQuery.of(context).size.width,
+            height: 0.03 * MediaQuery.of(context).size.height,
+            child: botones(
+                widget.onIngresar, widget.login, widget.years.isNotEmpty))
       ],
     );
   }
