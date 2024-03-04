@@ -5,8 +5,11 @@ import 'package:com_celesoft_notasieo/modelo_aspectos.dart';
 import 'package:com_celesoft_notasieo/modelo_notas_full.dart';
 import 'package:com_celesoft_notasieo/widgets/aspectos_notas_docente.dart';
 import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
+import 'package:com_celesoft_notasieo/widgets/error_internet.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 String obtenerNota(String numeroNota) {
   switch (numeroNota) {
@@ -72,6 +75,7 @@ class NotasDocenteIndividuales extends StatefulWidget {
 class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
   List<KeyValuePair> anotas = [];
   bool isvalid = true;
+  bool cargandoAspectos = false;
   final TextEditingController controller = TextEditingController(text: "");
   @override
   void initState() {
@@ -119,6 +123,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
         builder: (context) {
           return StatefulBuilder(
             builder: (BuildContext context, setState) {
+              bool txtAspecto = subtitle != "";
               return AlertDialog(
                 backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
                 shape: const RoundedRectangleBorder(
@@ -131,47 +136,57 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                             const TextStyle(fontSize: 12, color: Colors.blue))
                   ],
                 ),
-                content: TextField(
-                  autofocus: true,
-                  onChanged: (value) {
-                    double valor = 0;
-                    if (value.isEmpty) {
-                      isvalid = false;
-                      setState(() {});
-                      return;
-                    }
-                    try {
-                      valor = double.parse(value);
-                    } catch (e) {
-                      print(e);
-                    }
-                    if (valor.isNaN) {
-                      isvalid = false;
-                      setState(() {});
-                      return;
-                    }
-                    if (valor >= 1 && valor <= 5) {
-                      isvalid = true;
-                    } else {
-                      isvalid = false;
-                    }
-                    setState(() {});
-                  },
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      autofocus: true,
+                      onChanged: (value) {
+                        double valor = 0;
+                        if (value.isEmpty) {
+                          isvalid = false;
+                          setState(() {});
+                          return;
+                        }
+                        try {
+                          valor = double.parse(value);
+                        } catch (e) {
+                          print(e);
+                        }
+                        if (valor.isNaN) {
+                          isvalid = false;
+                          setState(() {});
+                          return;
+                        }
+                        if (valor >= 1 && valor <= 5) {
+                          isvalid = true;
+                        } else {
+                          isvalid = false;
+                        }
+                        setState(() {});
+                      },
 
-                  keyboardType:
-                      TextInputType.number, // Tipo de teclado numérico
-                  controller: controller,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    errorText:
-                        !isvalid ? "El valor ingresado no está permitido" : "",
-                    errorBorder: OutlineInputBorder(
-                      borderSide: !isvalid
-                          ? const BorderSide(color: Colors.red)
-                          : const BorderSide(color: Colors.black),
+                      keyboardType:
+                          TextInputType.number, // Tipo de teclado numérico
+                      controller: controller,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        errorText: !isvalid
+                            ? "El valor ingresado no está permitido"
+                            : "",
+                        errorBorder: OutlineInputBorder(
+                          borderSide: !isvalid
+                              ? const BorderSide(color: Colors.red)
+                              : const BorderSide(color: Colors.black),
+                        ),
+                      ),
                     ),
-                  ),
+                    Text(
+                      !txtAspecto ? 'Falta el aspecto' : '',
+                      style: const TextStyle(color: Colors.red),
+                    )
+                  ],
                 ),
                 actions: [
                   TextButton(
@@ -239,6 +254,44 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
       }
     }
     return (cantidadNotas > 0 ? result / cantidadNotas : result);
+  }
+
+  Future<List<Map<String, dynamic>>> obtenerAspectos() async {
+    if (mounted) {
+      cargandoAspectos = true;
+      setState(() {});
+    }
+    final url = Uri.parse('$urlbase/obtenerAspectosIndividuales.php');
+    final bodyAspectos = json.encode({
+      'docente': widget.docente,
+      'asignatura': widget.asignatura,
+      'periodo': widget.periodo,
+      'year': widget.year,
+      'grado': widget.grado,
+    });
+    final response = await http.post(url, body: bodyAspectos);
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final dataAspectos = jsonResponse as List<dynamic>;
+      final listaAspectos =
+          dataAspectos.map((item) => item as Map<String, dynamic>).toList();
+      cargandoAspectos = false;
+      if (mounted) {
+        setState(() {});
+      }
+      return listaAspectos;
+    } else {
+      // ignore: use_build_context_synchronously
+      String result = await errorInternet(
+          context,
+          "Error ${response.statusCode}",
+          "Se ha presentado un error de Intertet");
+      if (result == "volver") {
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
+      }
+    }
+    return [];
   }
 
   @override
