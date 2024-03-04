@@ -115,10 +115,14 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
 
     showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (context) {
           return StatefulBuilder(
             builder: (BuildContext context, setState) {
               return AlertDialog(
+                backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(2))),
                 title: Column(
                   children: [
                     Text(title),
@@ -128,6 +132,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                   ],
                 ),
                 content: TextField(
+                  autofocus: true,
                   onChanged: (value) {
                     double valor = 0;
                     if (value.isEmpty) {
@@ -195,6 +200,47 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
     return completer.future;
   }
 
+  double calcularValoracion() {
+    double result = 0;
+    List<KeyValuePair> valoresNotas = widget.keyValuePairs
+        .where((element) =>
+            element.key != "Nombres" && element.key.startsWith('N'))
+        .toList();
+    List<KeyValuePair> valoresPorcentajes = widget.keyValuePairs
+        .where((element) => element.key.startsWith('porcentaje'))
+        .toList();
+    bool porcentajes = false;
+    for (KeyValuePair porcentaje in valoresPorcentajes) {
+      if (porcentaje.value != '0' && porcentaje.value != null) {
+        porcentajes = true;
+        break;
+      }
+    }
+    int cantidadNotas = 0;
+    for (int i = 0; i <= 11; i++) {
+      late double nota;
+      late double porcentaje;
+      try {
+        nota = double.tryParse(valoresNotas[i].value) ?? 0;
+      } catch (e) {
+        nota = 0;
+      }
+      try {
+        String strp = valoresPorcentajes[i].value ?? '';
+        porcentaje = double.tryParse(strp) ?? 0;
+      } catch (e) {
+        porcentaje = 0;
+      }
+      if (porcentajes) {
+        result += nota * 0.01 * porcentaje;
+      } else {
+        result += nota;
+        if (nota != 0) cantidadNotas++;
+      }
+    }
+    return (cantidadNotas > 0 ? result / cantidadNotas : result);
+  }
+
   @override
   Widget build(BuildContext context) {
     inicio();
@@ -247,6 +293,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
               widget.notasFullModelo.toMap().forEach((key, value) {
                 print({"$key:$value"});
               });
+              widget.notasFullModelo.valoracion = widget.keyValuePairs[2].value;
               var a = widget.notasFullModelo.toMap().map((key, value) {
                 if (key.startsWith("nota")) {
                   int indiceNota = widget.keyValuePairs
@@ -256,6 +303,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                 }
                 return MapEntry(key, value);
               });
+
               print(a);
             },
             child: const Icon(Icons.save, color: Colors.black87),
@@ -388,6 +436,9 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                                 indiceNota);
                             print(result);
                             widget.keyValuePairs[indiceNota].value = result;
+                            double valorac = calcularValoracion();
+                            widget.keyValuePairs[2].value =
+                                valorac.toStringAsFixed(1);
                             setState(() {});
                           },
                           child: Text(laNota != 0 ? laNota.toString() : '',
