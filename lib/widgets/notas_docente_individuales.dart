@@ -5,6 +5,7 @@ import 'package:com_celesoft_notasieo/modelo_aspectos.dart';
 import 'package:com_celesoft_notasieo/modelo_notas_full.dart';
 import 'package:com_celesoft_notasieo/widgets/aspectos_notas_docente.dart';
 import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
+import 'package:com_celesoft_notasieo/widgets/custom_footer.dart';
 import 'package:com_celesoft_notasieo/widgets/error_internet.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -76,6 +77,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
   List<KeyValuePair> anotas = [];
   bool isvalid = true;
   bool cargandoAspectos = false;
+  double valoracion = 0;
   final TextEditingController controller = TextEditingController(text: "");
   @override
   void initState() {
@@ -363,12 +365,41 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           ),
         ],
       ),
+      bottomNavigationBar: CustomFooter(
+        info: Text(
+          widget.nombres,
+          style: const TextStyle(
+            color: Colors.green,
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+          ),
+        ),
+        extInfo: Text(
+          '${widget.asignatura} ${widget.grado}',
+          style: const TextStyle(
+              color: Colors.deepPurple,
+              fontWeight: FontWeight.bold,
+              fontSize: 12),
+        ),
+        textInfo: Text(
+          widget.periodo,
+          style:
+              const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+        ),
+        valor: Text(
+          widget.keyValuePairs[2].value,
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
+              color: valoracion < 3 ? Colors.red.shade600 : Colors.green),
+        ),
+      ),
       body: ListView.builder(
-        itemCount: anotas.length + 1,
+        itemCount: anotas.length,
         itemBuilder: (context, index) {
-          if (index == 0) {
+          /* if (index == 0) {
             String valor = widget.keyValuePairs[2].value ?? '0';
-            double valoracion = double.parse(valor);
+            valoracion = double.parse(valor);
             return Card(
               color: Theme.of(context).focusColor,
               shape: RoundedRectangleBorder(
@@ -417,8 +448,9 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                 ],
               ),
             );
-          } else {
-            KeyValuePair data = anotas[index - 1];
+          } else */
+          {
+            KeyValuePair data = anotas[index];
             String str = data.key;
 
             int indiceNumero = str.indexOf(RegExp(r'\d'));
@@ -492,6 +524,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                             double valorac = calcularValoracion();
                             widget.keyValuePairs[2].value =
                                 valorac.toStringAsFixed(1);
+                            valoracion = valorac;
                             setState(() {});
                           },
                           child: Text(laNota != 0 ? laNota.toString() : '',
@@ -509,9 +542,10 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Fecha: $fechaNota'),
-                          Text(porcentaje != ''
-                              ? 'Porcentaje: $porcentaje'
-                              : ''),
+                          Text(
+                            porcentaje != '' ? 'Porcentaje: $porcentaje' : '',
+                            style: const TextStyle(color: Colors.blue),
+                          ),
                         ],
                       ),
                     ],
