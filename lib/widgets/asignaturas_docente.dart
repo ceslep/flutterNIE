@@ -266,7 +266,7 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
                                             MAspectos.fromJson(aspectoJSON),
                                       )
                                       .toList();
-                                  if (notas.isNotEmpty &&
+                                  if (notas.isNotEmpty ||
                                       notasFullModelo.isNotEmpty) {
                                     var result = await Navigator.push(
                                       context,
