@@ -62,6 +62,7 @@ class _NotasDocenteState extends State<NotasDocente> {
                       asignatura: widget.asignatura,
                       periodo: widget.periodo,
                       year: widget.year,
+                      obteniendo: true,
                     ),
                   ));
             },

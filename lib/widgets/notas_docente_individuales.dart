@@ -78,6 +78,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
   bool isvalid = true;
   bool cargandoAspectos = false;
   double valoracion = 0;
+  List<MAspectos> waspectos = [];
   final TextEditingController controller = TextEditingController(text: "");
   @override
   void initState() {
@@ -92,6 +93,10 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
               element.key.contains("N") && !element.key.contains("Nombres"),
         )
         .toList();
+    if (waspectos.isEmpty) {
+      waspectos = widget.aspectos;
+    }
+    print("inicio");
   }
 
   void mostrarAlert(BuildContext context, String title, String text) {
@@ -323,8 +328,8 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
             child: const Icon(Icons.home, color: Colors.white),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              bool result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => AspectosNotasDocente(
@@ -333,8 +338,20 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                       asignatura: widget.asignatura,
                       periodo: widget.periodo,
                       year: widget.year,
+                      obteniendo: true,
                     ),
                   ));
+              print(result);
+              if (result) {
+                List<Map<String, dynamic>> aspectos = await obtenerAspectos();
+                print(aspectos);
+                waspectos =
+                    aspectos.map((json) => MAspectos.fromJson(json)).toList();
+                for (var wa in waspectos) {
+                  print(wa.aspecto);
+                }
+                setState(() {});
+              }
             },
             child: const Icon(Icons.note_alt_outlined, color: Colors.yellow),
           ),
@@ -371,7 +388,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           style: const TextStyle(
             color: Colors.green,
             fontWeight: FontWeight.bold,
-            fontSize: 13,
+            fontSize: 10,
           ),
         ),
         extInfo: Text(
@@ -379,12 +396,12 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           style: const TextStyle(
               color: Colors.deepPurple,
               fontWeight: FontWeight.bold,
-              fontSize: 12),
+              fontSize: 10),
         ),
         textInfo: Text(
           widget.periodo,
-          style:
-              const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+              color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 10),
         ),
         valor: Text(
           widget.keyValuePairs[2].value ?? '',
@@ -397,163 +414,107 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
       body: ListView.builder(
         itemCount: anotas.length,
         itemBuilder: (context, index) {
-          /* if (index == 0) {
-            String valor = widget.keyValuePairs[2].value ?? '0';
-            valoracion = double.parse(valor);
-            return Card(
-              color: Theme.of(context).focusColor,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7)),
-              elevation: 7,
-              margin: const EdgeInsets.all(12),
-              child: Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(widget.keyValuePairs[1].value,
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Row(
-                        children: [
-                          const Text(
-                            'Valoracion:',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          Text(
-                            widget.keyValuePairs[2].value,
+          KeyValuePair data = anotas[index];
+          String str = data.key;
+
+          int indiceNumero = str.indexOf(RegExp(r'\d'));
+          String numeroStr = str.substring(indiceNumero);
+
+          int numero = int.parse(numeroStr);
+
+          int indiceNota = widget.keyValuePairs
+              .indexWhere((element) => element.key == 'N$numero');
+          int indiceAnotacion = widget.keyValuePairs
+              .indexWhere((element) => element.key == 'aspecto$numero');
+          int indiceFechaNota = widget.keyValuePairs
+              .indexWhere((element) => element.key == 'fecha$numero');
+          int indicePorcentaje = widget.keyValuePairs
+              .indexWhere((element) => element.key == 'porcentaje$numero');
+          String fechaNota = widget.keyValuePairs[indiceFechaNota].value ?? '';
+          String sNota = widget.keyValuePairs[indiceNota].value ?? '';
+          String strNota = sNota != "" ? sNota.trim() : "";
+          double laNota = double.parse(strNota != "" ? strNota : "0");
+
+          String aspecto = widget.keyValuePairs[indiceAnotacion].value ?? '';
+          String porcentaje =
+              widget.keyValuePairs[indicePorcentaje].value ?? '';
+          if (aspecto == '') {
+            if (numero <= widget.aspectos.length) {
+              aspecto = waspectos[numero - 1].aspecto;
+            }
+          }
+
+          return Card(
+              child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+            title: Text(
+              'Nota $numero',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Column(
+              children: [
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 0.65 * MediaQuery.of(context).size.width,
+                      child: Text(aspecto,
+                          style: const TextStyle(color: Colors.green)),
+                    ),
+                    const SizedBox(
+                        width: 27), // Add Spacer to fill remaining space
+                    SizedBox(
+                      height: 40,
+                      width: 55,
+                      child: TextButton(
+                        style: const ButtonStyle(
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.amberAccent),
+                            foregroundColor:
+                                MaterialStatePropertyAll(Colors.black)),
+                        onPressed: () async {
+                          controller.text =
+                              widget.keyValuePairs[indiceNota].value ?? '';
+                          // Handle button press
+                          String result = await showNumberDialog(
+                              context,
+                              'Nota $numero',
+                              widget.keyValuePairs[indiceAnotacion].value ?? '',
+                              widget.keyValuePairs[indiceNota].value ?? '',
+                              indiceNota);
+                          print(result);
+                          widget.keyValuePairs[indiceNota].value = result;
+                          double valorac = calcularValoracion();
+                          widget.keyValuePairs[2].value =
+                              valorac.toStringAsFixed(1);
+                          valoracion = valorac;
+                          setState(() {});
+                        },
+                        child: Text(laNota != 0 ? laNota.toString() : '',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25,
-                                color: valoracion < 3
-                                    ? Colors.red.shade600
-                                    : Colors.greenAccent),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const Expanded(child: Text('')),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        widget.periodo,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.indigoAccent),
+                                color: laNota < 3 ? Colors.red : Colors.black,
+                                fontWeight: FontWeight.bold)),
                       ),
                     ),
-                  )
-                ],
-              ),
-            );
-          } else */
-          {
-            KeyValuePair data = anotas[index];
-            String str = data.key;
-
-            int indiceNumero = str.indexOf(RegExp(r'\d'));
-            String numeroStr = str.substring(indiceNumero);
-
-            int numero = int.parse(numeroStr);
-
-            int indiceNota = widget.keyValuePairs
-                .indexWhere((element) => element.key == 'N$numero');
-            int indiceAnotacion = widget.keyValuePairs
-                .indexWhere((element) => element.key == 'aspecto$numero');
-            int indiceFechaNota = widget.keyValuePairs
-                .indexWhere((element) => element.key == 'fecha$numero');
-            int indicePorcentaje = widget.keyValuePairs
-                .indexWhere((element) => element.key == 'porcentaje$numero');
-            String fechaNota =
-                widget.keyValuePairs[indiceFechaNota].value ?? '';
-            String sNota = widget.keyValuePairs[indiceNota].value ?? '';
-            String strNota = sNota != "" ? sNota.trim() : "";
-            double laNota = double.parse(strNota != "" ? strNota : "0");
-
-            String aspecto = widget.keyValuePairs[indiceAnotacion].value ?? '';
-            String porcentaje =
-                widget.keyValuePairs[indicePorcentaje].value ?? '';
-            if (aspecto == '') {
-              if (numero <= widget.aspectos.length) {
-                aspecto = widget.aspectos[numero - 1].aspecto;
-              }
-            }
-
-            return Card(
-                child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-              title: Text(
-                'Nota $numero',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Column(
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 0.65 * MediaQuery.of(context).size.width,
-                        child: Text(aspecto,
-                            style: const TextStyle(color: Colors.green)),
-                      ),
-                      const SizedBox(
-                          width: 27), // Add Spacer to fill remaining space
-                      SizedBox(
-                        height: 40,
-                        width: 55,
-                        child: TextButton(
-                          style: const ButtonStyle(
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Colors.amberAccent),
-                              foregroundColor:
-                                  MaterialStatePropertyAll(Colors.black)),
-                          onPressed: () async {
-                            controller.text =
-                                widget.keyValuePairs[indiceNota].value ?? '';
-                            // Handle button press
-                            String result = await showNumberDialog(
-                                context,
-                                'Nota $numero',
-                                widget.keyValuePairs[indiceAnotacion].value ??
-                                    '',
-                                widget.keyValuePairs[indiceNota].value ?? '',
-                                indiceNota);
-                            print(result);
-                            widget.keyValuePairs[indiceNota].value = result;
-                            double valorac = calcularValoracion();
-                            widget.keyValuePairs[2].value =
-                                valorac.toStringAsFixed(1);
-                            valoracion = valorac;
-                            setState(() {});
-                          },
-                          child: Text(laNota != 0 ? laNota.toString() : '',
-                              style: TextStyle(
-                                  color: laNota < 3 ? Colors.red : Colors.black,
-                                  fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Fecha: $fechaNota'),
+                        Text(
+                          porcentaje != '' ? 'Porcentaje: $porcentaje' : '',
+                          style: const TextStyle(color: Colors.blue),
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Fecha: $fechaNota'),
-                          Text(
-                            porcentaje != '' ? 'Porcentaje: $porcentaje' : '',
-                            style: const TextStyle(color: Colors.blue),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ));
-          }
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ));
         },
       ),
     );

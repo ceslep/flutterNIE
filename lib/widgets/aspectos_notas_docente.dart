@@ -22,6 +22,7 @@ class Aspectos {
   String porcentaje;
   String fecha;
   String nota;
+  String year;
   TextEditingController aspectoController;
   TextEditingController porcentajeController;
   TextEditingController fechaController;
@@ -35,6 +36,7 @@ class Aspectos {
       this.porcentaje,
       this.fecha,
       this.nota,
+      this.year,
       this.aspectoController,
       this.porcentajeController,
       this.fechaController);
@@ -49,7 +51,8 @@ String toJson(Aspectos aspecto) {
       '"aspecto": "${aspecto.aspecto}",'
       '"porcentaje": "${aspecto.porcentaje}",'
       '"fecha": "${aspecto.fecha}",'
-      '"nota": ${aspecto.nota}'
+      '"nota": "${aspecto.nota}",'
+      '"year": "${aspecto.year}"'
       '}';
 }
 
@@ -59,13 +62,15 @@ class AspectosNotasDocente extends StatefulWidget {
   final String asignatura;
   final String periodo;
   final String year;
+  final bool obteniendo;
   const AspectosNotasDocente(
       {Key? key,
       required this.docente,
       required this.grado,
       required this.asignatura,
       required this.periodo,
-      required this.year})
+      required this.year,
+      required this.obteniendo})
       : super(key: key);
 
   @override
@@ -79,6 +84,7 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
   bool cargandoAspectos = false;
   List<MAspectos> maspectos = [];
   late FToast fToast;
+  bool obteniendo = false;
 
   Future<List<Map<String, dynamic>>> obtenerAspectos() async {
     if (mounted) {
@@ -120,6 +126,7 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
 
   @override
   void initState() {
+    obteniendo = widget.obteniendo;
     super.initState();
     for (int i = 0; i < 12; i++) {
       aspectos.add(Aspectos(
@@ -131,6 +138,7 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
           "",
           "",
           (i + 1).toString(),
+          widget.year,
           TextEditingController(),
           TextEditingController(),
           TextEditingController()));
@@ -154,7 +162,10 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
           SizedBox(
             width: 12.0,
           ),
-          Text("Aspectos almacenados correctamente"),
+          Text(
+            "Aspectos almacenados correctamente",
+            style: TextStyle(fontSize: 10),
+          ),
         ],
       ),
     );
@@ -186,25 +197,31 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
     return false;
   }
 
+  void asignarAspectos(List<Map<String, dynamic>> jsonData) {
+    maspectos = jsonData.map((json) => MAspectos.fromJson(json)).toList();
+    for (var maspecto in maspectos) {
+      int indiceAspecto = int.parse(maspecto.nota) - 1;
+      aspectos[indiceAspecto].aspectoController.text = maspecto.aspecto;
+      aspectos[indiceAspecto].porcentajeController.text = maspecto.porcentaje;
+      aspectos[indiceAspecto].fechaController.text = maspecto.fecha;
+      if (mounted) {
+        setState(() {
+          // State update code here
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    obtenerAspectos().then(
-      (jsonData) {
-        maspectos = jsonData.map((json) => MAspectos.fromJson(json)).toList();
-        for (var maspecto in maspectos) {
-          int indiceAspecto = int.parse(maspecto.nota) - 1;
-          aspectos[indiceAspecto].aspectoController.text = maspecto.aspecto;
-          aspectos[indiceAspecto].porcentajeController.text =
-              maspecto.porcentaje;
-          aspectos[indiceAspecto].fechaController.text = maspecto.fecha;
-          if (mounted) {
-            setState(() {
-              // State update code here
-            });
-          }
-        }
-      },
-    );
+    if (obteniendo) {
+      obteniendo = false;
+      obtenerAspectos().then(
+        (jsonData) {
+          asignarAspectos(jsonData);
+        },
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
@@ -237,7 +254,7 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context, true),
         ),
         actions: [
           TextButton(
@@ -251,7 +268,7 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
               json =
                   json.substring(0, json.length - 1); // Eliminar la última coma
               json += ']';
-
+              print(json);
               if (await guardarAspectos(json)) {
                 if (kDebugMode) {
                   print("guardado");
@@ -285,12 +302,6 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                     ? const Icon(
                         Icons.check_circle,
                         color: Colors.green,
-                      )
-                    : const SizedBox(),
-                !cargandoAspectos
-                    ? const SpinKitHourGlass(
-                        color: Colors.blueAccent,
-                        size: 20,
                       )
                     : const SizedBox(),
               ],

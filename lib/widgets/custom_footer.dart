@@ -34,8 +34,14 @@ class _CustomFooterState extends State<CustomFooter> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                widget.info,
-                widget.extInfo,
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, top: 8),
+                  child: widget.info,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: widget.extInfo,
+                ),
               ],
             ),
             const SizedBox(width: 6),
