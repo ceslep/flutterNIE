@@ -2,7 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:com_celesoft_notasieo/modelo_Convivencia.dart';
+import 'package:com_celesoft_notasieo/modelo_convivencia.dart';
 import 'package:com_celesoft_notasieo/widgets/convivencia_detallado.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';

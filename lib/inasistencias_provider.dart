@@ -1,5 +1,5 @@
 import 'package:com_celesoft_notasieo/modelo_inasistencias.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -13,7 +13,9 @@ class InasistenciasProvider extends ChangeNotifier {
   Future<void> updateData(String estudiante, String year) async {
     final List<Map<String, dynamic>> data =
         await fetchDataFromJson(estudiante, year);
-    print({'lengthdatainasistencias': data.length});
+    if (kDebugMode) {
+      print({'lengthdatainasistencias': data.length});
+    }
     setData(data);
   }
 

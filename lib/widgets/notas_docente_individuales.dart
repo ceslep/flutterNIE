@@ -386,8 +386,8 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           style:
               const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
         ),
-        valor: Text(ss
-          widget.keyValuePairs[2].value,
+        valor: Text(
+          widget.keyValuePairs[2].value ?? '',
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 25,

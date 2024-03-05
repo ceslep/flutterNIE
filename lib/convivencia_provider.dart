@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
-import 'package:com_celesoft_notasieo/modelo_Convivencia.dart';
+import 'package:com_celesoft_notasieo/modelo_convivencia.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 

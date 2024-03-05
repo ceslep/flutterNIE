@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:com_celesoft_notasieo/convivencia_provider.dart';
 import 'package:com_celesoft_notasieo/inasistencias_provider.dart';
 import 'package:com_celesoft_notasieo/main.dart';
-import 'package:com_celesoft_notasieo/modelo_Convivencia.dart';
+import 'package:com_celesoft_notasieo/modelo_convivencia.dart';
 import 'package:com_celesoft_notasieo/modelo_inasistencias.dart';
 import 'package:com_celesoft_notasieo/modelo_notas.dart';
 import 'package:com_celesoft_notasieo/notas_provider.dart';
