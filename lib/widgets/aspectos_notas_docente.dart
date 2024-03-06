@@ -329,10 +329,6 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                     aspectos[index].aspecto =
                         aspectos[index].aspectoController.text;
                     aspectos[index].nota = (index + 1).toString();
-                    if (kDebugMode) {
-                      print({'oc': value});
-                      print({"aspecto": aspectos[index].aspecto});
-                    }
                   },
                   controller: aspectos[index].aspectoController,
                   maxLines: 3,
@@ -356,12 +352,9 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                         .digitsOnly, // Permite solo números
                   ],
                   onChanged: (value) {
-                    if (kDebugMode) {
-                      aspectos[index].porcentaje =
-                          aspectos[index].porcentajeController.text;
-                      print({'oc': value});
-                      print({"porcentaje": aspectos[index].porcentaje});
-                    }
+                    print(value);
+                    aspectos[index].porcentajeController.text = value;
+                    aspectos[index].porcentaje = value;
                   },
                   controller: aspectos[index].porcentajeController,
                   decoration: InputDecoration(
@@ -373,12 +366,9 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   child: TextField(
                     onChanged: (value) {
-                      if (kDebugMode) {
-                        aspectos[index].fecha =
-                            aspectos[index].fechaController.text;
-                        print({'oc': value});
-                        print({"fecha": aspectos[index].fecha});
-                      }
+                      print(value);
+                      aspectos[index].fechaController.text = value;
+                      aspectos[index].fecha = value;
                     },
                     readOnly: true,
                     controller: aspectos[index].fechaController,

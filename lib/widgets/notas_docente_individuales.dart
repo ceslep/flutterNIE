@@ -228,12 +228,11 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
         .where((element) =>
             element.key != "Nombres" && element.key.startsWith('N'))
         .toList();
-    List<KeyValuePair> valoresPorcentajes = widget.keyValuePairs
-        .where((element) => element.key.startsWith('porcentaje'))
-        .toList();
+    List<String> valoresPorcentajes =
+        waspectos.map((e) => e.porcentaje).cast<String>().toList();
     bool porcentajes = false;
-    for (KeyValuePair porcentaje in valoresPorcentajes) {
-      if (porcentaje.value != '0' && porcentaje.value != null) {
+    for (String porcentaje in valoresPorcentajes) {
+      if (porcentaje != '0' && porcentaje != '') {
         porcentajes = true;
         break;
       }
@@ -248,7 +247,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
         nota = 0;
       }
       try {
-        String strp = valoresPorcentajes[i].value ?? '';
+        String strp = valoresPorcentajes[i];
         porcentaje = double.tryParse(strp) ?? 0;
       } catch (e) {
         porcentaje = 0;
@@ -438,9 +437,12 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           String aspecto = widget.keyValuePairs[indiceAnotacion].value ?? '';
           String porcentaje =
               widget.keyValuePairs[indicePorcentaje].value ?? '';
+          String fecha = widget.keyValuePairs[indicePorcentaje].value ?? '';
           if (aspecto == '') {
             if (numero <= widget.aspectos.length) {
               aspecto = waspectos[numero - 1].aspecto;
+              porcentaje = waspectos[numero - 1].porcentaje;
+              fecha = waspectos[numero - 1].fecha;
             }
           }
 
@@ -479,7 +481,6 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                               context,
                               'Nota $numero',
                               aspecto,
-                              //widget.keyValuePairs[indiceAnotacion].value ?? '',
                               widget.keyValuePairs[indiceNota].value ?? '',
                               indiceNota);
                           print(result);
