@@ -478,7 +478,8 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                           String result = await showNumberDialog(
                               context,
                               'Nota $numero',
-                              widget.keyValuePairs[indiceAnotacion].value ?? '',
+                              aspecto,
+                              //widget.keyValuePairs[indiceAnotacion].value ?? '',
                               widget.keyValuePairs[indiceNota].value ?? '',
                               indiceNota);
                           print(result);

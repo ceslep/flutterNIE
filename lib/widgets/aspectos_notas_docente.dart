@@ -262,8 +262,17 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
               guardando = true;
               setState(() {});
               String json = '[';
+              int index = 0;
               for (var aspecto in aspectos) {
-                json += '${toJson(aspecto)},';
+                if (aspecto.aspecto != "") {
+                  json += '${toJson(aspecto)},';
+                } else {
+                  aspecto.aspecto = maspectos[index].aspecto;
+                  aspecto.porcentaje = maspectos[index].porcentaje;
+                  aspecto.fecha = maspectos[index].fecha;
+                  json += '${toJson(aspecto)},';
+                }
+                index++;
               }
               json =
                   json.substring(0, json.length - 1); // Eliminar la última coma
@@ -365,10 +374,10 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                   child: TextField(
                     onChanged: (value) {
                       if (kDebugMode) {
-                        aspectos[index].porcentaje =
-                            aspectos[index].porcentajeController.text;
+                        aspectos[index].fecha =
+                            aspectos[index].fechaController.text;
                         print({'oc': value});
-                        print({"porcentaje": aspectos[index].porcentaje});
+                        print({"fecha": aspectos[index].fecha});
                       }
                     },
                     readOnly: true,
