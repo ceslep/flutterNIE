@@ -212,6 +212,29 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
     }
   }
 
+  bool porcentajeValido(String porcentaje) {
+    double valor = 0;
+    bool isvalid = true;
+    if (porcentaje == "") return true;
+    try {
+      valor = double.parse(porcentaje);
+    } catch (e) {
+      print(e);
+    }
+    if (valor.isNaN) {
+      isvalid = false;
+
+      return isvalid;
+    }
+    if (valor > 0 && valor <= 100) {
+      isvalid = true;
+    } else {
+      isvalid = false;
+    }
+    // if (mounted) setState(() {});
+    return isvalid;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (obteniendo) {
@@ -300,6 +323,12 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
         itemCount: aspectos.length,
         itemBuilder: (context, index) {
           bool boldAspecto = aspectos[index].aspectoController.text != "";
+          bool porcentajeval = true;
+
+          if (maspectos.isNotEmpty) {
+            porcentajeval = porcentajeValido(maspectos[index].porcentaje);
+          }
+
           return ExpansionTile(
             title: Row(
               children: [
@@ -343,7 +372,7 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 5),
                 child: TextField(
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
@@ -353,12 +382,26 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                   ],
                   onChanged: (value) {
                     print(value);
+
+                    // if (mounted) setState(() {});
                     aspectos[index].porcentajeController.text = value;
                     aspectos[index].porcentaje = value;
+                    maspectos[index].porcentaje = value;
+                    setState(() {});
                   },
                   controller: aspectos[index].porcentajeController,
                   decoration: InputDecoration(
                     labelText: "Porcentaje del Aspecto ${index + 1}",
+                    labelStyle: TextStyle(
+                        color: !porcentajeval ? Colors.red : Colors.black),
+                    errorText: !porcentajeval
+                        ? "El porcentaje ingresado no está permitido"
+                        : "",
+                    errorBorder: OutlineInputBorder(
+                      borderSide: !porcentajeval
+                          ? const BorderSide(color: Colors.red)
+                          : const BorderSide(color: Colors.black),
+                    ),
                   ),
                 ),
               ),
