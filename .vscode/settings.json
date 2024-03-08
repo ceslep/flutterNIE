@@ -19,5 +19,21 @@
         "titleBar.inactiveBackground": "#007fff99",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "peacock.color": "#007fff"
+    "peacock.color": "#007fff",
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "162.241.203.120",
+            "port": 3306,
+            "driver": "MariaDB",
+            "name": "iedeocci",
+            "database": "iedeocci_occidente",
+            "username": "iedeocci_root",
+            "password": "Qpzm894035*"
+        }
+    ]
 }
