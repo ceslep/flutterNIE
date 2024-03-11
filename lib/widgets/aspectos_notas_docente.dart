@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:com_celesoft_notasieo/modelo_aspectos.dart';
+import 'package:com_celesoft_notasieo/widgets/custom_footer.dart';
 import 'package:com_celesoft_notasieo/widgets/error_internet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 
 const String urlbase = 'https://app.iedeoccidente.com';
 
@@ -85,6 +87,7 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
   List<MAspectos> maspectos = [];
   late FToast fToast;
   bool obteniendo = false;
+  double _totalPorcentaje = 0;
 
   Future<List<Map<String, dynamic>>> obtenerAspectos() async {
     if (mounted) {
@@ -197,6 +200,13 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
     return false;
   }
 
+  double _calcularPorcentaje(List<MAspectos> aspectos) {
+    double porcentaje = aspectos
+        .map((e) => double.parse(e.porcentaje != "" ? e.porcentaje : '0'))
+        .reduce((value, porcentaje) => value + porcentaje);
+    return porcentaje;
+  }
+
   void asignarAspectos(List<Map<String, dynamic>> jsonData) {
     maspectos = jsonData.map((json) => MAspectos.fromJson(json)).toList();
     for (var maspecto in maspectos) {
@@ -209,6 +219,10 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
           // State update code here
         });
       }
+    }
+    _totalPorcentaje = _calcularPorcentaje(maspectos);
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -288,6 +302,10 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
               int index = 0;
               for (var aspecto in aspectos) {
                 if (aspecto.aspecto != "") {
+                  if (aspecto.fecha == "") {
+                    final DateTime now = DateTime.now();
+                    aspecto.fecha = DateFormat('yyyy-MM-dd').format(now);
+                  }
                   json += '${toJson(aspecto)},';
                 } else {
                   aspecto.aspecto = maspectos[index].aspecto;
@@ -318,6 +336,38 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                   ),
           ),
         ],
+      ),
+      bottomNavigationBar: CustomFooter(
+        info: const Text(
+          'Porcentajes',
+          style: TextStyle(
+            color: Colors.green,
+            fontWeight: FontWeight.bold,
+            fontSize: 10,
+          ),
+        ),
+        extInfo: Text(
+          '${widget.asignatura} ${widget.grado}',
+          style: const TextStyle(
+              color: Colors.deepPurple,
+              fontWeight: FontWeight.bold,
+              fontSize: 10),
+        ),
+        textInfo: Text(
+          'Total: ${_totalPorcentaje.toString()}',
+          style: const TextStyle(
+              color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 12),
+        ),
+        valor: const Text(
+          '',
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 25, color: Colors.green),
+        ),
+        gradiente: const LinearGradient(
+          colors: [Colors.white, Colors.lightBlueAccent],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
       body: ListView.builder(
         itemCount: aspectos.length,
@@ -387,6 +437,7 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                     aspectos[index].porcentajeController.text = value;
                     aspectos[index].porcentaje = value;
                     maspectos[index].porcentaje = value;
+                    _totalPorcentaje = _calcularPorcentaje(maspectos);
                     setState(() {});
                   },
                   controller: aspectos[index].porcentajeController,

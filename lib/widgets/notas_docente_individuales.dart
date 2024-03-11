@@ -121,7 +121,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
   }
 
   Future<String> showNumberDialog(BuildContext context, String title,
-      String subtitle, String value, int indice) async {
+      String subtitle, String porcentaje, String value, int indice) async {
     Completer<String> completer = Completer();
 
     showDialog(
@@ -138,9 +138,16 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                 title: Column(
                   children: [
                     Text(title),
-                    Text(subtitle,
-                        style:
-                            const TextStyle(fontSize: 12, color: Colors.blue))
+                    Column(
+                      children: [
+                        Text(subtitle,
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.blue)),
+                        Text(porcentaje,
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.blueGrey)),
+                      ],
+                    )
                   ],
                 ),
                 content: Column(
@@ -409,6 +416,11 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
               fontSize: 25,
               color: valoracion < 3 ? Colors.red.shade600 : Colors.green),
         ),
+        gradiente: const LinearGradient(
+          colors: [Colors.white, Color.fromARGB(255, 230, 242, 248)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
       body: ListView.builder(
         itemCount: anotas.length,
@@ -481,6 +493,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                               context,
                               'Nota $numero',
                               aspecto,
+                              'Porcentaje $porcentaje',
                               widget.keyValuePairs[indiceNota].value ?? '',
                               indiceNota);
                           print(result);

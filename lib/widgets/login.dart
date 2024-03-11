@@ -106,6 +106,7 @@ class _LoginState extends State<Login> {
         ),
         Container(
           width: double.infinity,
+          height: 1,
           padding:
               const EdgeInsets.only(left: 30, right: 30, top: 0, bottom: 20),
           child: widget.years.isNotEmpty
@@ -138,7 +139,7 @@ class _LoginState extends State<Login> {
         ),
         SizedBox(
             width: 0.85 * MediaQuery.of(context).size.width,
-            height: 0.03 * MediaQuery.of(context).size.height,
+            height: 0.04 * MediaQuery.of(context).size.height,
             child: botones(
                 widget.onIngresar, widget.login, widget.years.isNotEmpty))
       ],

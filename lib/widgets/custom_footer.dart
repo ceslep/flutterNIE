@@ -6,12 +6,14 @@ class CustomFooter extends StatefulWidget {
   final Text extInfo;
   final Text textInfo;
   final Text valor;
+  final Gradient gradiente;
   const CustomFooter(
       {super.key,
       required this.info,
       required this.extInfo,
       required this.textInfo,
-      required this.valor});
+      required this.valor,
+      required this.gradiente});
 
   @override
   State<CustomFooter> createState() => _CustomFooterState();
@@ -21,10 +23,13 @@ class _CustomFooterState extends State<CustomFooter> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0),
+      padding: const EdgeInsets.all(2),
       child: Container(
         height: 50.0,
-        color: Colors.white,
+        decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 232, 255, 206),
+            border: Border.all(color: Colors.black),
+            gradient: widget.gradiente),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
