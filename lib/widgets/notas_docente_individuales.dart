@@ -518,6 +518,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           String aspecto = widget.keyValuePairs[indiceAspecto].value ?? '';
           String porcentaje =
               widget.keyValuePairs[indicePorcentaje].value ?? '';
+          // ignore: unused_local_variable
           String fecha = widget.keyValuePairs[indicePorcentaje].value ?? '';
           if (aspecto == '') {
             if (numero <= widget.aspectos.length) {
