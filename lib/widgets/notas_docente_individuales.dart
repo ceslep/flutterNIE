@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 String obtenerNota(String numeroNota) {
   switch (numeroNota) {
@@ -42,6 +43,18 @@ String obtenerNota(String numeroNota) {
     default:
       return "No se encontró una nota para $numeroNota";
   }
+}
+
+String obtenerPorcentaje(String numeroPorcentaje) {
+  return numeroPorcentaje.toLowerCase();
+}
+
+String obtenerAspecto(String numeroAspecto) {
+  return numeroAspecto.toLowerCase();
+}
+
+String obtenerFecha(String numeroFecha) {
+  return numeroFecha.toLowerCase();
 }
 
 class NotasDocenteIndividuales extends StatefulWidget {
@@ -378,6 +391,23 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                       .indexWhere((element) => obtenerNota(element.key) == key);
                   String nota = widget.keyValuePairs[indiceNota].value ?? '';
                   value = nota;
+                } else if (key.startsWith("porcentaje")) {
+                  int indicePorcentaje = widget.keyValuePairs.indexWhere(
+                      (element) => obtenerPorcentaje(element.key) == key);
+                  String porcentaje =
+                      widget.keyValuePairs[indicePorcentaje].value ?? '';
+                  value = porcentaje;
+                } else if (key.startsWith("aspecto")) {
+                  int indiceAspecto = widget.keyValuePairs.indexWhere(
+                      (element) => obtenerAspecto(element.key) == key);
+                  String aspecto =
+                      widget.keyValuePairs[indiceAspecto].value ?? '';
+                  value = aspecto;
+                } else if (key != "fechahora" && key.startsWith("fecha")) {
+                  int indiceFecha = widget.keyValuePairs.indexWhere(
+                      (element) => obtenerFecha(element.key) == key);
+                  String fecha = widget.keyValuePairs[indiceFecha].value ?? '';
+                  value = fecha;
                 }
                 return MapEntry(key, value);
               });
@@ -435,7 +465,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
 
           int indiceNota = widget.keyValuePairs
               .indexWhere((element) => element.key == 'N$numero');
-          int indiceAnotacion = widget.keyValuePairs
+          int indiceAspecto = widget.keyValuePairs
               .indexWhere((element) => element.key == 'aspecto$numero');
           int indiceFechaNota = widget.keyValuePairs
               .indexWhere((element) => element.key == 'fecha$numero');
@@ -446,7 +476,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           String strNota = sNota != "" ? sNota.trim() : "";
           double laNota = double.parse(strNota != "" ? strNota : "0");
 
-          String aspecto = widget.keyValuePairs[indiceAnotacion].value ?? '';
+          String aspecto = widget.keyValuePairs[indiceAspecto].value ?? '';
           String porcentaje =
               widget.keyValuePairs[indicePorcentaje].value ?? '';
           String fecha = widget.keyValuePairs[indicePorcentaje].value ?? '';
@@ -502,6 +532,13 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                           widget.keyValuePairs[2].value =
                               valorac.toStringAsFixed(1);
                           valoracion = valorac;
+                          widget.keyValuePairs[indiceAspecto].value = aspecto;
+                          widget.keyValuePairs[indicePorcentaje].value =
+                              porcentaje;
+                          final DateTime now = DateTime.now();
+                          final String fechan =
+                              DateFormat('yyyy-MM-dd').format(now);
+                          widget.keyValuePairs[indiceFechaNota].value = fechan;
                           setState(() {});
                         },
                         child: Text(laNota != 0 ? laNota.toString() : '',
