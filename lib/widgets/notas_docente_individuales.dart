@@ -8,6 +8,7 @@ import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
 import 'package:com_celesoft_notasieo/widgets/custom_footer.dart';
 import 'package:com_celesoft_notasieo/widgets/error_internet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -90,6 +91,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
   List<KeyValuePair> anotas = [];
   bool isvalid = true;
   bool cargandoAspectos = false;
+  bool _guardandoNotas = false;
   double valoracion = 0;
   List<MAspectos> waspectos = [];
   final TextEditingController controller = TextEditingController(text: "");
@@ -320,6 +322,27 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
     return [];
   }
 
+  Future<bool> guardarNota(String jsonString) async {
+    _guardandoNotas = true;
+    setState(() {});
+    final url = Uri.parse('$urlbase/guardarNotaIndividual.php');
+    final response = await http.post(url, body: jsonString);
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      print(jsonResponse);
+      _guardandoNotas = false;
+      setState(() {});
+      return true;
+    } else {
+      // ignore: use_build_context_synchronously
+      await errorInternet(context, "Error ${response.statusCode}",
+          "Se ha presentado un error de Internet");
+      _guardandoNotas = false;
+      setState(() {});
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     inicio();
@@ -375,7 +398,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
             child: const Icon(Icons.note_alt_outlined, color: Colors.yellow),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               int indiceEstudiante = widget.keyValuePairs
                   .indexWhere((element) => element.key == "estudiante");
               String estudiante = widget.keyValuePairs[indiceEstudiante].value;
@@ -412,9 +435,25 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                 return MapEntry(key, value);
               });
 
-              print(a);
+              List<MapEntry<String, dynamic>> entryList = a.entries.toList();
+
+// Convertir la lista a un mapa utilizando Map.fromEntries
+              Map<String, dynamic> resultMap = Map.fromEntries(entryList);
+
+// Convertir el mapa a una cadena JSON válida
+              String jsonResult = jsonEncode(resultMap);
+
+// Ahora 'jsonResult' contendrá la cadena JSON válida
+              print(jsonResult);
+              bool result = await guardarNota(jsonResult);
+              print(result);
             },
-            child: const Icon(Icons.save, color: Colors.black87),
+            child: !_guardandoNotas
+                ? const Icon(Icons.save, color: Colors.black87)
+                : const SpinKitDualRing(
+                    color: Colors.yellow,
+                    size: 12,
+                  ),
           ),
         ],
       ),
