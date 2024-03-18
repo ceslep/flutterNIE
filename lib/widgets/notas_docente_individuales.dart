@@ -58,6 +58,10 @@ String obtenerFecha(String numeroFecha) {
   return numeroFecha.toLowerCase();
 }
 
+String obtenerFechaAspecto(String numeroFechaAspecto) {
+  return numeroFechaAspecto.toLowerCase();
+}
+
 class NotasDocenteIndividuales extends StatefulWidget {
   final List<KeyValuePair> keyValuePairs;
   final ModeloNotasFull notasFullModelo;
@@ -70,7 +74,7 @@ class NotasDocenteIndividuales extends StatefulWidget {
   final String year;
 
   const NotasDocenteIndividuales(
-      {Key? key,
+      {super.key,
       required this.keyValuePairs,
       required this.docente,
       required this.grado,
@@ -79,8 +83,7 @@ class NotasDocenteIndividuales extends StatefulWidget {
       required this.notasFullModelo,
       required this.periodo,
       required this.year,
-      required this.aspectos})
-      : super(key: key);
+      required this.aspectos});
 
   @override
   State<NotasDocenteIndividuales> createState() =>
@@ -311,6 +314,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
     } else {
       // ignore: use_build_context_synchronously
       String result = await errorInternet(
+          // ignore: use_build_context_synchronously
           context,
           "Error ${response.statusCode}",
           "Se ha presentado un error de Intertet");
@@ -399,14 +403,12 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           ),
           TextButton(
             onPressed: () async {
-              int indiceEstudiante = widget.keyValuePairs
+              /* int indiceEstudiante = widget.keyValuePairs
                   .indexWhere((element) => element.key == "estudiante");
               String estudiante = widget.keyValuePairs[indiceEstudiante].value;
               print({"eskp": estudiante});
-              print({"esnfm": widget.notasFullModelo.estudiante});
-              widget.notasFullModelo.toMap().forEach((key, value) {
-                print({"$key:$value"});
-              });
+              print({"esnfm": widget.notasFullModelo.estudiante}); */
+
               widget.notasFullModelo.valoracion = widget.keyValuePairs[2].value;
               var a = widget.notasFullModelo.toMap().map((key, value) {
                 if (key.startsWith("nota")) {
@@ -430,6 +432,12 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                   int indiceFecha = widget.keyValuePairs.indexWhere(
                       (element) => obtenerFecha(element.key) == key);
                   String fecha = widget.keyValuePairs[indiceFecha].value ?? '';
+                  value = fecha;
+                } else if (key != "fechahora" && key.startsWith("fechaa")) {
+                  int indiceFechaAspecto = widget.keyValuePairs.indexWhere(
+                      (element) => obtenerFechaAspecto(element.key) == key);
+                  String fecha =
+                      widget.keyValuePairs[indiceFechaAspecto].value ?? '';
                   value = fecha;
                 }
                 return MapEntry(key, value);
@@ -506,6 +514,8 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
               .indexWhere((element) => element.key == 'N$numero');
           int indiceAspecto = widget.keyValuePairs
               .indexWhere((element) => element.key == 'aspecto$numero');
+          int indiceFechaAspecto = widget.keyValuePairs
+              .indexWhere((element) => element.key == 'fechaa$numero');
           int indiceFechaNota = widget.keyValuePairs
               .indexWhere((element) => element.key == 'fecha$numero');
           int indicePorcentaje = widget.keyValuePairs
@@ -516,14 +526,28 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
           double laNota = double.parse(strNota != "" ? strNota : "0");
 
           String aspecto = widget.keyValuePairs[indiceAspecto].value ?? '';
+
           String porcentaje =
               widget.keyValuePairs[indicePorcentaje].value ?? '';
-          String fecha = widget.keyValuePairs[indicePorcentaje].value ?? '';
-          if (aspecto == '') {
-            if (numero <= widget.aspectos.length) {
-              aspecto = waspectos[numero - 1].aspecto;
-              porcentaje = waspectos[numero - 1].porcentaje;
+          // ignore: unused_local_variable
+          String fecha = widget.keyValuePairs[indiceFechaAspecto].value ?? '';
+          try {
+            if (aspecto == '') {
+              if (numero <= widget.aspectos.length) {
+                aspecto = waspectos[numero - 1].aspecto;
+                porcentaje = waspectos[numero - 1].porcentaje;
+                fecha = waspectos[numero - 1].fecha;
+              }
+            }
+          } catch (e) {
+            print(e);
+          }
+
+          if (fecha == '0000-00-00') {
+            try {
               fecha = waspectos[numero - 1].fecha;
+            } catch (e) {
+              print(e);
             }
           }
 
@@ -572,6 +596,8 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                               valorac.toStringAsFixed(1);
                           valoracion = valorac;
                           widget.keyValuePairs[indiceAspecto].value = aspecto;
+                          widget.keyValuePairs[indiceFechaAspecto].value =
+                              fecha;
                           widget.keyValuePairs[indicePorcentaje].value =
                               porcentaje;
                           final DateTime now = DateTime.now();
@@ -594,7 +620,9 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Fecha: $fechaNota'),
+                        fechaNota != '0000-00-00'
+                            ? Text('Fecha: $fechaNota')
+                            : const SizedBox(),
                         Text(
                           porcentaje != '' ? 'Porcentaje: $porcentaje' : '',
                           style: const TextStyle(color: Colors.blue),

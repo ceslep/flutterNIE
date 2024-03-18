@@ -53,11 +53,10 @@ class Concentrador extends StatefulWidget {
   final List<String> asignaturas;
 
   const Concentrador(
-      {Key? key,
+      {super.key,
       required this.notasPeriodos,
       required this.periodos,
-      required this.asignaturas})
-      : super(key: key);
+      required this.asignaturas});
 
   @override
   State<Concentrador> createState() => _ConcentradorState();

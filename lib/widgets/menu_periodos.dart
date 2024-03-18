@@ -7,11 +7,10 @@ class DropdownButtonWidget extends StatefulWidget {
   final ValueChanged<String> onChanged;
   final String defaultValue;
   const DropdownButtonWidget(
-      {Key? key,
+      {super.key,
       required this.items,
       required this.onChanged,
-      required this.defaultValue})
-      : super(key: key);
+      required this.defaultValue});
 
   @override
   _DropdownButtonWidgetState createState() => _DropdownButtonWidgetState();

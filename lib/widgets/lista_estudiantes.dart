@@ -8,7 +8,7 @@ import 'package:com_celesoft_notasieo/total_estudiantes_provider.dart';
 import '../modelo_estudiantes.dart';
 
 class ListaEstudiantes extends StatefulWidget {
-  const ListaEstudiantes({Key? key}) : super(key: key);
+  const ListaEstudiantes({super.key});
 
   @override
   State<ListaEstudiantes> createState() => _ListaEstudiantesState();

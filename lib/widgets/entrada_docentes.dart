@@ -15,13 +15,12 @@ class EntradaDocentes extends StatefulWidget {
   final String periodo;
   final String year;
   const EntradaDocentes(
-      {Key? key,
+      {super.key,
       required this.docente,
       required this.nombresDocente,
       required this.asignacionDocente,
       required this.periodo,
-      required this.year})
-      : super(key: key);
+      required this.year});
 
   @override
   State<EntradaDocentes> createState() => _EntradaDocentesState();

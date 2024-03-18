@@ -19,7 +19,7 @@ class NotasDocente extends StatefulWidget {
   final String periodo;
   final String year;
   const NotasDocente({
-    Key? key,
+    super.key,
     required this.notas,
     required this.asignatura,
     required this.grado,
@@ -28,7 +28,7 @@ class NotasDocente extends StatefulWidget {
     required this.year,
     required this.notasFullModelo,
     required this.maspectos,
-  }) : super(key: key);
+  });
 
   @override
   State<NotasDocente> createState() => _NotasDocenteState();

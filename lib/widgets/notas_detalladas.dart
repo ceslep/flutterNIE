@@ -43,8 +43,7 @@ class NotasDetalladas extends StatefulWidget {
   final List<ModeloNotas> detalleNotas;
   final String asignatura;
   const NotasDetalladas(
-      {Key? key, required this.detalleNotas, required this.asignatura})
-      : super(key: key);
+      {super.key, required this.detalleNotas, required this.asignatura});
 
   @override
   State<NotasDetalladas> createState() => _NotasDetalladasState();

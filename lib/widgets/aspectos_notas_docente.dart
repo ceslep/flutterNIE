@@ -66,14 +66,13 @@ class AspectosNotasDocente extends StatefulWidget {
   final String year;
   final bool obteniendo;
   const AspectosNotasDocente(
-      {Key? key,
+      {super.key,
       required this.docente,
       required this.grado,
       required this.asignatura,
       required this.periodo,
       required this.year,
-      required this.obteniendo})
-      : super(key: key);
+      required this.obteniendo});
 
   @override
   State<AspectosNotasDocente> createState() => _AspectosNotasDocenteState();
@@ -407,6 +406,7 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
                   onChanged: (value) {
                     aspectos[index].aspecto =
                         aspectos[index].aspectoController.text;
+                    maspectos[index].aspecto = value;
                     aspectos[index].nota = (index + 1).toString();
                   },
                   controller: aspectos[index].aspectoController,

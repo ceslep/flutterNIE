@@ -15,13 +15,13 @@ class Login extends StatefulWidget {
   final bool login;
   final List<String> years;
   const Login({
-    Key? key,
+    super.key,
     required this.usController,
     required this.passController,
     required this.onIngresar,
     required this.login,
     required this.years,
-  }) : super(key: key);
+  });
   // ignore: library_private_types_in_public_api
   @override
   // ignore: library_private_types_in_public_api

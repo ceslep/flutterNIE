@@ -27,8 +27,7 @@ List<String> separarTexto(String texto) {
 
 class ConvivenciaDetallado extends StatefulWidget {
   final ModeloConvivencia detalleConvivencia;
-  const ConvivenciaDetallado({Key? key, required this.detalleConvivencia})
-      : super(key: key);
+  const ConvivenciaDetallado({super.key, required this.detalleConvivencia});
 
   @override
   _ConvivenciaDetalladoState createState() => _ConvivenciaDetalladoState();

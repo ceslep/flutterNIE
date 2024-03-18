@@ -14,8 +14,7 @@ class Inasistencias extends StatefulWidget {
   final List<ModeloInasistencias> inasistencias;
   final String periodoActual;
   const Inasistencias(
-      {Key? key, required this.inasistencias, required this.periodoActual})
-      : super(key: key);
+      {super.key, required this.inasistencias, required this.periodoActual});
 
   @override
   // ignore: library_private_types_in_public_api

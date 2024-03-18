@@ -36,7 +36,7 @@ ModeloConvivencia modConvi = ModeloConvivencia(
 class Convivencia extends StatefulWidget {
   final List<ModeloConvivencia> convivencia;
 
-  const Convivencia({Key? key, required this.convivencia}) : super(key: key);
+  const Convivencia({super.key, required this.convivencia});
 
   @override
   _ConvivenciaState createState() => _ConvivenciaState();

@@ -9,10 +9,10 @@ class NotaListTile extends StatefulWidget {
   final List<ModeloNotas> notas;
 
   const NotaListTile({
-    Key? key,
+    super.key,
     required this.nota,
     required this.notas,
-  }) : super(key: key);
+  });
 
   @override
   State<NotaListTile> createState() => _NotaListTileState();
