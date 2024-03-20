@@ -375,7 +375,11 @@ class _AspectosNotasDocenteState extends State<AspectosNotasDocente> {
           bool porcentajeval = true;
 
           if (maspectos.isNotEmpty) {
-            porcentajeval = porcentajeValido(maspectos[index].porcentaje);
+            try {
+              porcentajeval = porcentajeValido(maspectos[index].porcentaje);
+            } catch (e) {
+              print(e);
+            }
           }
 
           return ExpansionTile(
