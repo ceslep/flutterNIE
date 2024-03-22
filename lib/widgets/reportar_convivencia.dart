@@ -136,6 +136,7 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
 
   String tipoFalta = '';
   String horaFalta = '';
+  String firma = 'data:image/png;base64,';
   int descCount = 0;
   int descaCount = 0;
   @override
@@ -149,12 +150,19 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: IconButton(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                var result = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const Signature(),
                     ));
+
+                if (result != null) {
+                  if (result['firma'] != '') {
+                    firma = 'data:image/png;base64,${result['firma']}';
+                  }
+                }
+                print(firma);
               },
               icon: const Icon(Icons.edit,
                   color: Color.fromARGB(255, 231, 255, 76)),

@@ -23,6 +23,7 @@ dependencies:
   logger: ^2.0.2+1
   fluttertoast: ^8.2.4
   flutter_drawing_board: ^0.7.0+2
+  path_provider: ^2.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
