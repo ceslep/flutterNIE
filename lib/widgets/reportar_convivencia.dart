@@ -49,6 +49,7 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
   ];
 
   List<Map<String, dynamic>> _itemsFaltas = [];
+  List<bool> checkeds = [];
 
   Future<List<Map<String, dynamic>>> getFaltas(String tipo) async {
     final url = Uri.parse('$urlbase/getItemsConvivencia.php');
@@ -57,7 +58,6 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
 
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
-      print(data);
       return data.cast<Map<String, dynamic>>();
     } else {
       throw Exception('Error en la solicitud HTTP: ${response.statusCode}');
@@ -75,23 +75,57 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: DropdownButton(
-              items: _itemsTipos,
-              onChanged: (value) async {
-                _itemsFaltas = await getFaltas(value);
-                var result = Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ListadoFaltas(
-                        faltas: _itemsFaltas
-                            .map((e) => e['itemConvivencia'].toString())
-                            .toList(),
-                      ),
-                    ));
-              },
-              hint: const Text('Seleccione el tipo de falta'),
+          SizedBox(
+            width: double.infinity,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 0.85 * MediaQuery.of(context).size.width,
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: DropdownButton(
+                      items: _itemsTipos,
+                      onChanged: (value) async {
+                        _itemsFaltas = await getFaltas(value);
+                        var result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ListadoFaltas(
+                                faltas: _itemsFaltas
+                                    .map((e) => e['itemConvivencia']
+                                        .toString()
+                                        .replaceFirst(RegExp(r'^\d+\.'), '')
+                                        .trim())
+                                    .toList(),
+                              ),
+                            ));
+                        print(result);
+                        checkeds = result;
+                        setState(() {});
+                      },
+                      hint: const Text('Seleccione el tipo de falta'),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 0.15 * MediaQuery.of(context).size.width,
+                  child: IconButton(
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ListadoFaltas(
+                              faltas: _itemsFaltas
+                                  .map((e) => e['itemConvivencia']
+                                      .toString()
+                                      .replaceFirst(RegExp(r'^\d+\.'), '')
+                                      .trim())
+                                  .toList(),
+                              checkeds: checkeds,
+                            ),
+                          )),
+                      icon: const Icon(Icons.visibility)),
+                )
+              ],
             ),
           ),
         ],
