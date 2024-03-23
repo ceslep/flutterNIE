@@ -94,7 +94,7 @@ class _SignatureState extends State<Signature> {
                 controller: _drawingController,
                 background: Container(
                     width: MediaQuery.of(context).size.width,
-                    height: 0.75 * MediaQuery.of(context).size.height,
+                    height: 0.5 * MediaQuery.of(context).size.height,
                     color: Colors.white),
                 showDefaultActions: false,
                 showDefaultTools: false,

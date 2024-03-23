@@ -4,6 +4,7 @@
   // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+
     {
       "name": "Flutter ANDROID",
       "type": "dart",
@@ -49,6 +50,12 @@
       "type": "dart",
       "flutterMode": "release",
       "program": "lib/main.dart"
+    },{
+      "name": "Flutter Android Emulator",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "deviceId": "emulator-5554"
     }
   ]
 }
