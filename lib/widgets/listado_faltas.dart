@@ -38,6 +38,15 @@ class _ListadoFaltasState extends State<ListadoFaltas> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context, _isCheckedList),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: IconButton(
+              icon: const Icon(Icons.done),
+              onPressed: () => Navigator.pop(context, _isCheckedList),
+            ),
+          ),
+        ],
       ),
       body: ListView.builder(
         itemBuilder: (context, index) => Card(

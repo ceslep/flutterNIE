@@ -282,6 +282,9 @@ class _NotasDocenteState extends State<NotasDocente> {
                                   builder: (context) => ReportarConvivencia(
                                     estudiante: estudiante,
                                     nombres: nombres,
+                                    docente: widget.docente,
+                                    asignatura: widget.asignatura,
+                                    year: widget.year,
                                   ),
                                 ));
                           },

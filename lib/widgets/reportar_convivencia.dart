@@ -1,21 +1,32 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
 import 'package:com_celesoft_notasieo/widgets/listado_faltas.dart';
 import 'package:com_celesoft_notasieo/widgets/signature.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 const String urlbase = 'https://app.iedeoccidente.com';
 
 class ReportarConvivencia extends StatefulWidget {
   final String estudiante;
   final String nombres;
+  final String docente;
+  final String asignatura;
+  final String year;
 
   const ReportarConvivencia(
-      {super.key, required this.estudiante, required this.nombres});
+      {super.key,
+      required this.estudiante,
+      required this.nombres,
+      required this.docente,
+      required this.year,
+      required this.asignatura});
 
   @override
   State<ReportarConvivencia> createState() => _ReportarConvivenciaState();
@@ -120,6 +131,9 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
   TextEditingController setDescacripcionFaltaController =
       TextEditingController(text: "");
 
+  TextEditingController setPositivasFaltaController =
+      TextEditingController(text: "");
+
   List<String> itemFaltas = [];
 
   String tipoFalta = '';
@@ -127,6 +141,7 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
   String firma = '';
   int descCount = 0;
   int descaCount = 0;
+  int despoCount = 0;
 
   Future<List<Map<String, dynamic>>> getFaltas(String tipo) async {
     final url = Uri.parse('$urlbase/getItemsConvivencia.php');
@@ -197,7 +212,7 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
             padding: const EdgeInsets.all(8.0),
             child: IconButton(
               onPressed: () {
-                GuardaConv(context);
+                guardaConv(context);
               },
               icon: const Icon(Icons.save, color: Colors.white),
             ),
@@ -221,6 +236,11 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
                         items: _itemsTipos,
                         onChanged: (value) async {
                           tipoFalta = value;
+                          if (value == 'OTRAS') {
+                            setState(() {});
+                            return;
+                          }
+
                           setState(
                               () => consultandoFaltas = !consultandoFaltas);
                           _itemsFaltas = await getFaltas(value);
@@ -257,103 +277,146 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
                 ],
               ),
             ),
-            SizedBox(
-              width: 0.95 * MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: TextField(
-                  style: const TextStyle(fontSize: 11),
-                  maxLines: 3,
-                  readOnly: true,
-                  controller: setFaltasController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 0.95 * MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: DropdownButton(
-                  value: horaFalta,
-                  items: _itemsHoras,
-                  onChanged: (value) {
-                    setState(() {
-                      horaFalta = value;
-                    });
-                  },
-                  hint: const Text('Seleccione la hora de la falta'),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 0.95 * MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Descripción de la Situación presentada',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+            tipoFalta != 'OTRAS'
+                ? SizedBox(
+                    width: 0.95 * MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: TextField(
+                        style: const TextStyle(fontSize: 11),
+                        maxLines: 3,
+                        readOnly: true,
+                        controller: setFaltasController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
                     ),
-                    TextField(
-                      onChanged: (value) {
-                        descCount = value.length;
-                        setState(() {});
-                      },
-                      maxLines: 3,
-                      controller: setDescripcionFaltaController,
-                      decoration: InputDecoration(
-                          hoverColor: Colors.yellow,
-                          border: const OutlineInputBorder(),
-                          fillColor: Colors.yellow,
-                          counter: Text(
-                            '${descCount.toString()} de Mínimo  20 Caracteres',
-                            style: const TextStyle(
-                                color: Colors.blue, fontSize: 10),
-                          )),
-                      autocorrect: true,
+                  )
+                : const SizedBox(),
+            tipoFalta != 'OTRAS'
+                ? SizedBox(
+                    width: 0.95 * MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: DropdownButton(
+                        value: horaFalta,
+                        items: _itemsHoras,
+                        onChanged: (value) {
+                          setState(() {
+                            horaFalta = value;
+                          });
+                        },
+                        hint: const Text('Seleccione la hora de la falta'),
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 0.95 * MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Descargos del estudiante',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                  )
+                : const SizedBox(),
+            tipoFalta != 'OTRAS'
+                ? SizedBox(
+                    width: 0.95 * MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Descripción de la Situación presentada',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextField(
+                            onChanged: (value) {
+                              descCount = value.length;
+                              setState(() {});
+                            },
+                            maxLines: 3,
+                            controller: setDescripcionFaltaController,
+                            decoration: InputDecoration(
+                                hoverColor: Colors.yellow,
+                                border: const OutlineInputBorder(),
+                                fillColor: Colors.yellow,
+                                counter: Text(
+                                  '${descCount.toString()} de Mínimo  20 Caracteres',
+                                  style: const TextStyle(
+                                      color: Colors.blue, fontSize: 10),
+                                )),
+                            autocorrect: true,
+                          ),
+                        ],
+                      ),
                     ),
-                    TextField(
-                      onChanged: (value) {
-                        descaCount = value.length;
-                        setState(() {});
-                      },
-                      maxLines: 3,
-                      controller: setDescacripcionFaltaController,
-                      decoration: InputDecoration(
-                          hoverColor: Colors.yellow,
-                          border: const OutlineInputBorder(),
-                          fillColor: Colors.yellow,
-                          counter: Text(
-                            '${descaCount.toString()} de Mínimo  20 Caracteres',
-                            style: const TextStyle(
-                                color: Colors.blue, fontSize: 10),
-                          )),
-                      autocorrect: true,
+                  )
+                : const SizedBox(),
+            tipoFalta != 'OTRAS'
+                ? SizedBox(
+                    width: 0.95 * MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Descargos del estudiante',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextField(
+                            onChanged: (value) {
+                              descaCount = value.length;
+                              setState(() {});
+                            },
+                            maxLines: 3,
+                            controller: setDescacripcionFaltaController,
+                            decoration: InputDecoration(
+                                hoverColor: Colors.yellow,
+                                border: const OutlineInputBorder(),
+                                fillColor: Colors.yellow,
+                                counter: Text(
+                                  '${descaCount.toString()} de Mínimo  20 Caracteres',
+                                  style: const TextStyle(
+                                      color: Colors.blue, fontSize: 10),
+                                )),
+                            autocorrect: true,
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
+                  )
+                : const SizedBox(),
+            tipoFalta == 'OTRAS'
+                ? SizedBox(
+                    width: 0.95 * MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Observaciones Positivas',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextField(
+                            onChanged: (value) {
+                              despoCount = value.length;
+                              setState(() {});
+                            },
+                            maxLines: 3,
+                            controller: setPositivasFaltaController,
+                            decoration: InputDecoration(
+                                hoverColor: Colors.yellow,
+                                border: const OutlineInputBorder(),
+                                fillColor: Colors.yellow,
+                                counter: Text(
+                                  '${despoCount.toString()} de Mínimo  20 Caracteres',
+                                  style: const TextStyle(
+                                      color: Colors.blue, fontSize: 10),
+                                )),
+                            autocorrect: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
             firma != ''
                 ? Center(
                     child: Column(
@@ -382,8 +445,8 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
                     elevation: MaterialStatePropertyAll(Checkbox.width),
                     backgroundColor: MaterialStatePropertyAll(Colors.redAccent),
                     foregroundColor: MaterialStatePropertyAll(Colors.yellow)),
-                onPressed: () {
-                  GuardaConv(context);
+                onPressed: () async {
+                  guardaConv(context);
                 },
                 child: SizedBox(
                   width: 0.6 * MediaQuery.of(context).size.width,
@@ -407,11 +470,39 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
     );
   }
 
-  void GuardaConv(BuildContext context) {
+  Future<void> guardaConv(BuildContext context) async {
+    String device = '';
     if (tipoFalta != "" &&
         horaFalta != "" &&
         descCount >= 20 &&
         descaCount >= 20) {
+      if (Platform.isAndroid) {
+        DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        print('Running on ${androidInfo.model}'); // e.g. "Moto G (4)"
+        device = androidInfo.model;
+      }
+      final Uri url = Uri.parse('$urlbase/guardarConvivencia.php');
+      final bodyData = json.encode({
+        'estudiantecnv': widget.estudiante,
+        'docentecnv': widget.docente,
+        'asignaturacnv': widget.asignatura,
+        'tipofalta': tipoFalta,
+        'hora': horaFalta,
+        'fecha': DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        'descripcionSituacion': setDescripcionFaltaController.text,
+        'descargosEstudiante': setDescacripcionFaltaController.text,
+        'positivos': setPositivasFaltaController.text,
+        'firmacnv': firma,
+        'firmaAcudientecnv': '',
+        'faltas': tipoFalta != 'OTRAS' ? setFaltasController.text : '',
+        'device': device,
+        'year': widget.year
+      });
+      var response = await http.post(url, body: bodyData);
+      if (response.statusCode == 200) {
+        print("Se envió la convivencia");
+      }
     } else {
       mostrarAlert(context, 'Convivencia', 'Complete la información');
     }
