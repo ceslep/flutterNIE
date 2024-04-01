@@ -10,6 +10,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 const String urlbase = 'https://app.iedeoccidente.com';
 
@@ -33,6 +34,7 @@ class ReportarConvivencia extends StatefulWidget {
 }
 
 class _ReportarConvivenciaState extends State<ReportarConvivencia> {
+  late FToast fToast;
   final List<DropdownMenuItem> _itemsTipos = [
     const DropdownMenuItem(
       value: '',
@@ -118,6 +120,12 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
         'Séptima Hora',
       ),
     ),
+    const DropdownMenuItem(
+      value: 'Descanso u otras Actividades',
+      child: Text(
+        'Descanso u otras Actividades',
+      ),
+    ),
   ];
 
   List<Map<String, dynamic>> _itemsFaltas = [];
@@ -156,7 +164,36 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
     }
   }
 
-  Future<void> guardarConvivencia() async {}
+  _showToast() {
+    fToast = FToast();
+    fToast.init(context);
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: Colors.greenAccent,
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check),
+          SizedBox(
+            width: 12.0,
+          ),
+          Text(
+            "Convivencia Registrada",
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+
+    fToast.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: const Duration(seconds: 2),
+    );
+  }
 
   void mostrarAlert(BuildContext context, String title, String text) {
     showDialog(
@@ -177,6 +214,11 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -211,7 +253,7 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: IconButton(
-              onPressed: () {
+              onPressed: () async {
                 guardaConv(context);
               },
               icon: const Icon(Icons.save, color: Colors.white),
@@ -337,8 +379,11 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
                                 fillColor: Colors.yellow,
                                 counter: Text(
                                   '${descCount.toString()} de Mínimo  20 Caracteres',
-                                  style: const TextStyle(
-                                      color: Colors.blue, fontSize: 10),
+                                  style: TextStyle(
+                                      color: descCount >= 20
+                                          ? Colors.blue
+                                          : Colors.red,
+                                      fontSize: 10),
                                 )),
                             autocorrect: true,
                           ),
@@ -372,8 +417,11 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
                                 fillColor: Colors.yellow,
                                 counter: Text(
                                   '${descaCount.toString()} de Mínimo  20 Caracteres',
-                                  style: const TextStyle(
-                                      color: Colors.blue, fontSize: 10),
+                                  style: TextStyle(
+                                      color: descaCount >= 20
+                                          ? Colors.blue
+                                          : Colors.red,
+                                      fontSize: 10),
                                 )),
                             autocorrect: true,
                           ),
@@ -480,7 +528,8 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
         print('Running on ${androidInfo.model}'); // e.g. "Moto G (4)"
-        device = androidInfo.model;
+        device =
+            '${androidInfo.manufacturer}  ${androidInfo.brand} ${androidInfo.hardware} android-${androidInfo.version.release} ${androidInfo.product} ${androidInfo.model} ';
       }
       final Uri url = Uri.parse('$urlbase/guardarConvivencia.php');
       final bodyData = json.encode({
@@ -501,7 +550,17 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
       });
       var response = await http.post(url, body: bodyData);
       if (response.statusCode == 200) {
-        print("Se envió la convivencia");
+        await _showToast();
+        tipoFalta = '';
+        horaFalta = '';
+        setFaltasController.text = '';
+        setDescripcionFaltaController.text = '';
+        setDescacripcionFaltaController.text = '';
+        firma = '';
+        descCount = 0;
+        descaCount = 0;
+        setState(() {});
+        Navigator.pop(context);
       }
     } else {
       mostrarAlert(context, 'Convivencia', 'Complete la información');

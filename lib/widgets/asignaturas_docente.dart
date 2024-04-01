@@ -229,6 +229,9 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
             itemBuilder: (context, index) {
               String asignatura = widget.asignaturas[index];
               return ListTile(
+                leading: const CircleAvatar(
+                  child: Icon(Icons.description),
+                ),
                 title: Row(
                   children: [
                     Padding(

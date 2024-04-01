@@ -105,6 +105,7 @@ class _NotasDocenteState extends State<NotasDocente> {
             }
             double val = double.parse(valoracion != '' ? valoracion : '0');
             return Card(
+              margin: const EdgeInsets.all(10),
               color: index % 2 == 0
                   ? Colors.lightGreen.shade100
                   : const Color.fromARGB(255, 209, 222, 194),
