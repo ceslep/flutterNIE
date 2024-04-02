@@ -111,6 +111,13 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
                     print(aasignaturas);
                   }
                   return ListTile(
+                    leading: const CircleAvatar(
+                      backgroundColor: Colors.blueAccent,
+                      child: Icon(
+                        Icons.history_edu_outlined,
+                        color: Colors.white,
+                      ),
+                    ),
                     title: Row(
                       children: [
                         Text(

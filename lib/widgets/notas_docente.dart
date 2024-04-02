@@ -16,7 +16,10 @@ class NotasDocente extends StatefulWidget {
   final List<MAspectos> maspectos;
 
   final String asignatura;
+  final String asignacion;
   final String grado;
+  final String nivel;
+  final String numero;
   final String docente;
   final String periodo;
   final String year;
@@ -30,6 +33,9 @@ class NotasDocente extends StatefulWidget {
     required this.year,
     required this.notasFullModelo,
     required this.maspectos,
+    required this.asignacion,
+    required this.nivel,
+    required this.numero,
   });
 
   @override
@@ -273,11 +279,16 @@ class _NotasDocenteState extends State<NotasDocente> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           RegistrarInasistencia(
-                                            nombres: nombres,
-                                            grado: widget.grado,
-                                            asignatura: widget.asignatura,
-                                            docente: widget.docente,
-                                          )),
+                                              estudiante: estudiante,
+                                              asignacion: widget.asignacion,
+                                              nombres: nombres,
+                                              grado: widget.grado,
+                                              asignatura: widget.asignatura,
+                                              docente: widget.docente,
+                                              nivel: widget.nivel,
+                                              numero: widget.numero,
+                                              periodo: widget.periodo,
+                                              year: widget.year)),
                                 )),
                         ElevatedButton(
                           style: ButtonStyle(

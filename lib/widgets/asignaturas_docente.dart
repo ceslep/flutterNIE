@@ -275,9 +275,12 @@ class _AsignaturasDocenteState extends State<AsignaturasDocente> {
                                       MaterialPageRoute(
                                         builder: (context) => NotasDocente(
                                           notas: notas,
+                                          asignacion: widget.asignacion,
                                           notasFullModelo: notasFullModelo,
                                           asignatura: asignatura,
                                           grado: widget.grado,
+                                          nivel: widget.nivel,
+                                          numero: widget.numero,
                                           docente: widget.docente,
                                           periodo: widget.periodo,
                                           year: widget.year,

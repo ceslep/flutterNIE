@@ -37,6 +37,7 @@ class ReportarConvivencia extends StatefulWidget {
 }
 
 class _ReportarConvivenciaState extends State<ReportarConvivencia> {
+  bool guardando = false;
   late FToast fToast;
   final List<DropdownMenuItem> _itemsTipos = [
     const DropdownMenuItem(
@@ -255,12 +256,20 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              onPressed: () async {
-                guardaConv(context);
-              },
-              icon: const Icon(Icons.save, color: Colors.white),
-            ),
+            child: !guardando
+                ? IconButton(
+                    onPressed: () async {
+                      guardaConv(context);
+                    },
+                    icon: const Icon(
+                      Icons.save,
+                      color: Colors.white,
+                    ),
+                  )
+                : const SpinKitRipple(
+                    size: 25,
+                    color: Colors.white,
+                  ),
           )
         ],
       ),
@@ -507,15 +516,20 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
                 },
                 child: SizedBox(
                   width: 0.6 * MediaQuery.of(context).size.width,
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Registrar Convivencia'),
-                      Icon(
-                        Icons.accessibility_new,
-                        size: 35,
-                        color: Color.fromARGB(255, 254, 204, 221),
-                      ),
+                      const Text('Registrar Convivencia'),
+                      !guardando
+                          ? const Icon(
+                              Icons.accessibility_new,
+                              size: 35,
+                              color: Color.fromARGB(255, 254, 204, 221),
+                            )
+                          : const SpinKitRipple(
+                              color: Colors.white,
+                              size: 25,
+                            ),
                     ],
                   ),
                 ),
@@ -528,6 +542,7 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
   }
 
   Future<void> guardaConv(BuildContext context) async {
+    setState(() => guardando = !guardando);
     String device = '';
     if (tipoFalta != "" &&
         horaFalta != "" &&
@@ -574,6 +589,7 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
     } else {
       mostrarAlert(context, 'Convivencia', 'Complete la información');
     }
+    setState(() => guardando = !guardando);
   }
 
   Future<void> setFaltas(BuildContext context, List<String> itemFaltas) async {
