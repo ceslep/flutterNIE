@@ -17,17 +17,20 @@ const String urlbase = 'https://app.iedeoccidente.com';
 class ReportarConvivencia extends StatefulWidget {
   final String estudiante;
   final String nombres;
+  final String grado;
   final String docente;
   final String asignatura;
   final String year;
 
-  const ReportarConvivencia(
-      {super.key,
-      required this.estudiante,
-      required this.nombres,
-      required this.docente,
-      required this.year,
-      required this.asignatura});
+  const ReportarConvivencia({
+    super.key,
+    required this.estudiante,
+    required this.nombres,
+    required this.docente,
+    required this.year,
+    required this.asignatura,
+    required this.grado,
+  });
 
   @override
   State<ReportarConvivencia> createState() => _ReportarConvivenciaState();
@@ -265,6 +268,12 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            TextButton(
+              onPressed: () {},
+              child: Text(
+                '${widget.nombres} ${widget.grado}',
+              ),
+            ),
             SizedBox(
               width: double.infinity,
               child: Row(

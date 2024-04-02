@@ -5,6 +5,7 @@ import 'package:com_celesoft_notasieo/modelo_aspectos.dart';
 import 'package:com_celesoft_notasieo/modelo_notas_full.dart';
 import 'package:com_celesoft_notasieo/widgets/aspectos_notas_docente.dart';
 import 'package:com_celesoft_notasieo/widgets/notas_docente_individuales.dart';
+import 'package:com_celesoft_notasieo/widgets/registrar_inasistencia.dart';
 import 'package:com_celesoft_notasieo/widgets/reportar_convivencia.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -261,14 +262,23 @@ class _NotasDocenteState extends State<NotasDocente> {
                           },
                         ),
                         ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.yellow),
-                              foregroundColor:
-                                  MaterialStateProperty.all(Colors.black)),
-                          child: const Icon(Icons.sick),
-                          onPressed: () {},
-                        ),
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.yellow),
+                                foregroundColor:
+                                    MaterialStateProperty.all(Colors.black)),
+                            child: const Icon(Icons.sick),
+                            onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          RegistrarInasistencia(
+                                            nombres: nombres,
+                                            grado: widget.grado,
+                                            asignatura: widget.asignatura,
+                                            docente: widget.docente,
+                                          )),
+                                )),
                         ElevatedButton(
                           style: ButtonStyle(
                               backgroundColor:
@@ -283,6 +293,7 @@ class _NotasDocenteState extends State<NotasDocente> {
                                   builder: (context) => ReportarConvivencia(
                                     estudiante: estudiante,
                                     nombres: nombres,
+                                    grado: widget.grado,
                                     docente: widget.docente,
                                     asignatura: widget.asignatura,
                                     year: widget.year,
