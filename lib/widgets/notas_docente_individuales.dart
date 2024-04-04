@@ -7,8 +7,10 @@ import 'package:com_celesoft_notasieo/widgets/aspectos_notas_docente.dart';
 import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
 import 'package:com_celesoft_notasieo/widgets/custom_footer.dart';
 import 'package:com_celesoft_notasieo/widgets/error_internet.dart';
+import 'package:com_celesoft_notasieo/widgets/toastmsg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -91,6 +93,7 @@ class NotasDocenteIndividuales extends StatefulWidget {
 }
 
 class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
+  FToast fToast = FToast();
   List<KeyValuePair> anotas = [];
   bool isvalid = true;
   bool cargandoAspectos = false;
@@ -101,6 +104,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
   @override
   void initState() {
     super.initState();
+    fToast.init(context);
     inicio();
   }
 
@@ -347,6 +351,24 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
     }
   }
 
+  void showToastA(String message, {ToastGravity gravity = ToastGravity.TOP}) {
+    final toast = Toastmsg(
+      message: message,
+      toast: fToast,
+      backgroundColor: const Color.fromARGB(255, 214, 255, 187),
+      frontColor: Colors.black,
+    );
+
+    // Schedule the toast to be shown after a brief delay to simulate async behavior
+    Timer(const Duration(milliseconds: 100), () {
+      fToast.showToast(
+        child: toast,
+        gravity: ToastGravity.TOP,
+        toastDuration: const Duration(seconds: 2),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     inicio();
@@ -409,7 +431,8 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
               print({"eskp": estudiante});
               print({"esnfm": widget.notasFullModelo.estudiante}); */
 
-              widget.notasFullModelo.valoracion = widget.keyValuePairs[2].value;
+              widget.notasFullModelo.valoracion =
+                  widget.keyValuePairs[2].value ?? '0';
               var a = widget.notasFullModelo.toMap().map((key, value) {
                 if (key.startsWith("nota")) {
                   int indiceNota = widget.keyValuePairs
@@ -455,6 +478,7 @@ class _NotasDocenteIndividualesState extends State<NotasDocenteIndividuales> {
               print(jsonResult);
               bool result = await guardarNota(jsonResult);
               print(result);
+              showToastA('Notas almacenadas Correctamente');
             },
             child: !_guardandoNotas
                 ? const Icon(Icons.save, color: Colors.black87)

@@ -1,5 +1,8 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously
-//keytool -genkey -v -keystore key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key
+//keytool -genkey -v -keystore notasieo.keystore -alias notasieo -keyalg RSA -keysize 2048 -validity 10000
+//keytool -genkeypair -alias notasieo -keyalg RSA -keysize 2048 -validity 10000 -keystore notasieo.jks
+
+// ignore_for_file: avoid_print, depend_on_referenced_packages, use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:com_celesoft_notasieo/convivencia_provider.dart';
@@ -96,6 +99,12 @@ class PaginaPrincipal extends StatefulWidget {
   _PaginaPrincipalState createState() => _PaginaPrincipalState();
 }
 
+class Ddocente {
+  final String docente;
+  final String password;
+  Ddocente(this.docente, this.password);
+}
+
 class _PaginaPrincipalState extends State<PaginaPrincipal> {
   LocalStorage storage = LocalStorage('app.json');
   bool login = false;
@@ -107,10 +116,8 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
   bool iniciando = false;
   List<String> years = [];
   //variables de estado
-  TextEditingController usuarioController =
-      TextEditingController(text: '75081186');
-  TextEditingController passwordController =
-      TextEditingController(text: '75081186@');
+  TextEditingController usuarioController = TextEditingController(text: '');
+  TextEditingController passwordController = TextEditingController(text: '');
   TextEditingController yearController = TextEditingController();
   String theYear = DateTime.now().year.toString();
 
@@ -121,10 +128,26 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
     return valor ?? ''; // Valor predeterminado si no se encuentra la clave
   }
 
+  Future<Ddocente> obtenerValorLocalDocentes() async {
+    final prefs = await SharedPreferences.getInstance();
+    final docente = prefs.getString('docente');
+    final password = prefs.getString(
+        'password'); // Reemplaza 'clave' por la clave que utilizaste al guardar el valor
+    return Ddocente(docente ?? '',
+        password ?? ''); // Valor predeterminado si no se encuentra la clave
+  }
+
   Future<void> guardarValorLocal(String estudiante) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('estudiante',
         estudiante); // Reemplaza 'clave' por tu clave y true por el valor que desees almacenar
+  }
+
+  Future<void> guardarValorLocalDocente(String docente, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('docente', docente);
+    await prefs.setString('password',
+        password); // Reemplaza 'clave' por tu clave y true por el valor que desees almacenar
   }
 
   Future getYears() async {
@@ -167,6 +190,8 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
         nombresDocente = jsonResponse['nombres'];
         asignacionDocente = jsonResponse['asignacion'];
         periodo = jsonResponse['periodo'];
+        guardarValorLocalDocente(
+            usuarioController.text, passwordController.text);
         return true;
       } else if (jsonResponse['acceso'] == 'si') {
         final urlInasistencias = Uri.parse('$urlbase/est/php/getInasist.php');
@@ -237,11 +262,20 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
           }
         });
       } else {
-        getYears().then((value) {
-          print({value});
-          years = value;
-          setState(() {});
+        obtenerValorLocalDocentes().then((Ddocente value) {
+          String ddocente = value.docente;
+          usuarioController.text = value.docente;
+          passwordController.text = value.password;
+          getYears().then((value) {
+            print({value});
+            years = value;
+            setState(() {});
+            if (ddocente.isNotEmpty) {
+              ingresar();
+            }
+          });
         });
+
         /*  usuarioController.text = '';
         passwordController.text = ''; */
       }
@@ -265,71 +299,72 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
     print('hacer algo');
   }
 
-  @override
-  Widget build(BuildContext context) {
-    void mostrarAlert(BuildContext context, String title, String text) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CustomAlertDialog(
-            key: const Key('alert'),
-            title: title,
-            content: text,
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cerrar'),
-              ),
-            ],
-          );
-        },
-      );
+  void ingresar() async {
+    // init();
+    final yearProvider = Provider.of<YearProvider>(context, listen: false);
+    print({"yp": yearProvider.year});
+    if (yearProvider.year.isEmpty) {
+      yearProvider.setYear(DateTime.now().year.toString());
     }
-
-    void ingresar() async {
-      // init();
-      final yearProvider = Provider.of<YearProvider>(context, listen: false);
-      print({"yp": yearProvider.year});
-      if (yearProvider.year.isEmpty) {
-        yearProvider.setYear(DateTime.now().year.toString());
-      }
-      setState(() {
-        login = true;
-      });
-      bool acceso = (await fetchDataFromJson());
-      setState(() {
-        login = false;
-      });
-      if (acceso) {
-        if (docente) {
-          Navigator.push(
+    setState(() {
+      login = true;
+    });
+    bool acceso = (await fetchDataFromJson());
+    setState(() {
+      login = false;
+    });
+    if (acceso) {
+      if (docente) {
+        var value = Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EntradaDocentes(
+              docente: usuarioController.text,
+              nombresDocente: nombresDocente,
+              asignacionDocente: asignacionDocente,
+              periodo: periodo,
+              year: yearProvider.year,
+            ),
+          ),
+        );
+        print({value});
+      } else {
+        Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => EntradaDocentes(
-                docente: usuarioController.text,
-                nombresDocente: nombresDocente,
-                asignacionDocente: asignacionDocente,
-                periodo: periodo,
-                year: yearProvider.year,
-              ),
-            ),
-          );
-        } else {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const EntradaApp(
-                        elPeriodo: '',
-                      )));
-        }
-      } else {
-        mostrarAlert(
-            context, 'Acceso Denegado', 'Estudiante o contraseña erróneas');
+                builder: (context) => const EntradaApp(
+                      elPeriodo: '',
+                    )));
       }
+    } else {
+      mostrarAlert(
+          context, 'Acceso Denegado', 'Estudiante o contraseña erróneas');
     }
+  }
 
+  void mostrarAlert(BuildContext context, String title, String text) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          key: const Key('alert'),
+          title: title,
+          content: text,
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cerrar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: const Text('I.E. de Occidente'),

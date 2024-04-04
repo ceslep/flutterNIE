@@ -59,7 +59,7 @@ class _NotasDocenteState extends State<NotasDocente> {
             },
             child: const Icon(Icons.home, color: Colors.brown),
           ),
-          TextButton(
+          /*  TextButton(
             onPressed: () {
               Navigator.push(
                   context,
@@ -75,7 +75,7 @@ class _NotasDocenteState extends State<NotasDocente> {
                   ));
             },
             child: const Icon(Icons.note_alt_outlined, color: Colors.brown),
-          ),
+          ), */
           TextButton(
             onPressed: () {},
             child: const Icon(Icons.notes_outlined, color: Colors.brown),

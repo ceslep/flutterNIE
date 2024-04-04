@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:com_celesoft_notasieo/widgets/asignaturas_docente.dart';
 import 'package:com_celesoft_notasieo/widgets/error_internet.dart';
 import 'package:flutter/foundation.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:confirm_dialog/confirm_dialog.dart';
 
 const String urlbase = 'https://app.iedeoccidente.com';
 
@@ -79,13 +82,24 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+                onPressed: () async {
+                  if (await confirm(context,
+                      title: const Text('Salir'),
+                      content: const Text('Está seguro?'))) {
+                    Navigator.pop(context, {'logout': true});
+                  }
+                },
+                icon: const Icon(
+                  Icons.logout,
+                  color: Colors.yellowAccent,
+                )),
+          )
+        ],
       ),
       body: Container(
         padding: const EdgeInsets.all(6),
@@ -130,8 +144,11 @@ class _EntradaDocentesState extends State<EntradaDocentes> {
                           width: 45,
                           height: 45,
                           child: GestureDetector(
-                            child: const Icon(Icons.arrow_circle_right,
-                                size: 50, color: Colors.amber),
+                            child: const Padding(
+                              padding: EdgeInsets.only(top: 10.0),
+                              child: Icon(Icons.arrow_circle_right,
+                                  size: 50, color: Colors.amber),
+                            ),
                             onTap: () async {
                               var result = await Navigator.push(
                                 context,

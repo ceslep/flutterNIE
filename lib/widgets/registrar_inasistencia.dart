@@ -1,9 +1,11 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
+import 'package:com_celesoft_notasieo/widgets/toastmsg.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -43,7 +45,7 @@ class RegistrarInasistencia extends StatefulWidget {
 
 class _RegistrarInasistenciaState extends State<RegistrarInasistencia> {
   bool guardando = false;
-  late FToast fToast;
+  FToast fToast = FToast();
   String fecha = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String horass = '';
   String horaClase = '';
@@ -78,6 +80,7 @@ class _RegistrarInasistenciaState extends State<RegistrarInasistencia> {
   @override
   void initState() {
     super.initState();
+    fToast.init(context);
     _horas = horas
         .map((e) => DropdownMenuItem(
               value: !e.contains('Cuantas') ? e[0] : '',
@@ -130,6 +133,24 @@ class _RegistrarInasistenciaState extends State<RegistrarInasistencia> {
         ),
       ],
     );
+  }
+
+  void showToastA(String message, {ToastGravity gravity = ToastGravity.TOP}) {
+    final toast = Toastmsg(
+      message: message,
+      toast: fToast,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      frontColor: Colors.black,
+    );
+
+    // Schedule the toast to be shown after a brief delay to simulate async behavior
+    Timer(const Duration(milliseconds: 100), () {
+      fToast.showToast(
+        child: toast,
+        gravity: ToastGravity.TOP,
+        toastDuration: const Duration(seconds: 2),
+      );
+    });
   }
 
   @override
@@ -306,37 +327,6 @@ class _RegistrarInasistenciaState extends State<RegistrarInasistencia> {
     );
   }
 
-  _showToast() {
-    fToast = FToast();
-    fToast.init(context);
-    Widget toast = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25.0),
-        color: Colors.greenAccent,
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.check),
-          SizedBox(
-            width: 12.0,
-          ),
-          Text(
-            "Inasistencia Registrada",
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-
-    fToast.showToast(
-      child: toast,
-      gravity: ToastGravity.BOTTOM,
-      toastDuration: const Duration(seconds: 2),
-    );
-  }
-
   void mostrarAlert(BuildContext context, String title, String text) {
     showDialog(
       context: context,
@@ -388,7 +378,7 @@ class _RegistrarInasistenciaState extends State<RegistrarInasistencia> {
       });
       var response = await http.post(url, body: bodyData);
       if (response.statusCode == 200) {
-        await _showToast();
+        showToastA('Inasistencia Registrada');
         fecha = '';
         horaClase = '';
         horass = '';

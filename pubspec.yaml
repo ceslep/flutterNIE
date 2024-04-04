@@ -26,6 +26,7 @@ dependencies:
   path_provider: ^2.0.2
   device_info_plus: ^10.0.1
   flutter_localization: ^0.2.0
+  confirm_dialog: ^1.0.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

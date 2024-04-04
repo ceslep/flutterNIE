@@ -54,12 +54,12 @@ android {
         versionName flutterVersionName
     }
     signingConfigs {
-  release {
-    storeFile file("key.jks")
-    storePassword "qqppzzmm76"
-    keyAlias "key"
-    keyPassword "qqppzzmm76"
-  }
+   release {
+        storeFile file("notasieo.jks")
+        storePassword "894035"
+        keyAlias "notasieo"
+        keyPassword "894035"
+    }
 }
 
 buildTypes {

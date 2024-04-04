@@ -1,10 +1,12 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:com_celesoft_notasieo/widgets/custom_alert.dart';
 import 'package:com_celesoft_notasieo/widgets/listado_faltas.dart';
 import 'package:com_celesoft_notasieo/widgets/signature.dart';
+import 'package:com_celesoft_notasieo/widgets/toastmsg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
@@ -168,35 +170,23 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
     }
   }
 
-  _showToast() {
-    fToast = FToast();
-    fToast.init(context);
-    Widget toast = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25.0),
-        color: Colors.greenAccent,
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.check),
-          SizedBox(
-            width: 12.0,
-          ),
-          Text(
-            "Convivencia Registrada",
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
+  void showToastA(String message,
+      {int tiempo = 100, ToastGravity gravity = ToastGravity.TOP}) {
+    final toast = Toastmsg(
+      message: message,
+      toast: fToast,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      frontColor: Colors.black,
     );
 
-    fToast.showToast(
-      child: toast,
-      gravity: ToastGravity.BOTTOM,
-      toastDuration: const Duration(seconds: 2),
-    );
+    // Schedule the toast to be shown after a brief delay to simulate async behavior
+    Timer(Duration(milliseconds: tiempo), () {
+      fToast.showToast(
+        child: toast,
+        gravity: ToastGravity.TOP,
+        toastDuration: const Duration(seconds: 2),
+      );
+    });
   }
 
   void mostrarAlert(BuildContext context, String title, String text) {
@@ -574,7 +564,7 @@ class _ReportarConvivenciaState extends State<ReportarConvivencia> {
       });
       var response = await http.post(url, body: bodyData);
       if (response.statusCode == 200) {
-        await _showToast();
+        showToastA('Convivencia reportada');
         tipoFalta = '';
         horaFalta = '';
         setFaltasController.text = '';
